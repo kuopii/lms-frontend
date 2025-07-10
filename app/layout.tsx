@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Geologica } from "next/font/google";
 import "./globals.css";
+import ScreenSizeTracker from "@/components/screen-size";
+import { PageIndicator } from "@/components/page-indicator";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -33,6 +35,8 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${geologica.variable} antialiased`}
       >
         {children}
+        <ScreenSizeTracker />
+        <PageIndicator />
       </body>
     </html>
   );
