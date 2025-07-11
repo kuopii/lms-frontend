@@ -213,7 +213,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
             <SheetHeader>
               <SheetTitle className="text-xl text-white">Menu</SheetTitle>
             </SheetHeader>
-            <div className="-mt-2 px-4 overflow-y-auto">
+            <div className="-mt-2 overflow-y-auto px-4">
               <SideBarMenu
                 onItemClick={() => setIsMenuOpen(false)}
                 onLogout={handleLogout}
@@ -233,7 +233,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
         </aside>
 
         {/* Main content */}
-        <main className="mx-auto mt-28 flex w-full flex-col md:pl-4 lg:pl-8">
+        <main className="mx-auto mt-28 flex w-full flex-col pb-16 md:pl-4 lg:pl-8">
           {children}
         </main>
       </div>
