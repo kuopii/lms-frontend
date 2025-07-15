@@ -1,0 +1,99 @@
+{
+  "nav": {
+    "brand": "Koupii",
+    "home": "Trang chủ",
+    "features": "Tính năng",
+    "pricing": "Bảng giá",
+    "login": "Đăng nhập"
+  },
+  "footer": {
+    "brand": "Koupii",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "navigation": {
+      "pages": {
+        "title": "Trang",
+        "homepage": "Trang chủ",
+        "features": "Tính năng",
+        "profile": "Hồ sơ"
+      },
+      "company": {
+        "title": "Công ty",
+        "aboutus": "Về chúng tôi",
+        "term": "Điều khoản & quyền riêng tư",
+        "blog": "Blog"
+      },
+      "contact": {
+        "title": "Liên hệ",
+        "phone": "08xx",
+        "email": "example@gmail.com"
+      }
+    },
+    "copyright": {
+      "title": "Bản quyền",
+      "year": "2025",
+      "brand": "Koupi",
+      "allrightreserved": "Mọi quyền được bảo lưu"
+    },
+    "card": {
+      "tryitnow": "THỬ NGAY",
+      "title": "Sẵn sàng nâng cao tiếng Anh cùng Koupii?",
+      "description": "Công cụ tương tác, tiến trình cá nhân hóa, và mọi hỗ trợ bạn cần — ngay tại Koupii.",
+      "ctastudent": "Tham gia với tư cách Học sinh",
+      "ctateacher": "Tham gia với tư cách Giáo viên"
+    }
+  },
+  "home": {
+    "banner": {
+      "review": "+2000 học sinh và giáo viên tin dùng chúng tôi",
+      "titleMain": "Trợ Giảng IELTS Cá Nhân Của Bạn",
+      "titleSecondary": "Assistant",
+      "description": "Tiết kiệm hàng giờ với hệ thống ôn luyện thân thiện, tài liệu thông minh và theo dõi học viên theo thời gian thực, được thiết kế cho giáo viên IELTS.",
+      "getStarted": "Bắt đầu",
+      "learnMore": "Tìm hiểu thêm"
+    },
+    "content": {
+      "mainFeatures": {
+        "title": "Dạy Như Thường – Nhưng Nhanh Hơn",
+        "brand": "Koupii",
+        "description": "Hiểu rõ những khó khăn khi dạy hàng ngày, giúp bạn giảm thời gian ngoài giờ lớp và vẫn nâng cao chất lượng học tập.",
+        "card": {
+          "potrait": {
+            "title1": "Tạo bài tập trong vài phút",
+            "description1": "Chuyển tài liệu in thành bài tập ngay lập tức bằng OCR",
+            "title2": "Tùy chỉnh cá nhân",
+            "description2": "Sửa và lưu nội dung cá nhân để sử dụng lại bất cứ lúc nào",
+            "title3": "Bảng điều khiển tiến trình",
+            "description3": "Nhìn thấy tổng quan rõ ràng tiến trình của từng học sinh theo thời gian thực"
+          },
+          "landscape": {
+            "title1": "Quản lý bài tập về nhà",
+            "description1": "Mời học sinh tham gia lớp và quản lý nộp bài dễ dàng",
+            "title2": "Luyện, luyện và luyện!",
+            "description2": "Xác định điểm yếu và nhận đề xuất luyện tập phù hợp"
+          }
+        }
+      },
+      "skills": {
+        "title": "Thành thạo 4 kỹ năng tiếng Anh thiết yếu",
+        "description": "Xây dựng nền tảng vững chắc trong tiếng Anh bằng cách luyện tập tập trung ở mọi kỹ năng quan trọng.",
+        "card": {
+          "title1": "Đọc",
+          "title2": "Nghe",
+          "title3": "Viết",
+          "title4": "Nói",
+          "title5": "Bảng điều khiển kỹ năng",
+          "title6": "Rèn luyện điểm yếu"
+        }
+      },
+      "testimonial": {
+        "title": "Người dùng nói gì về chúng tôi",
+        "brand": "Koupii",
+        "descriptionFirst": "Xem cách",
+        "description": "khiến hành trình học tập của họ trở nên khác biệt.",
+        "card": {
+          "description1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."
+        }
+      }
+    }
+  }
+}
