@@ -1,17 +1,7 @@
 "use client";
 
-import { Role, User } from "@/types/auth";
-import React, { useState } from "react";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { axiosInstance } from "@/lib/axios";
-import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { MdEditSquare } from "react-icons/md";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { authSchema } from "@/validators/auth";
-import z from "zod";
 import {
   Form,
   FormControl,
@@ -21,9 +11,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { axiosInstance } from "@/lib/axios";
+import { Role, User } from "@/types/auth";
+import { authSchema } from "@/validators/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import Image from "next/image";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
 import { IoMdImage } from "react-icons/io";
 import { IoEye, IoEyeOff } from "react-icons/io5";
+import { MdEditSquare } from "react-icons/md";
+import { toast } from "sonner";
+import z from "zod";
 
 // API CALL
 export const useFetchUserById = ({

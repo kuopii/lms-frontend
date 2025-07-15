@@ -42,6 +42,10 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* tambahan */
+  --color-neutral-custom-3: var(--color-neutral-3);
+  --color-description: var(--color-neutral-1);
 }
 
 :root {
@@ -54,7 +58,7 @@
   --popover-foreground: oklch(0.145 0 0);
   --primary: oklch(0.6829 0.1288 134.88);
   --primary-foreground: oklch(1 0 0);
-  --secondary: oklch(0.97 0 0);
+  --secondary: oklch(0.8433 0.1115 137.24);
   --secondary-foreground: oklch(0.205 0 0);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
@@ -77,6 +81,8 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
+  --color-neutral-1: #dedede;
+  --color-neutral-3: #aaaaaa;
 }
 
 .dark {
@@ -129,5 +135,29 @@ body {
 @layer utilities {
   .font-geologica {
     font-family: var(--font-geologica), sans-serif;
+  }
+  .text-neutral-custom-1 {
+    color: var(--color-neutral-1);
+  }
+  .text-neutral-custom-3 {
+    color: var(--color-neutral-3);
+  }
+}
+
+@layer components {
+  .card-custom {
+    background-color: #333333;
+    border-radius: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+  }
+
+  .typoHeadlines {
+    @apply text-4xl font-bold;
+  }
+  .typoSubHeadlines {
+    @apply text-xl font-medium;
+  }
+  .select-trigger-custom span {
+    color: white !important;
   }
 }

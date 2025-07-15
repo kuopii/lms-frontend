@@ -1,0 +1,132 @@
+{
+  "nav": {
+    "brand": "Koupii",
+    "home": "Home",
+    "features": "Features",
+    "pricing": "Pricing",
+    "login": "Log in"
+  },
+  "footer": {
+    "brand": "Koupii",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+    "navigation": {
+      "pages": {
+        "title": "Pages",
+        "homepage": "Home page",
+        "features": "Features",
+        "profile": "Profile"
+      },
+      "company": {
+        "title": "Company",
+        "aboutus": "About us",
+        "term": "Term and privacy",
+        "blog": "Blog"
+      },
+      "contact": {
+        "title": "Contact",
+        "phone": "08xx",
+        "email": "example@gmail.com"
+      }
+    },
+    "copyright": {
+      "title": "Copyright",
+      "year": "2025",
+      "brand": "Koupi",
+      "allrightreserved": "All right reserved"
+    },
+    "card": {
+      "tryitnow": "TRY IT NOW",
+      "title": " Ready to Boost Your English with Koupii?",
+      "description": "Interactive tools, personalized progress, and all the support you need—right here at Koupii.",
+      "ctastudent": "Join as Student",
+      "ctateacher": "Join as Teacher"
+    }
+  },
+
+  "home": {
+    "banner": {
+      "review": "+2000 students and teachers trust us",
+      "titleMain": "Your Personal IELTS",
+      "titleSecondary": "Teaching Assistant",
+      "description": "Save hours with friendly prep systems, smart practice materials and real-time student tracking built just for IELTS teachers.",
+      "getStarted": "Get Started",
+      "learnMore": "Learn More"
+    },
+    "content": {
+      "mainFeatures": {
+        "title": "Teach the Way You Always Do - Just Faster",
+        "brand": "Koupii",
+        "description": "understands your daily teaching struggles helps you cut down time outside class while still boosting student learning.",
+        "card": {
+          "potrait": {
+            "title1": "Build Excercises in Minutes",
+            "description1": "Convert printed material into exercises instantly using OCR",
+            "title2": "Personal Customization",
+            "description2": "Fix and save personalized content for repeated use anytime",
+            "title3": "Progress Dashboard",
+            "description3": "Get a clear overview of each student’s learning progress in real time"
+          },
+          "landscape": {
+            "title1": "Homework Management",
+            "description1": "Invite students to join your class and easily manage homework submissions",
+            "title2": "Practice Practice Practice!",
+            "description2": "Pinpoint weaknesses and get tailored practice suggestions"
+          }
+        }
+      },
+      "skills": {
+        "title": "Master the Four Essential English Skills",
+        "description": "Build a solid foundation in English through focused practice in every key area.",
+        "card": {
+          "title1": "Reading",
+          "title2": "Listening",
+          "title3": "Writting",
+          "title4": "Speaking",
+          "title5": "Skill Dashboard",
+          "title6": "Weakness Training"
+        }
+      },
+      "testimonial": {
+        "title": "What Our Users Are Saying ",
+        "brand": "Koupii",
+        "descriptionFirst": "See how",
+        "description": "makes a difference in their learning journey.",
+        "card": {
+          "description1": "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+        }
+      }
+    }
+  },
+
+  "pricing": {
+    "title": "We've Got a Plan That's Perfect For You",
+    "description": "Level up your journey with the right tools, right now.",
+    "card": [
+      {
+        "title": "Pricing Name",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit,",
+        "price": "70",
+        "information": ["Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet"],
+        "getstarted": "Get Started",
+        "popular": false
+      },
+      {
+        "title": "Pricing Name",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit,",
+        "price": "100",
+        "information": ["Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet"],
+        "getstarted": "Get Started",
+        "popular": true
+      },
+
+      {
+        "title": "Pricing Name",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit,",
+        "price": "120",
+        "information": ["Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet", "Lorem ipsum dolor sit amet"],
+        "getstarted": "Get Started",
+        "popular": false
+      }
+    ]
+  }
+}
