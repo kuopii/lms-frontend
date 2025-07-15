@@ -36,13 +36,13 @@ export const classData = [
           "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=1470&q=80",
       },
       {
-        id: "stu4",
+        id: "stu5",
         name: "Dana Lee",
         image:
           "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=1470&q=80",
       },
       {
-        id: "stu4",
+        id: "stu6",
         name: "Dana Lee",
         image:
           "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=1470&q=80",
@@ -100,5 +100,26 @@ export const classData = [
           "https://images.unsplash.com/photo-1502767089025-6572583495b0?auto=format&fit=crop&w=1470&q=80",
       },
     ],
+  },
+];
+
+export const classAssignments = [
+  {
+    id: "a1b2c3d4",
+    name: "Reading Comprehension - Chapter 1",
+    type: "reading",
+    deadline: "2025-07-20",
+  },
+  {
+    id: "e5f6g7h8",
+    name: "Listening Practice - Dialogue A",
+    type: "listening",
+    deadline: "2025-07-22",
+  },
+  {
+    id: "i9j0k1l2",
+    name: "Speaking Task - Self Introduction",
+    type: "speaking",
+    deadline: "2025-07-25",
   },
 ];
