@@ -8,9 +8,7 @@ export default function Home() {
         backgroundImage: "url('/home/Vector.png'), url('/home/Vector2.png')",
       }}
     >
-      <div>
-        <HomeComp />
-      </div>
+      <HomeComp />
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import NavbarClientWrapper from "@/components/navbar/NavbarClientWrapper";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -16,6 +17,7 @@ import {
 import { useConfirm } from "@/hooks/use-confirm";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+import { NextIntlClientProvider } from "next-intl";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -29,6 +31,7 @@ import {
   RiDashboardHorizontalFill,
   RiMenu4Fill,
 } from "react-icons/ri";
+import enMessage from "../../messages/en.json";
 
 const navigation = [
   {
@@ -200,44 +203,48 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-screen-xl flex-col px-4 md:px-8 xl:px-0">
-      {/* Header */}
-      <header className="border-border fixed top-0 right-0 left-0 z-30 mx-auto h-20 max-w-screen-xl border-b bg-black px-4 md:px-8 lg:px-14">
-        <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-          <SheetTrigger asChild>
-            <Button className="lg:hidden" size="icon">
-              <RiMenu4Fill />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left">
-            <SheetHeader>
-              <SheetTitle className="text-xl text-white">Menu</SheetTitle>
-            </SheetHeader>
-            <div className="-mt-2 overflow-y-auto px-4">
-              <SideBarMenu
-                onItemClick={() => setIsMenuOpen(false)}
-                onLogout={handleLogout}
-              />
+    <NextIntlClientProvider locale="en" messages={enMessage}>
+      <div className="mx-auto flex min-h-screen max-w-screen-xl flex-col px-4 md:px-8 xl:px-0">
+        {/* Header */}
+        <NavbarClientWrapper />
+
+        <header className="border-border fixed top-0 right-0 left-0 z-30 mx-auto h-20 max-w-screen-xl border-b bg-black px-4 md:px-8 lg:px-14">
+          <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
+            <SheetTrigger asChild>
+              <Button className="lg:hidden" size="icon">
+                <RiMenu4Fill />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left">
+              <SheetHeader>
+                <SheetTitle className="text-xl text-white">Menu</SheetTitle>
+              </SheetHeader>
+              <div className="-mt-2 overflow-y-auto px-4">
+                <SideBarMenu
+                  onItemClick={() => setIsMenuOpen(false)}
+                  onLogout={handleLogout}
+                />
+              </div>
+            </SheetContent>
+          </Sheet>
+          <ConfirmDialog />
+        </header>
+
+        <div className="flex min-h-svh gap-4">
+          {/* Sidebar */}
+          <aside className="relative hidden w-64 border-r border-r-[oklch(0.83_0_0)] md:block">
+            <div className="sticky top-28 max-h-[calc(100vh-5rem)] overflow-auto pt-4 pr-4">
+              <SideBarMenu onLogout={handleLogout} />
             </div>
-          </SheetContent>
-        </Sheet>
-        <ConfirmDialog />
-      </header>
+          </aside>
 
-      <div className="flex min-h-svh gap-4">
-        {/* Sidebar */}
-        <aside className="relative hidden w-64 border-r border-r-[oklch(0.83_0_0)] md:block">
-          <div className="sticky top-28 max-h-[calc(100vh-5rem)] overflow-auto pt-4 pr-4">
-            <SideBarMenu onLogout={handleLogout} />
-          </div>
-        </aside>
-
-        {/* Main content */}
-        <main className="mx-auto mt-28 flex w-full flex-col pb-16 md:pl-4 lg:pl-8">
-          {children}
-        </main>
+          {/* Main content */}
+          <main className="mx-auto mt-28 flex w-full flex-col pb-16 md:pl-4 lg:pl-8">
+            {children}
+          </main>
+        </div>
       </div>
-    </div>
+    </NextIntlClientProvider>
   );
 };
 

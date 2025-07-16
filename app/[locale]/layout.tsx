@@ -1,4 +1,4 @@
-import NavbarComp from "@/components/navbar/NavbarComp";
+import NavbarClientWrapper from "@/components/navbar/NavbarClientWrapper";
 import { routing } from "@/i18n/routing";
 import type { Metadata } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
@@ -40,11 +40,13 @@ export default async function LocaleLayout({
     notFound();
   }
   const messages = await getMessages();
+  // const user = await getCurrentUser(); => untuk pengambilan data setelah login dan dipasingkan ke navbar / disimpan pada context
   return (
     <html lang={locale}>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <NavbarComp />
+          {/* <NavbarComp /> */}
+          <NavbarClientWrapper className="absolute top-[60px] hidden items-center justify-between rounded-[16px] bg-black/40 px-[20px] py-[20px] backdrop-blur-xl lg:flex lg:w-[900px] lg:px-[62px] xl:w-[1344px]" />
           {children}
         </NextIntlClientProvider>
       </body>
