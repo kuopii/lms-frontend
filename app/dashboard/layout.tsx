@@ -1,6 +1,9 @@
 "use client";
 
+<<<<<<< HEAD
 import NavbarClientWrapper from "@/components/navbar/NavbarClientWrapper";
+=======
+>>>>>>> 52f1c64750f6cededca179bddcbdf8dea8e76b7b
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
@@ -17,7 +20,10 @@ import {
 import { useConfirm } from "@/hooks/use-confirm";
 import { cn } from "@/lib/utils";
 import { Loader2 } from "lucide-react";
+<<<<<<< HEAD
 import { NextIntlClientProvider } from "next-intl";
+=======
+>>>>>>> 52f1c64750f6cededca179bddcbdf8dea8e76b7b
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -31,7 +37,10 @@ import {
   RiDashboardHorizontalFill,
   RiMenu4Fill,
 } from "react-icons/ri";
+<<<<<<< HEAD
 import enMessage from "../../messages/en.json";
+=======
+>>>>>>> 52f1c64750f6cededca179bddcbdf8dea8e76b7b
 
 const navigation = [
   {
