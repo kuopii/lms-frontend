@@ -123,3 +123,41 @@ export const classAssignments = [
     deadline: "2025-07-25",
   },
 ];
+
+export const skillPerformanceData = [
+  {
+    name: "Test 1",
+    classAvg: 55,
+    studentScore: 70,
+  },
+  {
+    name: "Test 2",
+    classAvg: 50,
+    studentScore: 88,
+  },
+  {
+    name: "Test 3",
+    classAvg: 65,
+    studentScore: 66,
+  },
+  {
+    name: "Test 4",
+    classAvg: 70,
+    studentScore: 75,
+  },
+  {
+    name: "Test 5",
+    classAvg: 90,
+    studentScore: 88,
+  },
+  {
+    name: "Test 6",
+    classAvg: 75,
+    studentScore: 65,
+  },
+  {
+    name: "Test 7",
+    classAvg: 60,
+    studentScore: null,
+  },
+];

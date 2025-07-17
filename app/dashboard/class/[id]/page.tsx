@@ -1,9 +1,8 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
 import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { classData, classAssignments } from "@/data/dummy-class-data";
+import { useFetchClass } from "@/features/class/api/use-fetch-class";
 import { toast } from "sonner";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -31,63 +30,17 @@ import {
 import { cn } from "@/lib/utils";
 import { DateRange } from "react-day-picker";
 import { Role } from "@/types/auth";
+import { useUpdateSearchParams } from "@/hooks/use-search-params";
+import { useFetchAssignments } from "@/features/class/api/use-fetch-assignments";
+import { getInitialsFromName } from "@/helpers/get-initials-from-name";
+import TabContentStudent from "@/features/class/components/tab-student";
+import TabContentAnalytics from "@/features/class/components/tab-analytics";
 import readingIllustration from "@/public/icons/reading-assignment-illustration.svg";
 import listeningIllustration from "@/public/icons/listening-assignment-illustration.svg";
 import speakingIllustration from "@/public/icons/speaking-assignment-illustration.svg";
 import Image from "next/image";
-import { Separator } from "@/components/ui/separator";
-import { useUpdateSearchParams } from "@/hooks/use-search-params";
 
-export const useFetchAssignments = ({
-  onError,
-  classId,
-  userId,
-}: {
-  onError: (e: Error) => void;
-  classId: string;
-  userId: string;
-}) =>
-  useQuery({
-    queryFn: async () => {
-      try {
-        const data = classAssignments;
-        // const { data } = await axiosInstance.get(`/class/assignments${userId}/${classId}`);
-        return data;
-      } catch (error) {
-        onError(error as Error);
-        console.error(error);
-        throw error;
-      }
-    },
-    enabled: !!classId && !!userId,
-    queryKey: ["class", classId, userId],
-  });
-
-export const useFetchClass = ({
-  onError,
-  classId,
-}: {
-  onError: (e: Error) => void;
-  classId: string;
-}) => {
-  return useQuery({
-    queryFn: async () => {
-      try {
-        const data = classData.find((cls) => cls.id === classId);
-        // const { data } = await axiosInstance.get(`/class/${userId}`);
-        return data;
-      } catch (error) {
-        onError(error as Error);
-        console.error(error);
-        throw error;
-      }
-    },
-    enabled: !!classId,
-    queryKey: ["class", classId],
-  });
-};
-
-export const AssignmentCard = ({ assignment }: { assignment: any }) => {
+const AssignmentCard = ({ assignment }: { assignment: any }) => {
   const img =
     assignment.type === "listening"
       ? listeningIllustration
@@ -137,16 +90,12 @@ const DetailClass = () => {
   const [session] = useState({
     user: {
       id: "33hf9jdk38di",
-      role: Role.STUDENT,
+      role: Role.TEACHER,
     },
   });
   const { params: searchParams, updateParams } = useUpdateSearchParams();
   const [search, setSearch] = useState(searchParams.search || "");
   const debouncedSearch = useDebounce(search, 300);
-  const [searchStudent, setSearchStudent] = useState(
-    searchParams.search_student || "",
-  );
-  const debouncedSearchStudent = useDebounce(searchStudent, 300);
   const [deadlineRange, setDeadlineRange] = useState<DateRange | undefined>({
     from: searchParams.from ? new Date(searchParams.from) : undefined,
     to: searchParams.to ? new Date(searchParams.to) : undefined,
@@ -194,10 +143,6 @@ const DetailClass = () => {
     updateParams({ search: debouncedSearch || null });
   }, [debouncedSearch, updateParams]);
 
-  useEffect(() => {
-    updateParams({ search_student: debouncedSearchStudent || null });
-  }, [debouncedSearchStudent, updateParams]);
-
   return (
     <div>
       <section className="relative mb-7 h-56 w-full rounded-4xl bg-[#333333]">
@@ -207,23 +152,20 @@ const DetailClass = () => {
             <Avatar>
               <AvatarImage src={classData?.teacher.image} />
               <AvatarFallback className="text-muted-foreground">
-                {classData?.teacher.name
-                  .split(" ")
-                  .map((word) => word[0])
-                  .filter(Boolean)
-                  .slice(0, 2)
-                  .join("")
-                  .toUpperCase()}
+                {getInitialsFromName(classData?.teacher.name)}
               </AvatarFallback>
             </Avatar>
             <span className="text-white">{classData?.teacher.name}</span>
           </div>
         </div>
       </section>
-      <Tabs defaultValue="class-assignments">
+      <Tabs defaultValue="analytics">
         <TabsList>
           <TabsTrigger value="class-assignments">Class Assignments</TabsTrigger>
           <TabsTrigger value="student">Student</TabsTrigger>
+          {session.user.role === Role.TEACHER && (
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+          )}
         </TabsList>
         <TabsContent value="class-assignments" className="mt-11">
           {/* Toolbar */}
@@ -320,7 +262,10 @@ const DetailClass = () => {
                             className="mt-4 w-full justify-between rounded-full text-sm text-white"
                           >
                             {deadlineRange?.from && deadlineRange?.to
-                              ? `${format(deadlineRange.from, "PPP")} - ${format(deadlineRange.to, "PPP")}`
+                              ? `${format(
+                                  deadlineRange.from,
+                                  "PPP",
+                                )} - ${format(deadlineRange.to, "PPP")}`
                               : "Pick a date range"}
                             <CalendarDays className="ml-2 h-5 w-5" />
                           </Button>
@@ -359,45 +304,13 @@ const DetailClass = () => {
           </div>
         </TabsContent>
         <TabsContent value="student" className="mt-11">
-          <div className="mb-6 flex items-center justify-between">
-            <h3 className="text-xl font-medium">My Classmate</h3>
-            <div>
-              <Input
-                value={searchStudent}
-                onChange={(e) => setSearchStudent(e.target.value)}
-                placeholder="Search"
-                className="h-11 w-full lg:w-96"
-                endIcon={searchStudent ? X : Search}
-                onClickEndIcon={
-                  searchStudent ? () => setSearchStudent("") : undefined
-                }
-              />
-            </div>
-          </div>
-          <div className="flex flex-col gap-5">
-            {classData?.students?.map((student) => (
-              <React.Fragment key={student.id}>
-                <div className="flex items-center gap-5 px-2.5">
-                  <Avatar className="size-9">
-                    <AvatarImage src={student.image} alt={student.name} />
-                    <AvatarFallback>
-                      {" "}
-                      {student?.name
-                        .split(" ")
-                        .map((word) => word[0])
-                        .filter(Boolean)
-                        .slice(0, 2)
-                        .join("")
-                        .toUpperCase()}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-white">{student.name}</span>
-                </div>
-                <Separator />
-              </React.Fragment>
-            ))}
-          </div>
+          <TabContentStudent classId={id} />
         </TabsContent>
+        {session.user.role === Role.TEACHER && (
+          <TabsContent value="analytics" className="mt-11">
+            <TabContentAnalytics />
+          </TabsContent>
+        )}
       </Tabs>
     </div>
   );
