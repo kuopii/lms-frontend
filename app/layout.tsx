@@ -1,10 +1,10 @@
+import { PageIndicator } from "@/components/page-indicator";
+import ScreenSizeTracker from "@/components/screen-size";
+import { Toaster } from "@/components/ui/sonner";
+import { TanstackProvider } from "@/providers/tanstack-provider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Geologica } from "next/font/google";
 import "./globals.css";
-import ScreenSizeTracker from "@/components/screen-size";
-import { PageIndicator } from "@/components/page-indicator";
-import { TanstackProvider } from "@/providers/tanstack-provider";
-import { Toaster } from "@/components/ui/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,9 +28,9 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
       <body
