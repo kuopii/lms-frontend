@@ -1,15 +1,27 @@
 "use client";
 
-<<<<<<< HEAD
 import NavbarClientWrapper from "@/components/navbar/NavbarClientWrapper";
-=======
->>>>>>> 52f1c64750f6cededca179bddcbdf8dea8e76b7b
+import { useState } from "react";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
+import { IoLogOut } from "react-icons/io5";
+import { IoMdArrowDropright } from "react-icons/io";
+import {
+  RiMenu4Fill,
+  RiDashboardHorizontalFill,
+  RiCompassFill,
+} from "react-icons/ri";
+import { FaCircleUser } from "react-icons/fa6";
+import { HiUserGroup } from "react-icons/hi2";
+import { PiBookOpenFill } from "react-icons/pi";
+import { useConfirm } from "@/hooks/use-confirm";
 import {
   Sheet,
   SheetContent,
@@ -17,30 +29,8 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { useConfirm } from "@/hooks/use-confirm";
-import { cn } from "@/lib/utils";
-import { Loader2 } from "lucide-react";
-<<<<<<< HEAD
 import { NextIntlClientProvider } from "next-intl";
-=======
->>>>>>> 52f1c64750f6cededca179bddcbdf8dea8e76b7b
-import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
-import { FaCircleUser } from "react-icons/fa6";
-import { HiUserGroup } from "react-icons/hi2";
-import { IoMdArrowDropright } from "react-icons/io";
-import { IoLogOut } from "react-icons/io5";
-import { PiBookOpenFill } from "react-icons/pi";
-import {
-  RiCompassFill,
-  RiDashboardHorizontalFill,
-  RiMenu4Fill,
-} from "react-icons/ri";
-<<<<<<< HEAD
 import enMessage from "../../messages/en.json";
-=======
->>>>>>> 52f1c64750f6cededca179bddcbdf8dea8e76b7b
 
 const navigation = [
   {
@@ -185,7 +175,6 @@ const SideBarMenu = ({
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
-  const [hasMounted, setHasMounted] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const [ConfirmDialog, Confirm] = useConfirm(
@@ -198,18 +187,6 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     const ok = await Confirm();
     if (ok) router.push("/");
   };
-
-  useEffect(() => {
-    setHasMounted(true);
-  }, []);
-
-  if (!hasMounted) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Loader2 className="text-primary h-8 w-8 animate-spin" />
-      </div>
-    );
-  }
 
   return (
     <NextIntlClientProvider locale="en" messages={enMessage}>
