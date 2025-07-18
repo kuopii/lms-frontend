@@ -159,7 +159,7 @@ const DetailClass = () => {
           </div>
         </div>
       </section>
-      <Tabs defaultValue="analytics">
+      <Tabs defaultValue="class-assignments">
         <TabsList>
           <TabsTrigger value="class-assignments">Class Assignments</TabsTrigger>
           <TabsTrigger value="student">Student</TabsTrigger>

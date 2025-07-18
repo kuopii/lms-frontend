@@ -42,6 +42,7 @@ import { RiBookMarkedFill } from "react-icons/ri";
 import { classData } from "@/data/dummy-class-data";
 import { useRouter } from "next/navigation";
 import { Textarea } from "@/components/ui/textarea";
+import { getInitialsFromName } from "@/helpers/get-initials-from-name";
 
 export const useFetchClasses = ({
   onError,
@@ -443,11 +444,7 @@ const ClassPage = () => {
                       alt={classItem.teacher.name}
                     />
                     <AvatarFallback className="text-muted-foreground">
-                      {classItem.teacher.name
-                        .split(" ")
-                        .map((word) => word[0])
-                        .join("")
-                        .toUpperCase()}{" "}
+                      {getInitialsFromName(classItem.teacher.name)}
                     </AvatarFallback>
                   </Avatar>
                 </div>
@@ -465,11 +462,7 @@ const ClassPage = () => {
                       >
                         <AvatarImage src={student.image} alt={student.name} />
                         <AvatarFallback>
-                          {student.name
-                            .split(" ")
-                            .map((word) => word[0])
-                            .join("")
-                            .toUpperCase()}
+                          {getInitialsFromName(student.name)}
                         </AvatarFallback>
                       </Avatar>
                     ))}
