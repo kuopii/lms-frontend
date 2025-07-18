@@ -6,6 +6,7 @@ import { LucideIcon } from "lucide-react";
 interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   startIcon?: LucideIcon;
   endIcon?: LucideIcon;
+  conteinerClassName?: string;
   onClickStartIcon?: () => void;
   onClickEndIcon?: () => void;
 }
@@ -15,6 +16,7 @@ function Input({
   type,
   endIcon,
   startIcon,
+  conteinerClassName,
   onClickStartIcon,
   onClickEndIcon,
   ...props
@@ -23,7 +25,7 @@ function Input({
   const EndIcon = endIcon;
 
   return (
-    <div className="relative w-full">
+    <div className={cn("relative w-full", conteinerClassName)}>
       {StartIcon && (
         <div className="absolute top-1/2 left-4.5 -translate-y-1/2">
           <StartIcon
