@@ -361,7 +361,7 @@ const DiscoverTest = () => {
             testsData?.map((testItem) => (
               <Card
                 key={testItem.id}
-                className="h-fit cursor-pointer border-[#FFFFFF66] bg-transparent pt-0"
+                className="h-fit cursor-pointer border border-[#FFFFFF66] bg-transparent pt-0"
               >
                 <Image
                   className="h-[136px] w-full rounded-t-xl object-cover"
