@@ -1,26 +1,9 @@
-import NavbarClientWrapper from "@/components/navbar/NavbarClientWrapper";
+import Header from "@/components/container/header";
 import { routing } from "@/i18n/routing";
 import type { Metadata } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages } from "next-intl/server";
-import { Geist, Geist_Mono, Geologica } from "next/font/google";
 import { notFound } from "next/navigation";
-import "../globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geologica = Geologica({
-  variable: "--font-geologica",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -32,7 +15,7 @@ export default async function LocaleLayout({
   params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
+  params: { locale: string };
 }) {
   const { locale } = await params;
 
@@ -41,18 +24,10 @@ export default async function LocaleLayout({
   }
   const messages = await getMessages();
 
-  // const user = await getCurrentUser(); => untuk pengambilan data setelah login dan dipasingkan ke navbar / disimpan pada context
-
   return (
-    <html lang={locale}>
-      <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
-          {/* <NavbarComp /> */}
-          <NavbarClientWrapper className="absolute top-[60px] hidden items-center justify-between rounded-[16px] bg-black/40 px-[20px] py-[20px] backdrop-blur-xl lg:flex lg:w-[900px] lg:px-[62px] xl:w-[1344px]" />
-          <NavbarClientWrapper />
-          {children}
-        </NextIntlClientProvider>
-      </body>
-    </html>
+    <NextIntlClientProvider locale={locale} messages={messages}>
+      <Header />
+      {children}
+    </NextIntlClientProvider>
   );
 }
