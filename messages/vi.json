@@ -95,5 +95,47 @@
         }
       }
     }
+  },
+  "pricing": {
+    "title": "Chúng tôi có gói phù hợp hoàn hảo cho bạn",
+    "description": "Nâng tầm hành trình của bạn với công cụ phù hợp, ngay bây giờ.",
+    "card": [
+      {
+        "title": "Tên Gói",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit,",
+        "price": "70",
+        "information": [
+          "Lorem ipsum dolor sit amet",
+          "Lorem ipsum dolor sit amet",
+          "Lorem ipsum dolor sit amet"
+        ],
+        "getstarted": "Bắt đầu ngay",
+        "popular": false
+      },
+      {
+        "title": "Tên Gói",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit,",
+        "price": "100",
+        "information": [
+          "Lorem ipsum dolor sit amet",
+          "Lorem ipsum dolor sit amet",
+          "Lorem ipsum dolor sit amet"
+        ],
+        "getstarted": "Bắt đầu ngay",
+        "popular": true
+      },
+      {
+        "title": "Tên Gói",
+        "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit,",
+        "price": "120",
+        "information": [
+          "Lorem ipsum dolor sit amet",
+          "Lorem ipsum dolor sit amet",
+          "Lorem ipsum dolor sit amet"
+        ],
+        "getstarted": "Bắt đầu ngay",
+        "popular": false
+      }
+    ]
   }
 }

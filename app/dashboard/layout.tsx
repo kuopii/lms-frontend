@@ -1,6 +1,6 @@
 "use client";
 
-import NavbarClientWrapper from "@/components/navbar/NavbarClientWrapper";
+// import NavbarClientWrapper from "@/components/navbar/NavbarClientWrapper";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -31,6 +31,7 @@ import {
 } from "@/components/ui/sheet";
 import { NextIntlClientProvider } from "next-intl";
 import enMessage from "../../messages/en.json";
+import Header from "@/components/container/header";
 
 const navigation = [
   {
@@ -192,15 +193,19 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
     <NextIntlClientProvider locale="en" messages={enMessage}>
       <div className="mx-auto flex min-h-screen max-w-screen-xl flex-col px-4 md:px-8 xl:px-0">
         {/* Header */}
-        <NavbarClientWrapper />
-
-        <header className="border-border fixed top-0 right-0 left-0 z-30 mx-auto h-20 max-w-screen-xl border-b bg-black px-4 md:px-8 lg:px-14">
+        <header className="border-border fixed top-0 right-0 left-0 z-30 mx-auto h-20 max-w-screen-xl border-b bg-black bg-none px-4">
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
-            <SheetTrigger asChild>
-              <Button className="lg:hidden" size="icon">
-                <RiMenu4Fill />
-              </Button>
-            </SheetTrigger>
+            <Header
+              className="static top-0 w-full px-0"
+              wrapperClassName="w-full px-4 bg-transparent backdrop-blur-none rounded-none px-0 md:px-0 lg:px-0"
+              iconLeft={
+                <SheetTrigger asChild>
+                  <Button className="md:hidden" size="icon">
+                    <RiMenu4Fill />
+                  </Button>
+                </SheetTrigger>
+              }
+            />
             <SheetContent side="left">
               <SheetHeader>
                 <SheetTitle className="text-xl text-white">Menu</SheetTitle>
