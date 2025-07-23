@@ -9,6 +9,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   conteinerClassName?: string;
   onClickStartIcon?: () => void;
   onClickEndIcon?: () => void;
+  iconSize?: number;
 }
 
 function Input({
@@ -19,6 +20,7 @@ function Input({
   conteinerClassName,
   onClickStartIcon,
   onClickEndIcon,
+  iconSize = 18,
   ...props
 }: InputProps) {
   const StartIcon = startIcon;
@@ -29,7 +31,7 @@ function Input({
       {StartIcon && (
         <div className="absolute top-1/2 left-4.5 -translate-y-1/2">
           <StartIcon
-            size={18}
+            size={iconSize}
             className="text-muted-foreground"
             onClick={onClickStartIcon}
           />
@@ -49,7 +51,7 @@ function Input({
       {EndIcon && (
         <div className="absolute top-1/2 right-4.5 -translate-y-1/2">
           <EndIcon
-            size={18}
+            size={iconSize}
             className="text-foreground"
             onClick={onClickEndIcon}
           />
