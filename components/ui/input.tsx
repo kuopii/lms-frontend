@@ -10,8 +10,8 @@ export interface InputProps
   conteinerClassName?: string;
   onClickStartIcon?: () => void;
   onClickEndIcon?: () => void;
-  variant?: "default" | "underline";
   iconSize?: number;
+  variant?: "default" | "underline" | "ghost";
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -57,6 +57,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               "focus-visible:border-ring focus-visible:ring-ring/50 h-12 rounded-full border focus-visible:ring-[3px]",
             variant === "underline" &&
               "focus-visible:border-b-ring border-border/40 h-10 rounded-none border-x-0 border-t-0 border-b",
+            variant === "ghost" &&
+              "focus-visible:ring-ring/30 h-10 rounded-md border-none focus-visible:ring-1",
 
             // validation
             "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
