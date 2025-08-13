@@ -213,7 +213,6 @@ const questionGroupSchema = z.object({
 const passageSchema = z.object({
   title: z.string().min(1, "Judul passage wajib diisi"),
   description: z.string().min(1, "Deskripsi passage wajib diisi"),
-  
   questionGroups: z.array(questionGroupSchema).min(1, "Minimal 1 grup soal"),
 });
 

@@ -10,7 +10,10 @@ export const baseTestSchema = z.object({
   timeType: z.enum(TIME_TYPES, {
     errorMap: () => ({ message: "Time type must be selected" }),
   }),
-  type: z.enum(TEST_TYPES, {
+  type: z.enum(["listening", "reading", "writing", "speaking"], {
+    errorMap: () => ({ message: "Type must be selected" }),
+  }),
+  typeTest: z.enum(TEST_TYPES, {
     errorMap: () => ({ message: "Type must be selected" }),
   }),
   hours: z.string().default("0"),
