@@ -8,12 +8,13 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { AlignLeft, Plus, Sparkle } from "lucide-react";
+import { AlignLeft, Plus, ShieldQuestionMark, Sparkle } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 interface ToolbarProps {
   onAddQuestion: () => void;
   onAddPassage: () => void;
+  onAddQustionGroup?: () => void;
   isActive?: boolean;
 }
 
@@ -21,6 +22,7 @@ const Toolbar = ({
   onAddQuestion,
   onAddPassage,
   isActive = false,
+  onAddQustionGroup,
 }: ToolbarProps) => {
   if (!isActive) return null;
 
@@ -70,6 +72,25 @@ const Toolbar = ({
         </TooltipTrigger>
         <TooltipContent side="left">
           <p>Generate Question</p>
+        </TooltipContent>
+      </Tooltip>
+
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            type="button"
+            size={"icon"}
+            className="rounded-full"
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddQustionGroup?.();
+            }}
+          >
+            <ShieldQuestionMark />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="left">
+          <p>Add Question Instruction</p>
         </TooltipContent>
       </Tooltip>
 

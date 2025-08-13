@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import {
   createReadingTestSchema,
   CreateReadingTestSchema,
@@ -29,8 +29,11 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { PassageSection } from "../components/passage-section";
 import { formatTimeLabel } from "../helpers/format-time-label";
+import { defaultQuestionValues } from "../constant/default-question-values";
+import { useFormStore } from "@/store/form-store";
 
 const CreateTestPage = () => {
+  const { setTrigger } = useFormStore();
   const form = useForm<CreateReadingTestSchema>({
     resolver: zodResolver(createReadingTestSchema),
     defaultValues: {
@@ -49,22 +52,15 @@ const CreateTestPage = () => {
           questionGroups: [
             {
               instruction: "",
-              questions: [
-                {
-                  id: crypto.randomUUID(),
-                  type: "choose_correct_answer",
-                  question: "",
-                  options: ["Option 1"],
-                  answerKey: "",
-                  breakdown: "",
-                },
-              ],
+              questions: [defaultQuestionValues["note_completion"]],
             },
           ],
         },
       ],
     },
   });
+
+  const { handleSubmit, control, formState } = form;
 
   const {
     fields: passageFields,
@@ -75,14 +71,15 @@ const CreateTestPage = () => {
     name: "passages",
   });
 
-  const onSubmit = (values: CreateReadingTestSchema) => {
-    console.log("Form submitted:", values);
-  };
+  const onSubmit = useCallback((values: CreateReadingTestSchema) => {
+    alert("Form submitted");
+    console.log("Form values:", values);
+  }, []);
 
   const isTimeError =
-    !!form.formState.errors.hours ||
-    !!form.formState.errors.minutes ||
-    !!form.formState.errors.seconds;
+    !!formState.errors.hours ||
+    !!formState.errors.minutes ||
+    !!formState.errors.seconds;
 
   const handleAddPassage = useCallback(() => {
     appendPassage({
@@ -106,15 +103,19 @@ const CreateTestPage = () => {
     });
   }, [appendPassage]);
 
+  useEffect(() => {
+    setTrigger(handleSubmit(onSubmit));
+  }, [handleSubmit, setTrigger, onSubmit]);
+
   return (
     <FormProvider {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)}>
         <section className="flex flex-col gap-8 md:flex-row md:justify-between">
           {/* Base Form */}
           <div className="flex w-full max-w-screen-sm flex-col space-y-6">
             {/* Name Field */}
             <FormField
-              control={form.control}
+              control={control}
               name="name"
               render={({ field }) => (
                 <FormItem className="flex flex-col items-start justify-start gap-6 lg:flex-row lg:items-center lg:gap-4">
@@ -137,7 +138,7 @@ const CreateTestPage = () => {
 
             {/* Description Field */}
             <FormField
-              control={form.control}
+              control={control}
               name="description"
               render={({ field }) => (
                 <FormItem className="flex flex-col items-start justify-start gap-6 lg:flex-row lg:items-center lg:gap-4">
@@ -160,7 +161,7 @@ const CreateTestPage = () => {
 
             {/* Difficulty Select */}
             <FormField
-              control={form.control}
+              control={control}
               name="difficulty"
               render={({ field }) => (
                 <FormItem className="flex flex-col items-start justify-start gap-6 lg:flex-row lg:items-center lg:gap-0">
@@ -195,7 +196,7 @@ const CreateTestPage = () => {
 
             {/* Type */}
             <FormField
-              control={form.control}
+              control={control}
               name="type"
               render={({ field }) => (
                 <FormItem className="flex flex-col items-start justify-start gap-6 lg:flex-row lg:items-center lg:gap-0">
@@ -236,7 +237,7 @@ const CreateTestPage = () => {
             </h2>
             <div className="flex flex-col items-start justify-between gap-4 lg:flex-row">
               <FormField
-                control={form.control}
+                control={control}
                 name="timeType"
                 render={({ field }) => (
                   <FormItem className="space-y-3">
@@ -275,7 +276,7 @@ const CreateTestPage = () => {
                     Hours
                   </Label>
                   <FormField
-                    control={form.control}
+                    control={control}
                     name="hours"
                     render={({ field }) => (
                       <Select
@@ -311,7 +312,7 @@ const CreateTestPage = () => {
                     Minutes
                   </Label>
                   <FormField
-                    control={form.control}
+                    control={control}
                     name="minutes"
                     render={({ field }) => (
                       <Select
@@ -347,7 +348,7 @@ const CreateTestPage = () => {
                     Seconds
                   </Label>
                   <FormField
-                    control={form.control}
+                    control={control}
                     name="seconds"
                     render={({ field }) => (
                       <Select
@@ -378,9 +379,9 @@ const CreateTestPage = () => {
             </div>
             {isTimeError && (
               <div className="text-destructive text-sm">
-                {form.formState.errors.hours?.message?.toString() ||
-                  form.formState.errors.minutes?.message?.toString() ||
-                  form.formState.errors.seconds?.message?.toString()}
+                {formState.errors.hours?.message?.toString() ||
+                  formState.errors.minutes?.message?.toString() ||
+                  formState.errors.seconds?.message?.toString()}
               </div>
             )}
           </div>

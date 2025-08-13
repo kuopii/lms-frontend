@@ -1,11 +1,16 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import React from "react";
 import { PiCopyFill } from "react-icons/pi";
 import { IoMdSave } from "react-icons/io";
 import { IoSend } from "react-icons/io5";
 import { MdPreview } from "react-icons/md";
+import { useFormStore } from "@/store/form-store";
 
 const TestLayout = ({ children }: { children: React.ReactNode }) => {
+  const { triggerSubmit } = useFormStore();
+
   return (
     <div className="mx-auto w-full max-w-screen-2xl px-4 md:px-8 lg:px-14">
       <header className="fixed top-0 right-0 left-0 z-10 mx-auto w-full max-w-screen-2xl">
@@ -36,7 +41,11 @@ const TestLayout = ({ children }: { children: React.ReactNode }) => {
             >
               <PiCopyFill className="-rotate-90" />
             </Button>
-            <Button size={"xsm"} className="h-10 rounded-4xl">
+            <Button
+              size={"xsm"}
+              onClick={triggerSubmit}
+              className="h-10 rounded-4xl"
+            >
               Send Out Test <IoSend />
             </Button>
           </div>

@@ -42,7 +42,14 @@ export const AnswerKeyField = ({
         name={name}
         render={({ field }) => (
           <FormItem className="w-full md:w-fit">
-            <Select onValueChange={field.onChange} value={field.value || ""}>
+            <Select
+              onValueChange={field.onChange}
+              value={
+                Array.isArray(field.value)
+                  ? (field.value[0] ?? "")
+                  : (field.value ?? "")
+              }
+            >
               <FormControl>
                 <SelectTrigger className="w-full max-w-64">
                   <SelectValue placeholder="Answer Key" />

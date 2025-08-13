@@ -1,31 +1,10 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
-import { readingQuestionTypes } from "@/data/test-filter-options";
 import { cn } from "@/lib/utils";
 import { useToolbarStore } from "@/store/toolbar-store";
-import React, { useRef, useEffect, useCallback } from "react";
+import React, { useRef, useEffect, useCallback, useMemo } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { MdDragIndicator } from "react-icons/md";
-import { PiCopyFill } from "react-icons/pi";
-import { FaTrash } from "react-icons/fa";
-import QuestionBreakdown from "./question-breakdown";
-import OptionsFieldArray from "./options-field-array";
 import { ReadingQuestion } from "@/types/test";
 import Toolbar from "./toolbar";
 import {
@@ -41,32 +20,55 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import SortableItem from "@/components/ui/sortable-item";
-import { AnswerKeyField } from "./answer-key-field";
 import { defaultQuestionValues } from "../constant/default-question-values";
+import ChooseMultipleAnswer from "./questions/choose-multiple-answer";
+import TrueFalseNotGiven from "./questions/true-false-not-given";
+import YesNoNotGiven from "./questions/yes-no-not-given";
+import ChooseCorrectAnswer from "./questions/choose-correct-answer";
+import MatchingHeading from "./questions/matching-heading";
+import ShortAnswer from "./questions/short-answer";
+import MatchingFeatures from "./questions/matching-features";
+import MatchingSentenceEnding from "./questions/matching-sentence-ending";
+import MatchingInformation from "./questions/matching-information";
+import DiagramLabelCompletion from "./questions/diagram-label-completion";
+import SentenceCompletion from "./questions/sentence-completion";
+import ParagraphCompletion from "./questions/paragraph-completion";
+import NoteCompletion from "./questions/note-completion";
 
 type QuestionsSectionProps = {
   nestIndex: number;
   questionGroupIndex: number;
   onAddPassage: () => void;
+  onAddQuestionGroup?: () => void;
 };
 
-const TRUE_FALSE_OPTIONS = ["True", "False", "Not Given"];
-const YES_NO_OPTIONS = ["Yes", "No", "Not Given"];
 const TRUE_FALSE_TYPE = "true_false_not_given";
 const YES_NO_TYPE = "yes_no_not_given";
 const MULTIPLE_CHOICE_TYPE = "choose_multiple_answer";
 const SINGLE_CHOICE_TYPE = "choose_correct_answer";
+const MATCHING_HEADING_TYPE = "matching_heading";
+const SHORT_ANSWER_TYPE = "short_answer_question";
+const MATCHING_FEATURES_TYPE = "matching_features";
+const MATCHING_SENTENCE_ENDING_TYPE = "matching_sentence_ending";
+const MATCHING_INFORMATION_TYPE = "matching_information";
+const DIAGRAM_LABEL_COMPLETION_TYPE = "diagram_label_completion";
+const SENTENCE_COMPLETION_TYPE = "sentence_completion";
+const PARAGRAPH_COMPLETION_TYPE = "paragraph_completion";
+const NOTE_COMPLETION_TYPE = "note_completion";
 
 export const QuestionsSection = ({
   nestIndex,
   questionGroupIndex,
   onAddPassage,
+  onAddQuestionGroup,
 }: QuestionsSectionProps) => {
   const form = useFormContext();
-  const { control, getValues, setValue } = form;
+  const { control, getValues } = form;
   const { activeQuestionId, setActiveQuestion, clearActive } =
     useToolbarStore();
   const questionsContainerRef = useRef<HTMLDivElement>(null);
+  const previousQuestionTypesRef = useRef<Record<string, string>>({});
+  const isDraggingRef = useRef(false);
 
   const questionsPath = `passages.${nestIndex}.questionGroups.${questionGroupIndex}.questions`;
 
@@ -77,102 +79,92 @@ export const QuestionsSection = ({
     move,
   } = useFieldArray({ control, name: questionsPath });
 
+  // Watch only question types to minimize re-renders
   const watchedQuestions = useWatch({
     control,
     name: questionsPath,
   }) as ReadingQuestion[];
 
+  // Memoize question types to prevent unnecessary effect runs
+  const questionTypes = useMemo(() => {
+    return (
+      watchedQuestions?.map((q, index) => ({
+        id: questionFields[index]?.id,
+        type: q?.type,
+        index,
+        question: q?.question,
+      })) || []
+    );
+  }, [watchedQuestions, questionFields]);
+
+  useEffect(() => {
+    // Skip during drag operations
+    if (isDraggingRef.current) return;
+
+    if (!questionTypes.length) return;
+
+    questionTypes.forEach(({ id: questionId, type: questionType, index }) => {
+      if (!questionType || !questionId) return;
+
+      const previousType = previousQuestionTypesRef.current[questionId];
+
+      if (previousType && previousType !== questionType) {
+        const defaultData =
+          defaultQuestionValues[
+            questionType as keyof typeof defaultQuestionValues
+          ];
+
+        if (defaultData) {
+          // Use setTimeout to avoid conflicts with drag operations
+          setTimeout(() => {
+            // Create completely new question with default values
+            const newQuestion = {
+              ...defaultData,
+              type: questionType,
+              id: questionId, // Keep the same ID to maintain references
+            };
+
+            // Remove old question and insert new one at the same position
+            removeQuestion(index);
+            insertQuestion(index, newQuestion);
+          }, 0);
+        }
+      }
+
+      // Update ref without causing re-render
+      previousQuestionTypesRef.current[questionId] = questionType;
+    });
+  }, [questionTypes, removeQuestion, insertQuestion, questionsPath]);
+
   // Memoized sensors for drag and drop
   const sensors = useSensors(
     useSensor(PointerSensor, {
-      activationConstraint: { distance: 5 },
+      activationConstraint: { distance: 8 }, // Increase distance
     }),
   );
 
-  // Optimized answer key management
-  const updateAnswerKeyForQuestionType = useCallback(
-    (question: ReadingQuestion, index: number) => {
-      if (!question) return;
-
-      const basePath = `${questionsPath}.${index}`;
-      const { type, options = [], answerKey } = question;
-
-      if (type === TRUE_FALSE_TYPE) {
-        // Handle True/False/Not Given questions
-        const needsOptionsUpdate =
-          !options.length ||
-          options.length !== 3 ||
-          !TRUE_FALSE_OPTIONS.every((option, idx) => option === options[idx]);
-
-        if (needsOptionsUpdate) {
-          setValue(`${basePath}.options`, TRUE_FALSE_OPTIONS, {
-            shouldDirty: true,
-            shouldValidate: false,
-          });
-        }
-
-        if (!TRUE_FALSE_OPTIONS.includes(answerKey as string)) {
-          setValue(`${basePath}.answerKey`, "True", {
-            shouldDirty: true,
-            shouldValidate: false,
-          });
-        }
-      } else if (type === YES_NO_TYPE) {
-        // Handle Yes/No/Not Given questions
-        const needsOptionsUpdate =
-          !options.length ||
-          options.length !== 3 ||
-          !YES_NO_OPTIONS.every((option, idx) => option === options[idx]);
-
-        if (needsOptionsUpdate) {
-          setValue(`${basePath}.options`, YES_NO_OPTIONS, {
-            shouldDirty: true,
-            shouldValidate: false,
-          });
-        }
-
-        if (!YES_NO_OPTIONS.includes(answerKey as string)) {
-          setValue(`${basePath}.answerKey`, "Yes", {
-            shouldDirty: true,
-            shouldValidate: false,
-          });
-        }
-      } else {
-        // Handle other question types
-        const shouldBeArray = type === MULTIPLE_CHOICE_TYPE;
-        const isCurrentlyArray = Array.isArray(answerKey);
-
-        if (shouldBeArray && !isCurrentlyArray) {
-          setValue(`${basePath}.answerKey`, [], {
-            shouldDirty: true,
-            shouldValidate: false,
-          });
-        } else if (!shouldBeArray && isCurrentlyArray) {
-          setValue(`${basePath}.answerKey`, "", {
-            shouldDirty: true,
-            shouldValidate: false,
-          });
-        }
-      }
-    },
-    [questionsPath, setValue],
-  );
-
-  // Optimized effect for answer key management
-  useEffect(() => {
-    if (!watchedQuestions?.length) return;
-    watchedQuestions.forEach(updateAnswerKeyForQuestionType);
-  }, [watchedQuestions, updateAnswerKeyForQuestionType]);
-
   // Event handlers
+  const handleDragStart = useCallback(() => {
+    isDraggingRef.current = true;
+  }, []);
+
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {
       const { active, over } = event;
+
+      // Reset dragging flag
+      setTimeout(() => {
+        isDraggingRef.current = false;
+      }, 100);
+
       if (!over || active.id === over.id) return;
 
       const oldIndex = questionFields.findIndex((q) => q.id === active.id);
       const newIndex = questionFields.findIndex((q) => q.id === over.id);
-      move(oldIndex, newIndex);
+
+      if (oldIndex !== -1 && newIndex !== -1) {
+        move(oldIndex, newIndex);
+      }
     },
     [questionFields, move],
   );
@@ -252,15 +244,12 @@ export const QuestionsSection = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [clearActive]);
 
-  // Helper function
-  const getAnswerKeyVariant = (questionType: string): "single" | "multiple" =>
-    questionType === MULTIPLE_CHOICE_TYPE ? "multiple" : "single";
-
   return (
     <div className="space-y-4" ref={questionsContainerRef}>
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
         <SortableContext
@@ -270,7 +259,6 @@ export const QuestionsSection = ({
           {questionFields.map((question, qIndex) => {
             const watchedQuestion = watchedQuestions?.[qIndex];
             const questionType = watchedQuestion?.type || SINGLE_CHOICE_TYPE;
-            const questionOptions = watchedQuestion?.options || [];
             const isActive = question.id === activeQuestionId;
 
             return (
@@ -295,119 +283,139 @@ export const QuestionsSection = ({
                         isActive={isActive}
                         onAddQuestion={handleAddQuestion}
                         onAddPassage={onAddPassage}
+                        onAddQustionGroup={onAddQuestionGroup}
                       />
                     )}
 
-                    <div className="space-y-6 rounded-3xl bg-[#333333] p-3 md:p-4 lg:p-5">
-                      {/* QUESTION & TYPE */}
-                      <div className="flex items-center justify-between gap-7">
-                        <span className="text-medium text-primary text-xl">
-                          {qIndex + 1}
-                        </span>
-                        <div className="flex flex-1 flex-col items-center justify-between gap-4 md:flex-row">
-                          <FormField
-                            control={control}
-                            name={`${questionsPath}.${qIndex}.question`}
-                            render={({ field }) => (
-                              <FormItem className="w-full">
-                                <FormControl>
-                                  <Textarea
-                                    {...field}
-                                    placeholder="Type your question here..."
-                                    className="min-h-11 resize-none"
-                                  />
-                                </FormControl>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                          <FormField
-                            control={control}
-                            name={`${questionsPath}.${qIndex}.type`}
-                            render={({ field }) => (
-                              <FormItem className="w-full md:w-64">
-                                <Select
-                                  onValueChange={field.onChange}
-                                  value={field.value}
-                                >
-                                  <FormControl>
-                                    <SelectTrigger>
-                                      <SelectValue placeholder="Select Question Type" />
-                                    </SelectTrigger>
-                                  </FormControl>
-                                  <SelectContent>
-                                    {readingQuestionTypes.map((type) => (
-                                      <SelectItem
-                                        key={type.value}
-                                        value={type.value}
-                                      >
-                                        {type.label}
-                                      </SelectItem>
-                                    ))}
-                                  </SelectContent>
-                                </Select>
-                                <FormMessage />
-                              </FormItem>
-                            )}
-                          />
-                        </div>
-                      </div>
-
-                      <OptionsFieldArray
-                        nestIndex={nestIndex}
-                        questionGroupIndex={questionGroupIndex}
-                        qIndex={qIndex}
-                      />
-
-                      <Separator />
-
-                      {/* ANSWER KEY & ACTION */}
-                      <div className="flex items-center justify-between gap-4">
-                        <AnswerKeyField
-                          name={`${questionsPath}.${qIndex}.answerKey`}
-                          variant={getAnswerKeyVariant(questionType)}
-                          options={questionOptions}
-                        />
-
-                        <div className="flex items-center gap-4">
-                          <Button
-                            type="button"
-                            size="iconSm"
-                            variant="ghost"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDuplicateQuestion(qIndex);
-                            }}
-                            className="-rotate-90 [&_svg:not([class*='size-'])]:size-6"
-                          >
-                            <PiCopyFill />
-                          </Button>
-                          <Button
-                            size="iconSm"
-                            type="button"
-                            variant="ghost"
-                            onClick={
-                              questionFields.length > 1
-                                ? (e) => {
-                                    e.stopPropagation();
-                                    handleRemoveQuestion(qIndex);
-                                  }
-                                : undefined
-                            }
-                            className="text-destructive hover:text-destructive [&_svg:not([class*='size-'])]:size-5"
-                          >
-                            <FaTrash />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* BREAKDOWN */}
-                    <QuestionBreakdown
-                      index={qIndex}
-                      nestIndex={nestIndex}
-                      questionGroupIndex={questionGroupIndex}
-                    />
+                    {(() => {
+                      switch (questionType) {
+                        case SINGLE_CHOICE_TYPE:
+                          return (
+                            <ChooseCorrectAnswer
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                            />
+                          );
+                        case MULTIPLE_CHOICE_TYPE:
+                          return (
+                            <ChooseMultipleAnswer
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              nestIndex={nestIndex}
+                              questionGroupIndex={questionGroupIndex}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                            />
+                          );
+                        case TRUE_FALSE_TYPE:
+                          return (
+                            <TrueFalseNotGiven
+                              qIndex={qIndex}
+                              nestIndex={nestIndex}
+                              key={`${question.id}-${questionType}`}
+                              questionGroupIndex={questionGroupIndex}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                            />
+                          );
+                        case YES_NO_TYPE:
+                          return (
+                            <YesNoNotGiven
+                              nestIndex={nestIndex}
+                              qIndex={qIndex}
+                              questionGroupIndex={questionGroupIndex}
+                              key={`${question.id}-${questionType}`}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                            />
+                          );
+                        case MATCHING_HEADING_TYPE:
+                          return (
+                            <MatchingHeading
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                            />
+                          );
+                        case SHORT_ANSWER_TYPE:
+                          return (
+                            <ShortAnswer
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                            />
+                          );
+                        case MATCHING_FEATURES_TYPE:
+                          return (
+                            <MatchingFeatures
+                              key={`${question.id}-${questionType}`}
+                              questionsPath={questionsPath}
+                              qIndex={qIndex}
+                            />
+                          );
+                        case MATCHING_SENTENCE_ENDING_TYPE:
+                          return (
+                            <MatchingSentenceEnding
+                              qIndex={qIndex}
+                              key={`${question.id}-${questionType}`}
+                              questionsPath={questionsPath}
+                            />
+                          );
+                        case MATCHING_INFORMATION_TYPE:
+                          return (
+                            <MatchingInformation
+                              qIndex={qIndex}
+                              key={`${question.id}-${questionType}`}
+                              questionsPath={questionsPath}
+                            />
+                          );
+                        case DIAGRAM_LABEL_COMPLETION_TYPE:
+                          return (
+                            <DiagramLabelCompletion
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                            />
+                          );
+                        case SENTENCE_COMPLETION_TYPE:
+                          return (
+                            <SentenceCompletion
+                              questionsPath={questionsPath}
+                              qIndex={qIndex}
+                              key={`${question.id}-${questionType}`}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                            />
+                          );
+                        case PARAGRAPH_COMPLETION_TYPE:
+                          return (
+                            <ParagraphCompletion
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                            />
+                          );
+                        case NOTE_COMPLETION_TYPE:
+                          return (
+                            <NoteCompletion
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                            />
+                          );
+                        default:
+                          return null;
+                      }
+                    })()}
                   </div>
                 </div>
               </SortableItem>

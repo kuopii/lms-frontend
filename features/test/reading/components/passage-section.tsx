@@ -14,8 +14,9 @@ import { FaFileImport, FaTrash } from "react-icons/fa";
 import { ScanText } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import React from "react";
+import React, { useCallback } from "react";
 import dynamic from "next/dynamic";
+import { defaultQuestionValues } from "../constant/default-question-values";
 
 const QuestionsSection = dynamic(() => import("./questions-section"), {
   ssr: false,
@@ -36,10 +37,31 @@ export const PassageSection = ({
 }: PassageSectionProps) => {
   const form = useFormContext();
 
-  const { fields: questionGroupFields } = useFieldArray({
+  const {
+    fields: questionGroupFields,
+    append: appendQuestionGroup,
+    remove: removeQuestionGroup,
+  } = useFieldArray({
     control: form.control,
     name: `passages.${index}.questionGroups`,
   });
+
+  const handleAddQuestionGroup = useCallback(() => {
+    console.log("Adding question group");
+    appendQuestionGroup({
+      instruction: "",
+      questions: [defaultQuestionValues["choose_correct_answer"]],
+    });
+  }, [appendQuestionGroup]);
+
+  const handleRemoveQuestionGroup = useCallback(
+    (qgIndex: number) => {
+      if (questionGroupFields.length > 1) {
+        removeQuestionGroup(qgIndex);
+      }
+    },
+    [questionGroupFields.length, removeQuestionGroup],
+  );
 
   return (
     <section className="space-y-6">
@@ -111,9 +133,22 @@ export const PassageSection = ({
       {questionGroupFields.map((qg, qgIndex) => (
         <React.Fragment key={qg.id}>
           <section className="bg-primary my-14 rounded-3xl p-5">
-            <h4 className="mb-5 text-xl font-medium text-white">
-              Question Instructions
-            </h4>
+            <div className="mb-5 flex items-center justify-between gap-4">
+              <h4 className="text-xl font-medium text-white">
+                Question Instructions
+              </h4>
+              {questionGroupFields.length > 1 && (
+                <Button
+                  size="iconSm"
+                  variant="ghost"
+                  type="button"
+                  className="text-destructive hover:text-destructive hover:bg-destructive/20 disabled:opacity-50"
+                  onClick={() => handleRemoveQuestionGroup(qgIndex)}
+                >
+                  <FaTrash />
+                </Button>
+              )}
+            </div>
             <FormField
               control={form.control}
               name={`passages.${index}.questionGroups.${qgIndex}.instruction`}
@@ -136,6 +171,7 @@ export const PassageSection = ({
             onAddPassage={onAddPassage}
             nestIndex={index}
             questionGroupIndex={qgIndex}
+            onAddQuestionGroup={handleAddQuestionGroup}
           />
         </React.Fragment>
       ))}

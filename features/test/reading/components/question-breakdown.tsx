@@ -8,16 +8,9 @@ import { Pencil, Plus } from "lucide-react";
 import React from "react";
 import { useFormContext } from "react-hook-form";
 
-const QuestionBreakdown = ({
-  index,
-  nestIndex,
-  questionGroupIndex,
-}: {
-  index: number;
-  nestIndex: number;
-  questionGroupIndex: number;
-}) => {
+const QuestionBreakdown = ({ questionsPath }: { questionsPath: string }) => {
   const form = useFormContext();
+  
   const { control } = form;
 
   return (
@@ -51,7 +44,7 @@ const QuestionBreakdown = ({
 
       <FormField
         control={control}
-        name={`passages.${nestIndex}.questionGroups.${questionGroupIndex}.questions.${index}.breakdown`}
+        name={questionsPath}
         render={({ field }) => (
           <FormControl>
             <Input
