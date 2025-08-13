@@ -4,14 +4,14 @@ import React, { useCallback, useEffect } from "react";
 import {
   createReadingTestSchema,
   CreateReadingTestSchema,
-} from "@/features/test/reading/form/create-reading-form";
+} from "@/features/test/form/create-reading-form";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Separator } from "@/components/ui/separator";
-import { PassageSection } from "../components/passage-section";
+import { PassageSection } from "../reading/components/passage-section";
 import { defaultQuestionValues } from "../constant/default-question-values";
 import { useFormStore } from "@/store/form-store";
-import BaseForm from "../components/base-form";
+import BaseForm from "@/features/test/components/base-form";
 
 const CreateReadingTestPage = () => {
   const { setTrigger, setTitle } = useFormStore();

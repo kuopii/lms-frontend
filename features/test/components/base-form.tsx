@@ -13,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { DIFFICULTIES, TEST_TYPES, TIME_TYPES } from "@/types/test";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { formatTimeLabel } from "../helpers/format-time-label";
+import { formatTimeLabel } from "../../../helpers/format-time-label";
 import { Label } from "@/components/ui/label";
 import {
   Select,

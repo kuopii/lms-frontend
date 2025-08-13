@@ -16,7 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import React, { useCallback } from "react";
 import dynamic from "next/dynamic";
-import { defaultQuestionValues } from "../constant/default-question-values";
+import { defaultQuestionValues } from "../../constant/default-question-values";
 
 const QuestionsSection = dynamic(() => import("./questions-section"), {
   ssr: false,
