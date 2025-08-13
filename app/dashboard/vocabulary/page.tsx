@@ -325,9 +325,11 @@ export const DialogVocabForm = ({
   return (
     <div>
       <Dialog open={openDialog} onOpenChange={setOpenDialog}>
-        <DialogTrigger className={dialogTriggerClassName}>
-          {iconButton}
-          <span className={titleTrigerClassName}>{titleTriger}</span>
+        <DialogTrigger className={dialogTriggerClassName} asChild>
+          <div>
+            {iconButton}
+            <span className={titleTrigerClassName}>{titleTriger}</span>
+          </div>
         </DialogTrigger>
         <DialogContent className="flex flex-col rounded-[30px] border-none px-[20] py-[15px] lg:h-[700px] lg:w-[850px]">
           <DialogHeader>

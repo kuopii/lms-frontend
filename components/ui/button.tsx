@@ -20,7 +20,8 @@ const buttonVariants = cva(
         ghost:
           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
         link: "text-primary underline-offset-4 hover:underline",
-        custom: "rounded-[30px] bg-primary text-white ",
+        custom: "rounded-[30px] bg-primary text-white text-[16px] ",
+        custom2: "rounded-[15px] bg-[#E0E9D8] text-primary text-[16px]",
       },
       size: {
         xs: "h-9 rounded-md px-4",
@@ -30,7 +31,8 @@ const buttonVariants = cva(
         lg: "h-15 rounded-md px-6 has-[>svg]:px-4",
         icon: "size-9",
         iconSm: "size-10",
-        custom: "px-[14] py-[8px]",
+        custom: "px-[14px] py-[8px]",
+        custom2: "px-[26px] py-[5px]",
       },
     },
     defaultVariants: {
