@@ -118,7 +118,7 @@ export const defaultQuestionValues: Record<
     options: ["Type the suggested answers here..."],
     answerKey: [""],
     breakdown: "",
-  },  
+  },
   note_completion: {
     type: "note_completion",
     paragraph: "",

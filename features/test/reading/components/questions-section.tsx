@@ -20,7 +20,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import SortableItem from "@/components/ui/sortable-item";
-import { defaultQuestionValues } from "../constant/default-question-values";
+import { defaultQuestionValues } from "../../constant/default-question-values";
 import ChooseMultipleAnswer from "./questions/choose-multiple-answer";
 import TrueFalseNotGiven from "./questions/true-false-not-given";
 import YesNoNotGiven from "./questions/yes-no-not-given";
