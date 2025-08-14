@@ -5,7 +5,7 @@ import { useToolbarStore } from "@/store/toolbar-store";
 import React, { useRef, useEffect, useCallback, useMemo } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { MdDragIndicator } from "react-icons/md";
-import { ReadingQuestion } from "@/types/test";
+import { QuestionType, ReadingQuestion } from "@/types/test";
 import Toolbar from "./toolbar";
 import {
   DndContext,
@@ -39,7 +39,7 @@ type QuestionsSectionProps = {
   nestIndex: number;
   questionGroupIndex: number;
   onAddPassage: () => void;
-  onAddQuestionGroup?: () => void;
+  onAddQuestionGroup?: (questionType: QuestionType) => void;
 };
 
 const TRUE_FALSE_TYPE = "true_false_not_given";
@@ -109,32 +109,50 @@ export const QuestionsSection = ({
       const previousType = previousQuestionTypesRef.current[questionId];
 
       if (previousType && previousType !== questionType) {
-        const defaultData =
-          defaultQuestionValues[
-            questionType as keyof typeof defaultQuestionValues
-          ];
+        // If only 1 question, replace it with default question
+        if (questionFields.length === 1) {
+          const defaultData =
+            defaultQuestionValues[
+              questionType as keyof typeof defaultQuestionValues
+            ];
 
-        if (defaultData) {
-          // Use setTimeout to avoid conflicts with drag operations
-          setTimeout(() => {
-            // Create completely new question with default values
-            const newQuestion = {
-              ...defaultData,
-              type: questionType,
-              id: questionId, // Keep the same ID to maintain references
-            };
+          if (defaultData) {
+            // Use setTimeout to avoid conflicts with drag operations
+            setTimeout(() => {
+              // Create completely new question with default values
+              const newQuestion = {
+                ...defaultData,
+                type: questionType,
+                id: questionId, // Keep the same ID to maintain references
+              };
 
-            // Remove old question and insert new one at the same position
-            removeQuestion(index);
-            insertQuestion(index, newQuestion);
-          }, 0);
+              // Remove old question and insert new one at the same position
+              removeQuestion(index);
+              insertQuestion(index, newQuestion);
+            }, 0);
+          }
+        } else {
+          // If more than 1 question, call onAddQuestionGroup and remove current question
+          if (onAddQuestionGroup) {
+            setTimeout(() => {
+              onAddQuestionGroup(questionType as QuestionType);
+              // Remove the question that changed type
+              removeQuestion(index);
+            }, 0);
+          }
         }
       }
 
       // Update ref without causing re-render
       previousQuestionTypesRef.current[questionId] = questionType;
     });
-  }, [questionTypes, removeQuestion, insertQuestion, questionsPath]);
+  }, [
+    questionTypes,
+    questionFields.length,
+    removeQuestion,
+    insertQuestion,
+    onAddQuestionGroup,
+  ]);
 
   // Memoized sensors for drag and drop
   const sensors = useSensors(

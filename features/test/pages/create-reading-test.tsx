@@ -34,7 +34,7 @@ const CreateReadingTestPage = () => {
           questionGroups: [
             {
               instruction: "",
-              questions: [defaultQuestionValues["note_completion"]],
+              questions: [defaultQuestionValues["choose_correct_answer"]],
             },
           ],
         },

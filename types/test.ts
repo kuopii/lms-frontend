@@ -13,3 +13,18 @@ export type ReadingQuestion = {
   answerKey: string;
   breakdown: string;
 };
+
+export type QuestionType =
+  | "choose_correct_answer"
+  | "choose_multiple_answer"
+  | "true_false_not_given"
+  | "yes_no_not_given"
+  | "matching_heading"
+  | "short_answer_question"
+  | "matching_features"
+  | "matching_sentence_ending"
+  | "matching_information"
+  | "diagram_label_completion"
+  | "sentence_completion"
+  | "paragraph_completion"
+  | "note_completion";

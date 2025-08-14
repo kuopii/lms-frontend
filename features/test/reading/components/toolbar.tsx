@@ -10,11 +10,12 @@ import {
 import { Button } from "@/components/ui/button";
 import { AlignLeft, Plus, ShieldQuestionMark, Sparkle } from "lucide-react";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { QuestionType } from "@/types/test";
 
 interface ToolbarProps {
   onAddQuestion: () => void;
   onAddPassage: () => void;
-  onAddQustionGroup?: () => void;
+  onAddQustionGroup?: (questionType: QuestionType) => void;
   isActive?: boolean;
 }
 
@@ -83,7 +84,7 @@ const Toolbar = ({
             className="rounded-full"
             onClick={(e) => {
               e.stopPropagation();
-              onAddQustionGroup?.();
+              onAddQustionGroup?.("choose_correct_answer");
             }}
           >
             <ShieldQuestionMark />
