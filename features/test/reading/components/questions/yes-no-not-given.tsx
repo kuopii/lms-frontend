@@ -8,7 +8,7 @@ import { PiCopyFill } from "react-icons/pi";
 import { FaTrash } from "react-icons/fa";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import OptionFieldArray from "../options-field-array";
-import QuestionBreakdown from "../question-breakdown";
+import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import QuestionHeader from "../question-header";
 
 const YesNoNotGiven = ({
@@ -96,9 +96,7 @@ const YesNoNotGiven = ({
         </div>
       </div>
 
-      <QuestionBreakdown
-        questionsPath={`${questionsPath}.${qIndex}.breakdown`}
-      />
+      <QuestionBreakdown name={`${questionsPath}.${qIndex}.breakdown`} />
     </div>
   );
 };

@@ -3,7 +3,7 @@
 import React, { memo, useCallback, useMemo, useRef } from "react";
 import QuestionHeader from "../question-header";
 import { Separator } from "@/components/ui/separator";
-import QuestionBreakdown from "../question-breakdown";
+import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import { Button } from "@/components/ui/button";
 import { FaTrash } from "react-icons/fa";
 import { PiCopyFill } from "react-icons/pi";
@@ -333,7 +333,7 @@ const SentenceCompletion = ({
         </div>
       </div>
 
-      <QuestionBreakdown questionsPath={breakdownPathMemo} />
+      <QuestionBreakdown name={breakdownPathMemo} />
     </div>
   );
 };

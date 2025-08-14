@@ -21,7 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import QuestionBreakdown from "../question-breakdown";
+import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import { PiCopyFill } from "react-icons/pi";
 import { FaTrash } from "react-icons/fa";
 import { RiDeleteBack2Fill } from "react-icons/ri";
@@ -290,9 +290,7 @@ const DiagramLabelCompletion = ({
           </div>
         </div>
       </div>
-      <QuestionBreakdown
-        questionsPath={`${questionsPath}.${qIndex}.breakdown`}
-      />
+      <QuestionBreakdown name={`${questionsPath}.${qIndex}.breakdown`} />
     </div>
   );
 };

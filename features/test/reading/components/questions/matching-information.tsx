@@ -15,7 +15,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Plus } from "lucide-react";
 import { indexToLetter } from "../../../../../helpers/index-to-letter";
-import QuestionBreakdown from "../question-breakdown";
+import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import { AnswerKeyField } from "../answer-key-field";
 import { PiCopyFill } from "react-icons/pi";
 
@@ -254,9 +254,7 @@ const MatchingInformation = ({
             </div>
           </div>
 
-          <QuestionBreakdown
-            questionsPath={`${itemsPath}.${itemIndex}.breakdown`}
-          />
+          <QuestionBreakdown name={`${itemsPath}.${itemIndex}.breakdown`} />
 
           <Button
             type="button"

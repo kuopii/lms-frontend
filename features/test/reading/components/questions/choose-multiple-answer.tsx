@@ -3,7 +3,7 @@
 import React from "react";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
-import QuestionBreakdown from "../question-breakdown";
+import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { PiCopyFill } from "react-icons/pi";
 import { FaTrash } from "react-icons/fa";
@@ -96,9 +96,7 @@ const ChooseMultipleAnswer = ({
         </div>
       </div>
 
-      <QuestionBreakdown
-        questionsPath={`${questionsPath}.${qIndex}.breakdown`}
-      />
+      <QuestionBreakdown name={`${questionsPath}.${qIndex}.breakdown`} />
     </div>
   );
 };

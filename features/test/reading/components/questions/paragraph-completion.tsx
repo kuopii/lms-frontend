@@ -12,7 +12,7 @@ import {
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { GrSelect } from "react-icons/gr";
-import QuestionBreakdown from "../question-breakdown";
+import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import { PiCopyFill } from "react-icons/pi";
 import { FaTrash } from "react-icons/fa";
 import OptionFieldArray from "../options-field-array";
@@ -302,9 +302,7 @@ const ParagraphCompletion = ({
         </div>
       )}
 
-      <QuestionBreakdown
-        questionsPath={`${questionsPath}.${qIndex}.breakdown`}
-      />
+      <QuestionBreakdown name={`${questionsPath}.${qIndex}.breakdown`} />
     </div>
   );
 };
