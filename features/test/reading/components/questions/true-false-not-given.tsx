@@ -8,7 +8,7 @@ import { PiCopyFill } from "react-icons/pi";
 import { AnswerKeyField } from "../answer-key-field";
 import { FaTrash } from "react-icons/fa";
 import OptionFieldArray from "../options-field-array";
-import QuestionBreakdown from "../question-breakdown";
+import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import QuestionHeader from "../question-header";
 
 const TrueFalseNotGiven = ({
@@ -95,9 +95,7 @@ const TrueFalseNotGiven = ({
         </div>
       </div>
 
-      <QuestionBreakdown
-        questionsPath={`${questionsPath}.${qIndex}.breakdown`}
-      />
+      <QuestionBreakdown name={`${questionsPath}.${qIndex}.breakdown`} />
     </div>
   );
 };

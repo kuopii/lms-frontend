@@ -17,6 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import React, { useCallback } from "react";
 import dynamic from "next/dynamic";
 import { defaultQuestionValues } from "../../constant/default-question-values";
+import { QuestionType } from "@/types/test";
 
 const QuestionsSection = dynamic(() => import("./questions-section"), {
   ssr: false,
@@ -46,13 +47,18 @@ export const PassageSection = ({
     name: `passages.${index}.questionGroups`,
   });
 
-  const handleAddQuestionGroup = useCallback(() => {
-    console.log("Adding question group");
-    appendQuestionGroup({
-      instruction: "",
-      questions: [defaultQuestionValues["choose_correct_answer"]],
-    });
-  }, [appendQuestionGroup]);
+  const handleAddQuestionGroup = useCallback(
+    (defaultQuestion: QuestionType) => {
+      console.log("Adding question group");
+      appendQuestionGroup({
+        instruction: "",
+        questions: [
+          defaultQuestionValues[defaultQuestion || "choose_correct_answer"],
+        ],
+      });
+    },
+    [appendQuestionGroup],
+  );
 
   const handleRemoveQuestionGroup = useCallback(
     (qgIndex: number) => {

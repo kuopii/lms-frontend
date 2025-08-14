@@ -6,7 +6,7 @@ import OptionFieldArray from "../options-field-array";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
-import QuestionBreakdown from "../question-breakdown";
+import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import {
   FormControl,
   FormField,
@@ -180,9 +180,7 @@ const MatchingHeading = ({ qIndex, questionsPath }: MatchingHeadingProps) => {
             </div>
           </div>
 
-          <QuestionBreakdown
-            questionsPath={`${itemsPath}.${index}.breakdown`}
-          />
+          <QuestionBreakdown name={`${itemsPath}.${index}.breakdown`} />
 
           <Button
             type="button"

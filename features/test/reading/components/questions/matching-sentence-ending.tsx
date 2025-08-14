@@ -15,7 +15,7 @@ import { AnswerKeyField } from "../answer-key-field";
 import { Button } from "@/components/ui/button";
 import { PiCopyFill } from "react-icons/pi";
 import { FaTrash } from "react-icons/fa";
-import QuestionBreakdown from "../question-breakdown";
+import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import { Plus } from "lucide-react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 
@@ -182,9 +182,7 @@ const MatchingSentenceEnding = ({
             </div>
           </div>
 
-          <QuestionBreakdown
-            questionsPath={`${itemsPath}.${index}.breakdown`}
-          />
+          <QuestionBreakdown name={`${itemsPath}.${index}.breakdown`} />
 
           <Button
             type="button"

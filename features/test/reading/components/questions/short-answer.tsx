@@ -3,7 +3,7 @@
 import React from "react";
 import QuestionHeader from "../question-header";
 import { Separator } from "@/components/ui/separator";
-import QuestionBreakdown from "../question-breakdown";
+import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import { Button } from "@/components/ui/button";
 import { PiCopyFill } from "react-icons/pi";
 import { useFieldArray, useFormContext } from "react-hook-form";
@@ -114,9 +114,7 @@ const ShortAnswer = ({
           </div>
         </div>
       </div>
-      <QuestionBreakdown
-        questionsPath={`${questionsPath}.${qIndex}.breakdown`}
-      />
+      <QuestionBreakdown name={`${questionsPath}.${qIndex}.breakdown`} />
     </div>
   );
 };
