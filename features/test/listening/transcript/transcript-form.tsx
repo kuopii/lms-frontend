@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -6,24 +5,33 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FormValues } from "@/validators/create-test-listening-teacher";
 import { Controller, useFormContext } from "react-hook-form";
-import { FaTrash } from "react-icons/fa6";
+import { CreateListeningTestSchema } from "../../form/create-listening-form";
 import TranscriptConversation from "./transcript-conversation";
 import TranscriptDescriptive from "./transcript-descriptive";
 
 interface TranscriptFormParams {
-  sectionIndex: number;
-  removeSection: (index: number) => void;
+  index: number;
+  qgIndex: number;
+  removePassage: (index: number) => void;
+  isLast: boolean;
 }
 
 const TranscriptForm = ({
-  removeSection,
-  sectionIndex,
+  removePassage,
+  index,
+  qgIndex,
+  isLast,
 }: TranscriptFormParams) => {
-  const { control, watch, setValue } = useFormContext<FormValues>();
+  const { control, watch, setValue } =
+    useFormContext<CreateListeningTestSchema>();
 
-  const transcriptType = watch(`sections.${sectionIndex}.transcriptValue.name`);
+  const transcriptType = watch(
+    `passages.${index}.questionGroups.${qgIndex}.transcript.type`,
+  );
+
+  const transcriptPath =
+    `passages.${index}.questionGroups.${qgIndex}.transcript` as const;
 
   return (
     <>
@@ -38,37 +46,36 @@ const TranscriptForm = ({
             {/* Pilih Transcript Type */}
             <Controller
               control={control}
-              name={`sections.${sectionIndex}.transcriptValue.name`}
+              name={`${transcriptPath}.type`}
               render={({ field }) => (
                 <Select
                   value={field.value}
                   onValueChange={(val) => {
-                    const basePath =
-                      `sections.${sectionIndex}.transcriptValue` as const;
+                    const basePath = `${transcriptPath}` as const;
                     if (val === "descriptive") {
                       setValue(basePath, {
-                        name: "descriptive",
+                        type: "descriptive",
                         title: "",
-                        description: "",
+                        text: "",
                       });
                     }
 
                     if (val === "conversation") {
                       setValue(basePath, {
-                        name: "conversation",
+                        type: "conversation",
                         title: "",
                         speakers: [
-                          { name: "", inputs: [""] },
-                          { name: "", inputs: [""] },
+                          { name: "", inputs: [{ text: "" }] },
+                          { name: "", inputs: [{ text: "" }] },
                         ],
                       });
                     }
 
                     if (val === "transcript") {
                       setValue(basePath, {
-                        name: "transcript",
+                        type: "transcript",
                         title: "",
-                        description: "",
+                        text: "",
                       });
                     }
                   }}
@@ -89,29 +96,19 @@ const TranscriptForm = ({
               )}
             />
           </div>
-
-          {/* hapus section */}
-          <div className="flex items-center justify-end">
-            <Button
-              onClick={() =>
-                // setAddTranscriptActive(false)
-                removeSection(sectionIndex)
-              }
-              className="bg-transparent hover:bg-white/20"
-            >
-              <FaTrash className="size-[20px] text-red-500" />
-            </Button>
-          </div>
         </div>
 
         {/* transcript  descriptive*/}
         {transcriptType === "descriptive" && (
-          <TranscriptDescriptive sectionIndex={sectionIndex} />
+          <TranscriptDescriptive transcriptPath={transcriptPath} />
         )}
 
         {/* Trascript conversation */}
         {transcriptType === "conversation" && (
-          <TranscriptConversation sectionIndex={sectionIndex} />
+          <TranscriptConversation
+            transcriptPath={transcriptPath}
+            index={index}
+          />
         )}
       </div>
     </>

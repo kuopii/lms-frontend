@@ -11,12 +11,12 @@ import {
 import { Separator } from "@/components/ui/separator";
 
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import { AudioDropzone } from "@/features/dashboard/dashboard-listening/components/audio-dropzone";
 import { ErrorForm } from "@/features/dashboard/dashboard-listening/components/error-form";
 import { QuestionsPerSection } from "@/features/dashboard/dashboard-listening/components/question-per-section";
-import TranscriptForm from "@/features/dashboard/dashboard-listening/components/transcript/transcript-form";
-import { questionTemplates } from "@/features/dashboard/dashboard-listening/types/question-templates";
-import { createHandleDragEnd } from "@/features/dashboard/dashboard-listening/utils/handle-drag-end";
+import { AudioDropzone } from "@/features/test/listening/components/audio-dropzone";
+import TranscriptForm from "@/features/test/listening/transcript/transcript-form";
+import { questionTemplates } from "@/features/test/listening/types/question-templates";
+import { createHandleDragEnd } from "@/features/test/listening/utils/handle-drag-end";
 import {
   formSchema,
   FormValues,

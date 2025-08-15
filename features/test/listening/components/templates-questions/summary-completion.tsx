@@ -1,26 +1,29 @@
-"use client";
-
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import { FormValues } from "@/validators/create-test-listening-teacher";
+import { AnswerKeyDialog } from "@/features/test/components/answer-key-dialog";
+import { CreateListeningTestSchema } from "@/features/test/form/create-listening-form";
 import { SquareDashedMousePointer } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { FaDeleteLeft, FaTrash } from "react-icons/fa6";
+import { FaTrash } from "react-icons/fa";
 import { arrayEqual } from "../../utils/arrray-equal";
 import {
-  isObjectOptionsArray,
+  isObjectOptionsAnswerArray,
   isStructuredAnswer,
 } from "../../utils/is-object";
-import { AnswerKeyDialog } from "../answer-key-dialog";
+
+type OptionAnswer = {
+  optIndex: number;
+  wordIndex: number;
+  word: string;
+};
 
 interface Props {
   onRemove: () => void;
-  fieldPrefix: `sections.${number}.questions.${number}`;
+  fieldPrefix: `passages.${number}.questionGroups.${number}.questions.${number}`;
 }
 
-export function SentenceCompletion({ onRemove, fieldPrefix }: Props) {
+const SummaryCompletion = ({ onRemove, fieldPrefix }: Props) => {
   const {
     control,
     register,
@@ -28,7 +31,16 @@ export function SentenceCompletion({ onRemove, fieldPrefix }: Props) {
     setValue,
     getValues,
     formState: { errors },
-  } = useFormContext<FormValues>();
+  } = useFormContext<CreateListeningTestSchema>();
+  const inputRefs = useRef<(HTMLInputElement | HTMLTextAreaElement | null)[]>(
+    [],
+  );
+
+  const [selected, setSelected] = useState<{
+    optIndex: number;
+    wordIndex: number;
+    word: string;
+  } | null>(null);
 
   const [open, setOpen] = useState(false);
 
@@ -38,66 +50,93 @@ export function SentenceCompletion({ onRemove, fieldPrefix }: Props) {
   });
 
   const rawOptions = watch(`${fieldPrefix}.options`);
-  const options = isObjectOptionsArray(rawOptions);
+  const options = isObjectOptionsAnswerArray(rawOptions);
 
   const rawAnswer = watch(`${fieldPrefix}.answer`);
   const answer = isStructuredAnswer(rawAnswer) ? rawAnswer : [];
 
-  const filteredOptions = options.filter((opt) => opt.answer?.trim?.());
+  const filteredOptions = options.filter(
+    (opt) =>
+      Array.isArray(opt.answer) && opt.answer.some((a) => a.word?.trim()),
+  );
+
   const isOptionsAvailable = filteredOptions.length > 0;
 
+  // isChanged?
   const isChanged = !arrayEqual(
-    filteredOptions.map((opt: any) => opt.answer).filter(Boolean),
+    filteredOptions
+      .flatMap((opt: any) => opt.answer?.map((e: any) => e.word) || [])
+      .filter(Boolean),
     answer.map((e) => e.word).filter(Boolean),
   );
 
+  console.log("filteredOptions?", filteredOptions);
+  console.log("isChanged?", isChanged);
+
   //    --------------- Test handle mark as blank
-  const [selected, setSelected] = useState<{
-    optIndex: number;
-    wordIndex: number;
-    word: string;
-  } | null>(null);
-
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-
   const handleMarkAsBlank = () => {
     if (!selected) return;
     const { optIndex, wordIndex, word } = selected;
 
     const options = getValues(`${fieldPrefix}.options`) as {
       label: string;
-      answer: string;
+      answer: OptionAnswer[];
     }[];
     const currentLabel = options[optIndex].label || "";
 
     const words = currentLabel.split(" ");
     const isAlreadyBlank = words[wordIndex] === "____";
-    const hasAlreadyBlank = words.includes("____");
 
-    if (!isAlreadyBlank && hasAlreadyBlank) {
-      alert("Only one blank is allowed per options.");
-      return;
-    }
+    const cleanAnswerList = (
+      answer: OptionAnswer[],
+      currentWords: string[],
+    ) => {
+      return answer.filter((e) => currentWords[e.wordIndex] === "____");
+    };
 
     if (isAlreadyBlank) {
-      const originalWord = options[optIndex]?.answer;
+      const originalWord = options[optIndex]?.answer.find(
+        (e) => e.wordIndex === wordIndex,
+      );
       if (!originalWord) return;
 
       // kembalikan orignal di options label
-      words[wordIndex] = originalWord;
+      words[wordIndex] = originalWord.word;
       setValue(`${fieldPrefix}.options.${optIndex}.label`, words.join(" "));
 
-      // hapus dari options answer
-      setValue(`${fieldPrefix}.options.${optIndex}.answer`, "");
-      setValue(`${fieldPrefix}.answer`, []);
+      // hapus dan update options answer
+      const newOptionsAnswer = options[optIndex].answer.filter(
+        (e) => e.wordIndex !== wordIndex,
+      );
+      setValue(
+        `${fieldPrefix}.options.${optIndex}.answer`,
+        cleanAnswerList(newOptionsAnswer, words),
+      );
+
+      // update global answer
+      const currentAnswer = getValues(
+        `${fieldPrefix}.answer`,
+      ) as OptionAnswer[];
+      const newAnswer = currentAnswer.filter(
+        (a) => !(a.optIndex === optIndex && a.wordIndex === wordIndex),
+      );
+      setValue(`${fieldPrefix}.answer`, newAnswer);
     } else {
       words[wordIndex] = "____";
 
-      // set value ke options label dengan words yang sudah blank
+      // set value ke options label dengan words blank
       setValue(`${fieldPrefix}.options.${optIndex}.label`, words.join(" "));
 
       // masukkan kata yang di selected ke options answer
-      setValue(`${fieldPrefix}.options.${optIndex}.answer`, word);
+      const newOptionsAnswer = [
+        ...(options[optIndex].answer ?? []).filter(
+          (ans) => ans.wordIndex !== wordIndex,
+        ),
+        { optIndex, wordIndex, word },
+      ];
+
+      const filtered = cleanAnswerList(newOptionsAnswer, words);
+      setValue(`${fieldPrefix}.options.${optIndex}.answer`, filtered);
     }
 
     setSelected(null);
@@ -116,7 +155,7 @@ export function SentenceCompletion({ onRemove, fieldPrefix }: Props) {
     // Ambil fulltext
     const fullOptions = getValues(`${fieldPrefix}.options`) as {
       label: string;
-      answer: string;
+      answer: OptionAnswer[];
     }[];
     const fullText = fullOptions?.[optIndex].label;
 
@@ -155,67 +194,78 @@ export function SentenceCompletion({ onRemove, fieldPrefix }: Props) {
     });
   };
 
-  console.log("selected?:", selected);
+  //    --------------- Test save answer
 
   const handleSaveAnswer = () => {
     const options = getValues(`${fieldPrefix}.options`) as {
       label: string;
-      answer: string;
+      answer: OptionAnswer[];
     }[];
 
-    const answerKey: {
-      optIndex: number;
-      wordIndex: number;
-      word: string;
-    }[] = [];
+    const answerMap = new Map<string, OptionAnswer>();
 
-    options.forEach((opt, optIndex) => {
-      if (!opt.answer) return;
+    options
+      .flatMap((opt) => opt.answer ?? [])
+      .forEach((ans) => {
+        if (ans && ans.word) {
+          const key = `${ans.optIndex}-${ans.wordIndex}`;
+          answerMap.set(key, ans);
+        }
+      });
 
-      const words = opt.label.split(" ");
-      const wordIndex = words.findIndex((w) => w === "____");
-      if (wordIndex !== -1) {
-        answerKey.push({
-          optIndex,
-          wordIndex,
-          word: opt.answer,
-        });
-      }
-    });
+    const answerKey = Array.from(answerMap.values());
 
     setValue(`${fieldPrefix}.answer`, answerKey);
   };
 
-  //  --------------------
-
+  // ------- useEffect
   // tambah field options
+  const isAppended = useRef(false);
   useEffect(() => {
-    if (fields.length === 0) {
-      append("");
+    if (fields.length === 0 && !isAppended.current) {
+      append({ label: "", answer: [] });
+      isAppended.current = true;
     }
   }, [fields, append]);
 
   // menghapus answer jika options dihapus dan mapping answer key
   const optionsValues = getValues(`${fieldPrefix}.options`) as {
     label: string;
-    answer: string;
+    answer: OptionAnswer[];
   }[];
 
   const answerPreview = optionsValues
     .map((opt, optIndex) => {
-      const wordIndex = opt.label?.split(" ").findIndex((w) => w === "____");
-      if (!opt.answer || wordIndex === -1) return null;
+      if (!opt.answer.length) return null;
+      const words = opt.label?.split(" ") || [];
+
+      const validAnswer = opt.answer.filter(
+        (w) => words[w.wordIndex] === "____",
+      );
+
+      if (!validAnswer.length) return null;
 
       return (
-        <div key={optIndex} className="flex gap-2">
-          <p>{optIndex + 1}</p>
-          <p>
-            Answer : <strong>{opt.answer}</strong>
-          </p>
+        <div key={optIndex} className="flex flex-col gap-2">
+          {opt.answer.map((e, idx) => {
+            return (
+              <div
+                key={idx}
+                className="flex h-[41px] w-full items-center gap-[25px]"
+              >
+                <p className="w-[25px] border-r">{idx + 1}</p>
+                <p className="w-full border-b">
+                  <strong>{e.word}</strong>
+                </p>
+              </div>
+            );
+          })}
         </div>
       );
     })
     .filter(Boolean);
+
+  console.log("selected?", selected);
 
   return (
     <div className="space-y-4">
@@ -224,50 +274,21 @@ export function SentenceCompletion({ onRemove, fieldPrefix }: Props) {
           <div key={field.id}>
             <div className="flex w-full items-center justify-between">
               <div className="flex w-full items-center gap-4">
-                <Label className="flex h-1.5 w-1.5 rounded-full bg-white"></Label>
-                <input
+                <textarea
+                  rows={20}
                   onMouseUp={(e) => {
                     inputRefs.current[optIndex] = e.currentTarget;
                     handleSelection(optIndex);
                   }}
-                  placeholder="Type the sentence here..."
+                  placeholder="Type or paste the notes here..."
                   {...register(`${fieldPrefix}.options.${optIndex}.label`)}
-                  className="w-3/4 border-b outline-none"
+                  className="w-full max-w-full rounded-[30px] border border-white/40 p-5"
                 />
               </div>
-              <Button
-                type="button"
-                variant="ghost"
-                onClick={() => {
-                  if (fields.length > 0) {
-                    // Hapus jawaban yang berhubungan dengan optIndex ini
-                    const updatedAnswer = answer.filter(
-                      (ans) => ans.optIndex !== optIndex,
-                    );
-                    setValue(`${fieldPrefix}.answer`, updatedAnswer);
-
-                    // Hapus option-nya
-                    remove(optIndex);
-                  }
-                }}
-                className="hover:text-red-500"
-              >
-                <FaDeleteLeft className="size-[20px]" />
-              </Button>
             </div>
           </div>
         );
       })}
-
-      <Button
-        type="button"
-        onClick={() => append("")}
-        variant="secondary"
-        className="bg-transparent text-white hover:bg-transparent hover:text-[#dedede]"
-        disabled={options.some((opt) => opt.label.trim() === "")}
-      >
-        + Add Sentence
-      </Button>
 
       <Separator />
 
@@ -315,4 +336,6 @@ export function SentenceCompletion({ onRemove, fieldPrefix }: Props) {
       </div>
     </div>
   );
-}
+};
+
+export default SummaryCompletion;

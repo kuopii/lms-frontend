@@ -4,29 +4,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { AnswerKeyDialog } from "@/features/test/components/answer-key-dialog";
+import { CreateListeningTestSchema } from "@/features/test/form/create-listening-form";
 import { cn } from "@/lib/utils";
-import { FormValues } from "@/validators/create-test-listening-teacher";
 import { useEffect, useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaDeleteLeft, FaTrash } from "react-icons/fa6";
 import { arrayEqual } from "../../utils/arrray-equal";
 import { isStringArray } from "../../utils/is-array";
-import { AnswerKeyDialog } from "../answer-key-dialog";
 
 interface Props {
   questionIndex: number;
   onRemove: () => void;
-  sectionIndex: number;
-  fieldPrefix: `sections.${number}.questions.${number}`;
+
+  fieldPrefix: `passages.${number}.questionGroups.${number}.questions.${number}`;
 }
 
 export function ChooseMultipleAnswers({
   questionIndex,
   onRemove,
-  sectionIndex,
   fieldPrefix,
 }: Props) {
-  const { control, register, watch, setValue } = useFormContext<FormValues>();
+  const { control, register, watch, setValue } =
+    useFormContext<CreateListeningTestSchema>();
 
   const rawOptions = watch(`${fieldPrefix}.options`);
   const options = isStringArray(rawOptions) ? rawOptions : [];

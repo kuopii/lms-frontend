@@ -13,8 +13,8 @@ import {
 import { FaImage } from "react-icons/fa";
 import { MdStarOutline } from "react-icons/md";
 import { PiRectangleDashedFill } from "react-icons/pi";
-import { questionTemplates } from "../types/question-templates";
-import { QuestionRenderer } from "./question-renderer";
+import { QuestionRenderer } from "../../../test/components/question-renderer";
+import { questionTemplates } from "../../../test/listening/types/question-templates";
 import { SortableQuestion } from "./sortable-question";
 
 interface QuestionsPerSectionProps {

@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import {
   FormControl,
   FormField,
@@ -14,11 +13,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useFormContext } from "react-hook-form";
 import { Textarea } from "@/components/ui/textarea";
 import { readingQuestionTypes } from "@/data/test-filter-options";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
+import React from "react";
+import { useFormContext } from "react-hook-form";
 
 interface QuestionHeaderProps {
   variant: "input" | "text" | "tips";
@@ -74,8 +74,14 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
         )}
         {variant === "tips" && (
           <div className="flex items-center gap-3 rounded-4xl bg-[#DEDEDE] px-4 py-2">
-            <Image width={45} height={45} className="w-9 h-9" alt="tips" src="/icons/tips.svg" />
-            <h4 className="text-black text-sm">
+            <Image
+              width={45}
+              height={45}
+              className="h-9 w-9"
+              alt="tips"
+              src="/icons/tips.svg"
+            />
+            <h4 className="text-sm text-black">
               Select a word or phrase in the sentence and click
               <span className="text-primary">“Mark as Blank”</span>
               to create a gap for students to fill.

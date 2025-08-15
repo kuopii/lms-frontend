@@ -1,4 +1,3 @@
-import React from "react";
 import CreateListeningTestPage from "@/features/test/pages/create-listening-test";
 
 const ListeningTest = () => {
