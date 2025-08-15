@@ -1,6 +1,11 @@
 export const DIFFICULTIES = ["beginner", "intermediate", "advanced"] as const;
 export const TIME_TYPES = ["countup", "countdown", "notimer"] as const;
 export const TEST_TYPES = ["single", "final"] as const;
+export const TYPE = ["listening", "reading", "writing", "speaking"] as const;
+export const ALLOW_REPETITION = [
+  { label: "Yes", value: true },
+  { label: "No", value: false },
+] as const;
 
 export type Difficulty = (typeof DIFFICULTIES)[number];
 export type TimeType = (typeof TIME_TYPES)[number];

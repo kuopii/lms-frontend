@@ -1,4 +1,4 @@
-import { baseTestSchema, withTimeValidation } from "@/validators/test";
+import { baseTestSchema, withAllValidations } from "@/validators/test";
 import { z } from "zod";
 
 // const questionSchema = z.discriminatedUnion("type", [
@@ -16,7 +16,7 @@ const passageSchema = z.object({
   questionGroups: z.array(questionGroupSchema).min(1, "Minimal 1 grup soal"),
 });
 
-export const createListeningTestSchema = withTimeValidation(
+export const createListeningTestSchema = withAllValidations(
   baseTestSchema.extend({
     passages: z.array(passageSchema).min(1, "At least one passage is required"),
   }),

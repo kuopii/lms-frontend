@@ -18,15 +18,24 @@ const CreateReadingTestPage = () => {
   const form = useForm<CreateReadingTestSchema>({
     resolver: zodResolver(createReadingTestSchema),
     defaultValues: {
-      name: "",
+      title: "",
       description: "",
       difficulty: "beginner",
-      timeType: "notimer",
-      typeTest: "single",
+      timer_mode: "notimer",
+      type_test: "single",
       type: "reading",
-      hours: "00",
-      minutes: "00",
-      seconds: "00",
+      timer_settings: {
+        hours: 0,
+        minutes: 0,
+        seconds: 0,
+      },
+      allow_repetition: false,
+      max_repetition_count: undefined,
+      is_public: false,
+      is_published: false,
+      settings: {
+        shuffle_questions: false,
+      },
       passages: [
         {
           title: "",
