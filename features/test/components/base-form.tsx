@@ -1,25 +1,15 @@
 "use client";
 
-import React, { useEffect, useMemo, useCallback } from "react";
 import {
+  FormControl,
   FormField,
   FormItem,
   FormLabel,
-  FormControl,
   FormMessage,
 } from "@/components/ui/form";
-import { useFormContext } from "react-hook-form";
 import { Input } from "@/components/ui/input";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
-import {
-  ALLOW_REPETITION,
-  DIFFICULTIES,
-  TEST_TYPES,
-  TIME_TYPES,
-} from "@/types/test";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { formatTimeLabel } from "../../../helpers/format-time-label";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Select,
   SelectContent,
@@ -27,11 +17,22 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import {
+  ALLOW_REPETITION,
+  DIFFICULTIES,
+  TEST_TYPES,
+  TIME_TYPES,
+} from "@/types/test";
+import React, { useCallback, useEffect, useMemo } from "react";
 import { z } from "zod";
+import { formatTimeLabel } from "../../../helpers/format-time-label";
 
 const HOURS_OPTIONS = Array.from({ length: 24 }, (_, i) => i);
 const MINUTES_OPTIONS = Array.from({ length: 60 }, (_, i) => i);
 const SECONDS_OPTIONS = Array.from({ length: 60 }, (_, i) => i);
+
+import { useFormContext } from "react-hook-form";
 
 const BaseForm = () => {
   const { control, formState, watch, setValue } = useFormContext();

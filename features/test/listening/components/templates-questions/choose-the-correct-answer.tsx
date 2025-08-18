@@ -4,26 +4,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { AnswerKeyDialog } from "@/features/test/components/answer-key-dialog";
+import { CreateListeningTestSchema } from "@/features/test/form/create-listening-form";
 import { cn } from "@/lib/utils";
-import { FormValues } from "@/validators/create-test-listening-teacher";
 import { useEffect, useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaDeleteLeft, FaTrash } from "react-icons/fa6";
 import { isString, isStringArray } from "../../utils/is-array";
-import { AnswerKeyDialog } from "../answer-key-dialog";
-import { ErrorForm } from "../error-form";
 
 interface Props {
   questionIndex: number;
   onRemove: () => void;
-  sectionIndex: number;
-  fieldPrefix: `sections.${number}.questions.${number}`;
+  questionGroupIndex: number;
+  fieldPrefix: `passages.${number}.questionGroups.${number}.questions.${number}`;
 }
 
 export function ChooseTheCorrectAnswer({
   questionIndex,
   onRemove,
-  sectionIndex,
+  questionGroupIndex,
   fieldPrefix,
 }: Props) {
   const {
@@ -32,13 +31,12 @@ export function ChooseTheCorrectAnswer({
     watch,
     setValue,
     formState: { errors },
-  } = useFormContext<FormValues>();
+  } = useFormContext<CreateListeningTestSchema>();
 
   const rawOptions = watch(`${fieldPrefix}.options`);
   const options = isStringArray(rawOptions) ? rawOptions : [];
 
   const rawAnswer = watch(`${fieldPrefix}.answer`);
-  // const answer = typeof rawAnswer === "string" ? rawAnswer : "";
   const answer = isString(rawAnswer) ? rawAnswer : "";
 
   const { fields, append, remove } = useFieldArray({
@@ -57,7 +55,7 @@ export function ChooseTheCorrectAnswer({
     (opt: string) => typeof opt === "string" && opt.trim() !== "",
   );
 
-  const isOptions = filteredOptions.length > 0;
+  const isOptions = filteredOptions?.length > 0;
   const isChanged = answer?.trim() !== tempAnswer.trim();
   const isAnswerSelected =
     typeof tempAnswer === "string" && tempAnswer.trim() !== "";
@@ -94,7 +92,9 @@ export function ChooseTheCorrectAnswer({
 
   // console.log("isOptions", isOptions);
 
-  const questionLength = watch(`sections.${sectionIndex}.questions`).length;
+  const questionLength = watch(`${fieldPrefix}`).length;
+
+  console.log("questionLength??", questionLength);
 
   return (
     <div className="space-y-4">
@@ -172,7 +172,7 @@ export function ChooseTheCorrectAnswer({
                 No options available.
               </p>
             )}
-            <ErrorForm
+            {/* <ErrorForm
               error={
                 (
                   (errors.sections?.[sectionIndex] as any).questions?.[
@@ -180,7 +180,7 @@ export function ChooseTheCorrectAnswer({
                   ] as any
                 )?.answer
               }
-            />
+            /> */}
           </div>
         </AnswerKeyDialog>
 

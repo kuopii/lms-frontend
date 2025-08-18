@@ -11,51 +11,56 @@ import {
 
 import LazyImage from "@/components/imageReusable/base/LazyImage";
 import { Separator } from "@/components/ui/separator";
-import { FormValues } from "@/validators/create-test-listening-teacher";
 import { Controller, useFormContext } from "react-hook-form";
-import { Question, QuestionType, questionTypeLabels } from "../types/question";
-import { questionTemplates } from "../types/question-templates";
-import { ErrorForm } from "./error-form";
-import { ChooseMultipleAnswers } from "./templates-questions/choose-multiple-answers";
-import { ChooseTheCorrectAnswer } from "./templates-questions/choose-the-correct-answer";
-import FormCompletion from "./templates-questions/form-completion";
-import MapLabeling from "./templates-questions/map-labeling";
-import NoteCompletion from "./templates-questions/note-completion";
-import { SentenceCompletion } from "./templates-questions/sentence-completion";
-import ShortAnswerQuestion from "./templates-questions/short-answer-question";
-import SummaryCompletion from "./templates-questions/summary-completion";
+import { CreateListeningTestSchema } from "../form/create-listening-form";
+import { ChooseMultipleAnswers } from "../listening/components/templates-questions/choose-multiple-answers";
+import { ChooseTheCorrectAnswer } from "../listening/components/templates-questions/choose-the-correct-answer";
+import FormCompletion from "../listening/components/templates-questions/form-completion";
+import MapLabeling from "../listening/components/templates-questions/map-labeling";
+import NoteCompletion from "../listening/components/templates-questions/note-completion";
+import { SentenceCompletion } from "../listening/components/templates-questions/sentence-completion";
+import ShortAnswerQuestion from "../listening/components/templates-questions/short-answer-question";
+import SummaryCompletion from "../listening/components/templates-questions/summary-completion";
+import {
+  Question,
+  QuestionType,
+  questionTypeLabels,
+} from "../listening/types/question";
+import { questionTemplates } from "../listening/types/question-templates";
 
 const typeMap = {
-  Choose_the_Correct_Answer: ChooseTheCorrectAnswer,
   Choose_Multiple_Answers: ChooseMultipleAnswers,
+  Choose_the_Correct_Answer: ChooseTheCorrectAnswer,
   Sentence_Completion: SentenceCompletion,
   Short_Answer_Question: ShortAnswerQuestion,
   Map_Labeling: MapLabeling,
   Form_Completion: FormCompletion,
   Note_Completion: NoteCompletion,
   Summary_Completion: SummaryCompletion,
-  // etc
+  // test punya faiq dibawah
 };
 
 interface QuestionRendererProps<
-  TFieldPrefix extends `sections.${number}.questions.${number}`,
+  TFieldPrefix extends
+    `passages.${number}.questionGroups.${number}.questions.${number}`,
 > {
   questionIndex: number;
   onRemove: () => void;
-  onClick: () => void;
-  isActive: boolean;
-  sectionIndex: number;
+  onClick?: () => void; // test opsional
+  isActive?: boolean; // test opsional
+  questionGroupIndex: number;
   fieldPrefix: TFieldPrefix;
 }
 
 export function QuestionRenderer<
-  TFieldPrefix extends `sections.${number}.questions.${number}`,
+  TFieldPrefix extends
+    `passages.${number}.questionGroups.${number}.questions.${number}`,
 >({
   questionIndex,
   onRemove,
   onClick,
   isActive,
-  sectionIndex,
+  questionGroupIndex,
   fieldPrefix,
 }: QuestionRendererProps<TFieldPrefix>) {
   const {
@@ -65,7 +70,7 @@ export function QuestionRenderer<
     control,
     resetField,
     formState: { errors },
-  } = useFormContext<FormValues>();
+  } = useFormContext<CreateListeningTestSchema>(); // nanti coba gunakan type cek form lain
 
   const type = watch(`${fieldPrefix}.type`) as keyof typeof typeMap;
   const Renderer = typeMap[type];
@@ -97,7 +102,7 @@ export function QuestionRenderer<
   return (
     <div
       onClick={onClick}
-      className={`cursor-pointer space-y-[25px] rounded-[30px] bg-[#1A1A1A] px-[25px] pt-[45px] pb-[25px] ${isActive ? "ring-primary ring-1" : ""}`}
+      className={`cursor-pointer space-y-[25px] rounded-[30px] bg-[#1A1A1A] px-[25px] pb-[25px] ${isActive ? "ring-primary ring-1" : ""}`}
     >
       <div className="card-custom flex flex-col gap-[25px] px-[20px] py-[20px]">
         {/* pertanyaan */}
@@ -111,7 +116,7 @@ export function QuestionRenderer<
                 placeholder="Type your question here..."
                 {...register(`${fieldPrefix}.prompt`)}
               />
-              <ErrorForm
+              {/* <ErrorForm
                 error={
                   (
                     (errors.sections?.[sectionIndex] as any).questions?.[
@@ -119,7 +124,7 @@ export function QuestionRenderer<
                     ] as any
                   )?.prompt
                 }
-              />
+              /> */}
             </>
           )}
           {isQuestionCompletion && (
@@ -173,8 +178,8 @@ export function QuestionRenderer<
         {Renderer ? (
           <Renderer
             questionIndex={questionIndex}
-            sectionIndex={sectionIndex}
-            fieldPrefix={fieldPrefix} // akan menggantikan questionIndex & sectionIndex
+            questionGroupIndex={questionGroupIndex}
+            fieldPrefix={fieldPrefix}
             onRemove={onRemove}
           />
         ) : null}
@@ -191,7 +196,7 @@ export function QuestionRenderer<
           placeholder="Type the answer explanation here..."
           {...register(`${fieldPrefix}.explanation`)}
         />
-        <ErrorForm
+        {/* <ErrorForm
           error={
             (
               (errors.sections?.[sectionIndex] as any)?.questions?.[
@@ -199,7 +204,7 @@ export function QuestionRenderer<
               ] as any
             )?.explanation
           }
-        />
+        /> */}
       </div>
     </div>
   );

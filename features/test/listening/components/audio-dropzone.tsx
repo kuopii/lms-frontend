@@ -1,19 +1,19 @@
-import { FormValues } from "@/validators/create-test-listening-teacher";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Controller, useFormContext } from "react-hook-form";
 import { FaUpload } from "react-icons/fa6";
-import { ErrorForm } from "./error-form";
+import { CreateListeningTestSchema } from "../../form/create-listening-form";
 
 interface AudioDropzoneParams {
-  sectionIndex: number;
+  // qgIndex: number;
+  index: number;
 }
 
-export const AudioDropzone = ({ sectionIndex }: AudioDropzoneParams) => {
+export const AudioDropzone = ({ index }: AudioDropzoneParams) => {
   const {
     control,
     formState: { errors },
-  } = useFormContext<FormValues>();
+  } = useFormContext<CreateListeningTestSchema>();
 
   // console.log("error audio :", error);
 
@@ -21,7 +21,8 @@ export const AudioDropzone = ({ sectionIndex }: AudioDropzoneParams) => {
 
   return (
     <Controller
-      name={`sections.${sectionIndex}.audio`}
+      // name={`passages.${index}.questionGroups.${qgIndex}.audio_file`}
+      name={`passages.${index}.audio_file`}
       control={control}
       render={({ field }) => {
         const onDrop = (acceptedFiles: File[]) => {
@@ -66,11 +67,11 @@ export const AudioDropzone = ({ sectionIndex }: AudioDropzoneParams) => {
               )}
             </div>
 
-            <p className="mt-1 text-sm text-red-500">
+            {/* <p className="mt-1 text-sm text-red-500">
               <ErrorForm
                 error={(errors?.sections?.[sectionIndex] as any)?.audio}
               />
-            </p>
+            </p> */}
 
             {/* Preview Audio */}
             {previewUrl && (

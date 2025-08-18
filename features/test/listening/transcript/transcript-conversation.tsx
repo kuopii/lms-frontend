@@ -4,18 +4,25 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaUser } from "react-icons/fa6";
 import SpeakerInputs from "./speaker-inputs";
 
-interface TranscriptConversationParams {
-  sectionIndex: number;
+interface TranscriptConversationParams<
+  TFieldPrefixTranscript extends
+    `passages.${number}.questionGroups.${number}.transcript`,
+> {
+  transcriptPath: TFieldPrefixTranscript;
+  index: number;
 }
 
-const TranscriptConversation = ({
-  sectionIndex,
-}: TranscriptConversationParams) => {
+const TranscriptConversation = <
+  TFieldPrefixTranscript extends
+    `passages.${number}.questionGroups.${number}.transcript`,
+>({
+  transcriptPath,
+}: TranscriptConversationParams<TFieldPrefixTranscript>) => {
   const { register, control } = useFormContext();
 
   const { fields: speakerFields } = useFieldArray({
     control,
-    name: `sections.${sectionIndex}.transcriptValue.speakers` as const,
+    name: `${transcriptPath}.speakers` as const,
   });
 
   console.log("speakerFields ? :", speakerFields);
@@ -27,7 +34,7 @@ const TranscriptConversation = ({
         <Input
           placeholder="Type the title here..."
           className="card-custom border-none bg-[#333333]"
-          {...register(`sections.${sectionIndex}.transcriptValue.title`)}
+          {...register(`${transcriptPath}.title`)}
         />
       </div>
 
@@ -58,14 +65,14 @@ const TranscriptConversation = ({
                       speakerIdx !== 0 && "text-right",
                     )}
                     {...register(
-                      `sections.${sectionIndex}.transcriptValue.speakers.${speakerIdx}.name`,
+                      `${transcriptPath}.speakers.${speakerIdx}.name`,
                     )}
                   />
 
                   {/* speaker inputs */}
                   <div className="flex w-full flex-col">
                     <SpeakerInputs
-                      sectionIndex={sectionIndex}
+                      transcriptPath={transcriptPath}
                       speakerIdx={speakerIdx}
                     />
                   </div>

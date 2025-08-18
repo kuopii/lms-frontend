@@ -9,13 +9,23 @@ import { cn } from "@/lib/utils";
 import { EllipsisVertical, Minus, Plus } from "lucide-react";
 import { useEffect } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
+import { CreateListeningTestSchema } from "../../form/create-listening-form";
 
-interface SpeakerInputsParams {
-  sectionIndex: number;
+interface SpeakerInputsParams<
+  TFieldPrefixTranscript extends
+    `passages.${number}.questionGroups.${number}.transcript`,
+> {
+  transcriptPath: TFieldPrefixTranscript;
   speakerIdx: number;
 }
 
-const SpeakerInputs = ({ sectionIndex, speakerIdx }: SpeakerInputsParams) => {
+const SpeakerInputs = <
+  TFieldPrefixTranscript extends
+    `passages.${number}.questionGroups.${number}.transcript`,
+>({
+  transcriptPath,
+  speakerIdx,
+}: SpeakerInputsParams<TFieldPrefixTranscript>) => {
   const { register, control } = useFormContext();
 
   const {
@@ -23,15 +33,15 @@ const SpeakerInputs = ({ sectionIndex, speakerIdx }: SpeakerInputsParams) => {
     remove: removeInput,
     append: appendInput,
     insert: insertInput,
-  } = useFieldArray({
+  } = useFieldArray<CreateListeningTestSchema>({
     control,
-    name: `sections.${sectionIndex}.transcriptValue.speakers.${speakerIdx}.inputs` as const,
+    name: `${transcriptPath}.speakers.${speakerIdx}.inputs` as const,
   });
 
   // render options awal
   useEffect(() => {
     if (inputFields.length === 0) {
-      appendInput("");
+      appendInput({ text: "" });
     }
   }, []);
 
@@ -57,7 +67,7 @@ const SpeakerInputs = ({ sectionIndex, speakerIdx }: SpeakerInputsParams) => {
               placeholder="Type the conversation here..."
               className="card-custom w-full border-none bg-[#666666] placeholder:text-white"
               {...register(
-                `sections.${sectionIndex}.transcriptValue.speakers.${speakerIdx}.inputs.${inputIdx}`,
+                `${transcriptPath}.speakers.${speakerIdx}.inputs.${inputIdx}.text`,
               )}
             />
 
@@ -80,7 +90,7 @@ const SpeakerInputs = ({ sectionIndex, speakerIdx }: SpeakerInputsParams) => {
                       size={"custom"}
                       type="button"
                       onClick={() => {
-                        insertInput(inputIdx + 1, "");
+                        insertInput(inputIdx + 1, { text: "" });
                       }}
                     >
                       <Plus className="size-[24px]" />

@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Controller, useFormContext } from "react-hook-form";
 import { FaUpload } from "react-icons/fa6";
-import { ErrorForm } from "./error-form";
 
 interface ImageDropzoneProps {
   fieldPrefix: string; // contoh: 'sections.0.questions.1'
@@ -90,9 +89,9 @@ export const ImageDropzone = ({ fieldPrefix }: ImageDropzoneProps) => {
               </p>
             )}
 
-            <p className="mt-1 text-sm text-red-500">
+            {/* <p className="mt-1 text-sm text-red-500">
               <ErrorForm error={getNestedError(errors, fieldName)} />
-            </p>
+            </p> */}
           </div>
         );
       }}

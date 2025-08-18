@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { FormValues } from "@/validators/create-test-listening-teacher";
+import { AnswerKeyDialog } from "@/features/test/components/answer-key-dialog";
+import { CreateListeningTestSchema } from "@/features/test/form/create-listening-form";
 import { SquareDashedMousePointer } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
@@ -10,7 +11,6 @@ import {
   isObjectOptionsAnswerArray,
   isStructuredAnswer,
 } from "../../utils/is-object";
-import { AnswerKeyDialog } from "../answer-key-dialog";
 
 type OptionAnswer = {
   optIndex: number;
@@ -20,7 +20,7 @@ type OptionAnswer = {
 
 interface Props {
   onRemove: () => void;
-  fieldPrefix: `sections.${number}.questions.${number}`;
+  fieldPrefix: `passages.${number}.questionGroups.${number}.questions.${number}`;
 }
 
 const NoteCompletion = ({ onRemove, fieldPrefix }: Props) => {
@@ -31,7 +31,7 @@ const NoteCompletion = ({ onRemove, fieldPrefix }: Props) => {
     setValue,
     getValues,
     formState: { errors },
-  } = useFormContext<FormValues>();
+  } = useFormContext<CreateListeningTestSchema>();
   const inputRefs = useRef<(HTMLInputElement | HTMLTextAreaElement | null)[]>(
     [],
   );

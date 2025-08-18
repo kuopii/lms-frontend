@@ -1,12 +1,11 @@
 "use client";
 
-import React from "react";
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { PiCopyFill } from "react-icons/pi";
 import { FaTrash } from "react-icons/fa";
+import { PiCopyFill } from "react-icons/pi";
 import { AnswerKeyField } from "../answer-key-field";
 import OptionFieldArray from "../options-field-array";
 import QuestionHeader from "../question-header";
