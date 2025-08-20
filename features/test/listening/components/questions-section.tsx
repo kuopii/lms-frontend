@@ -3,6 +3,7 @@
 import SortableItem from "@/components/ui/sortable-item";
 import { cn } from "@/lib/utils";
 import { useToolbarStore } from "@/store/toolbar-store";
+import { QuestionType, ReadingQuestion } from "@/types/test";
 import {
   DndContext,
   DragEndEvent,
@@ -18,38 +19,20 @@ import {
 import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { MdDragIndicator } from "react-icons/md";
-import { QuestionRenderer } from "../../components/question-renderer";
-import { defaultQuestionValues } from "../../constant/default-question-values";
 import Toolbar from "../../reading/components/toolbar";
-import { Question, QuestionType } from "../types/question";
-import { questionTemplates } from "../types/question-templates";
-import { ChooseMultipleAnswers } from "./templates-questions/choose-multiple-answers";
-import { ChooseTheCorrectAnswer } from "./templates-questions/choose-the-correct-answer";
-import FormCompletion from "./templates-questions/form-completion";
-import MapLabeling from "./templates-questions/map-labeling";
-import NoteCompletion from "./templates-questions/note-completion";
-import { SentenceCompletion } from "./templates-questions/sentence-completion";
-import ShortAnswerQuestion from "./templates-questions/short-answer-question";
-import SummaryCompletion from "./templates-questions/summary-completion";
+import { defaultListeningQuestion } from "../../constant/default-listening-question";
+import ChooseCorrectAnswer from "@/features/test/components/questions/choose-correct-answer";
+import ChooseMultipleAnswer from "@/features/test/components/questions/choose-multiple-answer";
 
 type QuestionsSectionProps = {
   nestIndex: number;
   questionGroupIndex: number;
   onAddPassage: () => void;
-  onAddQuestionGroup?: () => void;
+  onAddQuestionGroup?: (questionType: QuestionType) => void;
 };
 
-const typeMap = {
-  Choose_the_Correct_Answer: ChooseTheCorrectAnswer,
-  Choose_Multiple_Answers: ChooseMultipleAnswers,
-  Sentence_Completion: SentenceCompletion,
-  Short_Answer_Question: ShortAnswerQuestion,
-  Map_Labeling: MapLabeling,
-  Form_Completion: FormCompletion,
-  Note_Completion: NoteCompletion,
-  Summary_Completion: SummaryCompletion,
-  // etc
-};
+const SINGLE_CHOICE_TYPE = "choose_correct_answer";
+const MULTIPLE_CHOICE_TYPE = "choose_multiple_answer";
 
 export const QuestionsSection = ({
   nestIndex,
@@ -78,16 +61,16 @@ export const QuestionsSection = ({
   const watchedQuestions = useWatch({
     control,
     name: questionsPath,
-  }) as Question[];
+  }) as ReadingQuestion[];
 
   // Memoize question types to prevent unnecessary effect runs
   const questionTypes = useMemo(() => {
     return (
       watchedQuestions?.map((q, index) => ({
         id: questionFields[index]?.id,
-        type: q?.type as QuestionType,
+        type: q?.question_type,
         index,
-        question: q?.prompt,
+        question: q?.question_text,
       })) || []
     );
   }, [watchedQuestions, questionFields]);
@@ -104,32 +87,50 @@ export const QuestionsSection = ({
       const previousType = previousQuestionTypesRef.current[questionId];
 
       if (previousType && previousType !== questionType) {
-        const defaultData =
-          defaultQuestionValues[
-            questionType as keyof typeof defaultQuestionValues
-          ];
+        // If only 1 question, replace it with default question
+        if (questionFields.length === 1) {
+          const defaultData =
+            defaultListeningQuestion[
+              questionType as keyof typeof defaultListeningQuestion
+            ];
 
-        if (defaultData) {
-          // Use setTimeout to avoid conflicts with drag operations
-          setTimeout(() => {
-            // Create completely new question with default values
-            const newQuestion = {
-              ...defaultData,
-              type: questionType,
-              id: questionId, // Keep the same ID to maintain references
-            };
+          if (defaultData) {
+            // Use setTimeout to avoid conflicts with drag operations
+            setTimeout(() => {
+              // Create completely new question with default values
+              const newQuestion = {
+                ...defaultData,
+                type: questionType,
+                id: questionId, // Keep the same ID to maintain references
+              };
 
-            // Remove old question and insert new one at the same position
-            removeQuestion(index);
-            insertQuestion(index, newQuestion);
-          }, 0);
+              // Remove old question and insert new one at the same position
+              removeQuestion(index);
+              insertQuestion(index, newQuestion);
+            }, 0);
+          }
+        } else {
+          // If more than 1 question, call onAddQuestionGroup and remove current question
+          if (onAddQuestionGroup) {
+            setTimeout(() => {
+              onAddQuestionGroup(questionType as QuestionType);
+              // Remove the question that changed type
+              removeQuestion(index);
+            }, 0);
+          }
         }
       }
 
       // Update ref without causing re-render
       previousQuestionTypesRef.current[questionId] = questionType;
     });
-  }, [questionTypes, removeQuestion, insertQuestion, questionsPath]);
+  }, [
+    questionTypes,
+    questionFields.length,
+    removeQuestion,
+    insertQuestion,
+    onAddQuestionGroup,
+  ]);
 
   // Memoized sensors for drag and drop
   const sensors = useSensors(
@@ -183,27 +184,14 @@ export const QuestionsSection = ({
     const activeIndex = questionFields.findIndex(
       (q) => q.id === activeQuestionId,
     );
+    const activeType =
+      watchedQuestions?.[activeIndex]?.question_type || SINGLE_CHOICE_TYPE;
 
-    // Ambil tipe dari soal aktif, fallback ke tipe pertama di questionTemplates
-    const activeType = (watchedQuestions?.[activeIndex]?.type ||
-      "Choose_the_Correct_Answer") as QuestionType;
-
-    const template = questionTemplates[activeType];
-
-    if (!template) {
-      console.log(`Template untuk type ${activeType} tidak ditemukan`);
-      return;
-    }
-
-    // Kalau template adalah fungsi (defaultData), jalankan
-    const defaultData = typeof template === "function" && template();
-
-    const newQuestion = {
-      ...defaultData,
-      type: activeType,
-      id: crypto.randomUUID(),
-    };
-
+    const defaultData =
+      defaultListeningQuestion[
+        activeType as keyof typeof defaultListeningQuestion
+      ];
+    const newQuestion = { ...defaultData, id: crypto.randomUUID() };
     const insertIndex =
       activeIndex !== -1 ? activeIndex + 1 : questionFields.length;
 
@@ -254,10 +242,6 @@ export const QuestionsSection = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [clearActive]);
 
-  // test
-
-  // --------
-
   return (
     <div className="space-y-4" ref={questionsContainerRef}>
       <DndContext
@@ -271,8 +255,9 @@ export const QuestionsSection = ({
           strategy={verticalListSortingStrategy}
         >
           {questionFields.map((question, qIndex) => {
-            // const watchedQuestion = watchedQuestions?.[qIndex];
-            // const questionType = watchedQuestion?.type || SINGLE_CHOICE_TYPE;
+            const watchedQuestion = watchedQuestions?.[qIndex];
+            const questionType =
+              watchedQuestion?.question_type || SINGLE_CHOICE_TYPE;
             const isActive = question.id === activeQuestionId;
 
             return (
@@ -301,16 +286,32 @@ export const QuestionsSection = ({
                       />
                     )}
 
-                    {/* QUESTION RENDER */}
-                    <QuestionRenderer
-                      fieldPrefix={
-                        `passages.${nestIndex}.questionGroups.${questionGroupIndex}.questions.${qIndex}` as const
+                    {(() => {
+                      switch (questionType) {
+                        case SINGLE_CHOICE_TYPE:
+                          return (
+                            <ChooseCorrectAnswer
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                            />
+                          );
+                        case MULTIPLE_CHOICE_TYPE:
+                          return (
+                            <ChooseMultipleAnswer
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                            />
+                          );
+                        default:
+                          return null;
                       }
-                      questionIndex={qIndex}
-                      questionGroupIndex={questionGroupIndex}
-                      onRemove={() => handleRemoveQuestion(qIndex)}
-                      // kirimkan handle duplicate
-                    />
+                    })()}
                   </div>
                 </div>
               </SortableItem>

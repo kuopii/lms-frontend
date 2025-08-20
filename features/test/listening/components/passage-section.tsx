@@ -8,13 +8,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { questionTemplates } from "@/features/test/listening/types/question-templates";
 import dynamic from "next/dynamic";
 import React, { useCallback } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaTrash } from "react-icons/fa";
 import TranscriptForm from "../transcript/transcript-form";
 import { AudioDropzone } from "./audio-dropzone";
+import { QuestionType } from "@/types/test";
+import { defaultListeningQuestion } from "../../constant/default-listening-question";
 
 const QuestionsSection = dynamic(() => import("./questions-section"), {
   ssr: false,
@@ -44,13 +45,17 @@ export const PassageSection = ({
     name: `passages.${index}.questionGroups`,
   });
 
-  const handleAddQuestionGroup = useCallback(() => {
-    console.log("Adding question group");
-    appendQuestionGroup({
-      instruction: "",
-      questions: [questionTemplates["Choose_the_Correct_Answer"]()],
-    });
-  }, [appendQuestionGroup]);
+  const handleAddQuestionGroup = useCallback(
+    (defaultQuestion: QuestionType) => {
+      appendQuestionGroup({
+        instruction: "",
+        questions: [
+          defaultListeningQuestion[defaultQuestion || "choose_correct_answer"],
+        ],
+      });
+    },
+    [appendQuestionGroup],
+  );
 
   const handleRemoveQuestionGroup = useCallback(
     (qgIndex: number) => {

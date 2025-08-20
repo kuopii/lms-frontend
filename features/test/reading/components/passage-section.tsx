@@ -16,7 +16,7 @@ import dynamic from "next/dynamic";
 import React, { useCallback } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaFileImport, FaTrash } from "react-icons/fa";
-import { defaultQuestionValues } from "../../constant/default-question-values";
+import { defaultReadingQuestion } from "../../constant/default-reading-question";
 import { QuestionType } from "@/types/test";
 
 const QuestionsSection = dynamic(() => import("./questions-section"), {
@@ -49,11 +49,10 @@ export const PassageSection = ({
 
   const handleAddQuestionGroup = useCallback(
     (defaultQuestion: QuestionType) => {
-      console.log("Adding question group");
       appendQuestionGroup({
         instruction: "",
         questions: [
-          defaultQuestionValues[defaultQuestion || "choose_correct_answer"],
+          defaultReadingQuestion[defaultQuestion || "choose_correct_answer"],
         ],
       });
     },

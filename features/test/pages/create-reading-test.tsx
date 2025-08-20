@@ -10,7 +10,7 @@ import { useFormStore } from "@/store/form-store";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
-import { defaultQuestionValues } from "../constant/default-question-values";
+import { defaultReadingQuestion } from "../constant/default-reading-question";
 import { PassageSection } from "../reading/components/passage-section";
 
 const CreateReadingTestPage = () => {
@@ -43,7 +43,7 @@ const CreateReadingTestPage = () => {
           questionGroups: [
             {
               instruction: "",
-              questions: [defaultQuestionValues["choose_correct_answer"]],
+              questions: [defaultReadingQuestion["choose_correct_answer"]],
             },
           ],
         },
@@ -78,16 +78,7 @@ const CreateReadingTestPage = () => {
       questionGroups: [
         {
           instruction: "",
-          questions: [
-            {
-              id: crypto.randomUUID(),
-              type: "choose_correct_answer",
-              question: "",
-              options: ["Option 1"],
-              answerKey: "",
-              breakdown: "",
-            },
-          ],
+          questions: [defaultReadingQuestion["choose_correct_answer"]],
         },
       ],
     });

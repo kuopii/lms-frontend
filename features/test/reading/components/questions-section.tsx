@@ -20,21 +20,23 @@ import React, { useCallback, useEffect, useMemo, useRef } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { MdDragIndicator } from "react-icons/md";
 import Toolbar from "./toolbar";
-
-import { defaultQuestionValues } from "../../constant/default-question-values";
-import ChooseCorrectAnswer from "./questions/choose-correct-answer";
-import ChooseMultipleAnswer from "./questions/choose-multiple-answer";
-import DiagramLabelCompletion from "./questions/diagram-label-completion";
-import MatchingFeatures from "./questions/matching-features";
-import MatchingHeading from "./questions/matching-heading";
-import MatchingInformation from "./questions/matching-information";
-import MatchingSentenceEnding from "./questions/matching-sentence-ending";
-import NoteCompletion from "./questions/note-completion";
-import ParagraphCompletion from "./questions/paragraph-completion";
-import SentenceCompletion from "./questions/sentence-completion";
-import ShortAnswer from "./questions/short-answer";
-import TrueFalseNotGiven from "./questions/true-false-not-given";
-import YesNoNotGiven from "./questions/yes-no-not-given";
+import { defaultReadingQuestion } from "../../constant/default-reading-question";
+// import ChooseMultipleAnswer from "./questions/choose-multiple-answer";
+// import DiagramLabelCompletion from "./questions/diagram-label-completion";
+// import MatchingFeatures from "./questions/matching-features";
+// import MatchingHeading from "./questions/matching-heading";
+// import MatchingInformation from "./questions/matching-information";
+// import MatchingSentenceEnding from "./questions/matching-sentence-ending";
+// import NoteCompletion from "./questions/note-completion";
+// import ParagraphCompletion from "./questions/paragraph-completion";
+// import SentenceCompletion from "./questions/sentence-completion";
+// import ShortAnswer from "./questions/short-answer";
+// import TrueFalseNotGiven from "./questions/true-false-not-given";
+// import YesNoNotGiven from "./questions/yes-no-not-given";
+import ChooseCorrectAnswer from "@/features/test/components/questions/choose-correct-answer";
+import ChooseMultipleAnswer from "@/features/test/components/questions/choose-multiple-answer";
+import TrueFalseNotGiven from "@/features/test/components/questions/true-false-not-given";
+import YesNoNotGiven from "@/features/test/components/questions/yes-no-not-given";
 
 type QuestionsSectionProps = {
   nestIndex: number;
@@ -47,15 +49,15 @@ const TRUE_FALSE_TYPE = "true_false_not_given";
 const YES_NO_TYPE = "yes_no_not_given";
 const MULTIPLE_CHOICE_TYPE = "choose_multiple_answer";
 const SINGLE_CHOICE_TYPE = "choose_correct_answer";
-const MATCHING_HEADING_TYPE = "matching_heading";
-const SHORT_ANSWER_TYPE = "short_answer_question";
-const MATCHING_FEATURES_TYPE = "matching_features";
-const MATCHING_SENTENCE_ENDING_TYPE = "matching_sentence_ending";
-const MATCHING_INFORMATION_TYPE = "matching_information";
-const DIAGRAM_LABEL_COMPLETION_TYPE = "diagram_label_completion";
-const SENTENCE_COMPLETION_TYPE = "sentence_completion";
-const PARAGRAPH_COMPLETION_TYPE = "paragraph_completion";
-const NOTE_COMPLETION_TYPE = "note_completion";
+// const MATCHING_HEADING_TYPE = "matching_heading";
+// const SHORT_ANSWER_TYPE = "short_answer_question";
+// const MATCHING_FEATURES_TYPE = "matching_features";
+// const MATCHING_SENTENCE_ENDING_TYPE = "matching_sentence_ending";
+// const MATCHING_INFORMATION_TYPE = "matching_information";
+// const DIAGRAM_LABEL_COMPLETION_TYPE = "diagram_label_completion";
+// const SENTENCE_COMPLETION_TYPE = "sentence_completion";
+// const PARAGRAPH_COMPLETION_TYPE = "paragraph_completion";
+// const NOTE_COMPLETION_TYPE = "note_completion";
 
 export const QuestionsSection = ({
   nestIndex,
@@ -91,9 +93,9 @@ export const QuestionsSection = ({
     return (
       watchedQuestions?.map((q, index) => ({
         id: questionFields[index]?.id,
-        type: q?.type,
+        type: q?.question_type,
         index,
-        question: q?.question,
+        question: q?.question_text,
       })) || []
     );
   }, [watchedQuestions, questionFields]);
@@ -113,8 +115,8 @@ export const QuestionsSection = ({
         // If only 1 question, replace it with default question
         if (questionFields.length === 1) {
           const defaultData =
-            defaultQuestionValues[
-              questionType as keyof typeof defaultQuestionValues
+            defaultReadingQuestion[
+              questionType as keyof typeof defaultReadingQuestion
             ];
 
           if (defaultData) {
@@ -208,10 +210,10 @@ export const QuestionsSection = ({
       (q) => q.id === activeQuestionId,
     );
     const activeType =
-      watchedQuestions?.[activeIndex]?.type || SINGLE_CHOICE_TYPE;
+      watchedQuestions?.[activeIndex]?.question_type || SINGLE_CHOICE_TYPE;
 
     const defaultData =
-      defaultQuestionValues[activeType as keyof typeof defaultQuestionValues];
+      defaultReadingQuestion[activeType as keyof typeof defaultReadingQuestion];
     const newQuestion = { ...defaultData, id: crypto.randomUUID() };
     const insertIndex =
       activeIndex !== -1 ? activeIndex + 1 : questionFields.length;
@@ -277,7 +279,8 @@ export const QuestionsSection = ({
         >
           {questionFields.map((question, qIndex) => {
             const watchedQuestion = watchedQuestions?.[qIndex];
-            const questionType = watchedQuestion?.type || SINGLE_CHOICE_TYPE;
+            const questionType =
+              watchedQuestion?.question_type || SINGLE_CHOICE_TYPE;
             const isActive = question.id === activeQuestionId;
 
             return (
@@ -323,8 +326,7 @@ export const QuestionsSection = ({
                             <ChooseMultipleAnswer
                               key={`${question.id}-${questionType}`}
                               qIndex={qIndex}
-                              nestIndex={nestIndex}
-                              questionGroupIndex={questionGroupIndex}
+                              questionsPath={questionsPath}
                               onDuplicateQuestion={handleDuplicateQuestion}
                               onRemoveQuestion={handleRemoveQuestion}
                             />
@@ -333,9 +335,8 @@ export const QuestionsSection = ({
                           return (
                             <TrueFalseNotGiven
                               qIndex={qIndex}
-                              nestIndex={nestIndex}
                               key={`${question.id}-${questionType}`}
-                              questionGroupIndex={questionGroupIndex}
+                              questionsPath={questionsPath}
                               onDuplicateQuestion={handleDuplicateQuestion}
                               onRemoveQuestion={handleRemoveQuestion}
                             />
@@ -343,94 +344,93 @@ export const QuestionsSection = ({
                         case YES_NO_TYPE:
                           return (
                             <YesNoNotGiven
-                              nestIndex={nestIndex}
                               qIndex={qIndex}
-                              questionGroupIndex={questionGroupIndex}
+                              questionsPath={questionsPath}
                               key={`${question.id}-${questionType}`}
                               onDuplicateQuestion={handleDuplicateQuestion}
                               onRemoveQuestion={handleRemoveQuestion}
                             />
                           );
-                        case MATCHING_HEADING_TYPE:
-                          return (
-                            <MatchingHeading
-                              key={`${question.id}-${questionType}`}
-                              qIndex={qIndex}
-                              questionsPath={questionsPath}
-                            />
-                          );
-                        case SHORT_ANSWER_TYPE:
-                          return (
-                            <ShortAnswer
-                              key={`${question.id}-${questionType}`}
-                              qIndex={qIndex}
-                              questionsPath={questionsPath}
-                              onDuplicateQuestion={handleDuplicateQuestion}
-                              onRemoveQuestion={handleRemoveQuestion}
-                            />
-                          );
-                        case MATCHING_FEATURES_TYPE:
-                          return (
-                            <MatchingFeatures
-                              key={`${question.id}-${questionType}`}
-                              questionsPath={questionsPath}
-                              qIndex={qIndex}
-                            />
-                          );
-                        case MATCHING_SENTENCE_ENDING_TYPE:
-                          return (
-                            <MatchingSentenceEnding
-                              qIndex={qIndex}
-                              key={`${question.id}-${questionType}`}
-                              questionsPath={questionsPath}
-                            />
-                          );
-                        case MATCHING_INFORMATION_TYPE:
-                          return (
-                            <MatchingInformation
-                              qIndex={qIndex}
-                              key={`${question.id}-${questionType}`}
-                              questionsPath={questionsPath}
-                            />
-                          );
-                        case DIAGRAM_LABEL_COMPLETION_TYPE:
-                          return (
-                            <DiagramLabelCompletion
-                              key={`${question.id}-${questionType}`}
-                              qIndex={qIndex}
-                              questionsPath={questionsPath}
-                            />
-                          );
-                        case SENTENCE_COMPLETION_TYPE:
-                          return (
-                            <SentenceCompletion
-                              questionsPath={questionsPath}
-                              qIndex={qIndex}
-                              key={`${question.id}-${questionType}`}
-                              onDuplicateQuestion={handleDuplicateQuestion}
-                              onRemoveQuestion={handleRemoveQuestion}
-                            />
-                          );
-                        case PARAGRAPH_COMPLETION_TYPE:
-                          return (
-                            <ParagraphCompletion
-                              key={`${question.id}-${questionType}`}
-                              qIndex={qIndex}
-                              questionsPath={questionsPath}
-                              onDuplicateQuestion={handleDuplicateQuestion}
-                              onRemoveQuestion={handleRemoveQuestion}
-                            />
-                          );
-                        case NOTE_COMPLETION_TYPE:
-                          return (
-                            <NoteCompletion
-                              key={`${question.id}-${questionType}`}
-                              qIndex={qIndex}
-                              questionsPath={questionsPath}
-                              onDuplicateQuestion={handleDuplicateQuestion}
-                              onRemoveQuestion={handleRemoveQuestion}
-                            />
-                          );
+                        // case MATCHING_HEADING_TYPE:
+                        //   return (
+                        //     <MatchingHeading
+                        //       key={`${question.id}-${questionType}`}
+                        //       qIndex={qIndex}
+                        //       questionsPath={questionsPath}
+                        //     />
+                        //   );
+                        // case SHORT_ANSWER_TYPE:
+                        //   return (
+                        //     <ShortAnswer
+                        //       key={`${question.id}-${questionType}`}
+                        //       qIndex={qIndex}
+                        //       questionsPath={questionsPath}
+                        //       onDuplicateQuestion={handleDuplicateQuestion}
+                        //       onRemoveQuestion={handleRemoveQuestion}
+                        //     />
+                        //   );
+                        // case MATCHING_FEATURES_TYPE:
+                        //   return (
+                        //     <MatchingFeatures
+                        //       key={`${question.id}-${questionType}`}
+                        //       questionsPath={questionsPath}
+                        //       qIndex={qIndex}
+                        //     />
+                        //   );
+                        // case MATCHING_SENTENCE_ENDING_TYPE:
+                        //   return (
+                        //     <MatchingSentenceEnding
+                        //       qIndex={qIndex}
+                        //       key={`${question.id}-${questionType}`}
+                        //       questionsPath={questionsPath}
+                        //     />
+                        //   );
+                        // case MATCHING_INFORMATION_TYPE:
+                        //   return (
+                        //     <MatchingInformation
+                        //       qIndex={qIndex}
+                        //       key={`${question.id}-${questionType}`}
+                        //       questionsPath={questionsPath}
+                        //     />
+                        //   );
+                        // case DIAGRAM_LABEL_COMPLETION_TYPE:
+                        //   return (
+                        //     <DiagramLabelCompletion
+                        //       key={`${question.id}-${questionType}`}
+                        //       qIndex={qIndex}
+                        //       questionsPath={questionsPath}
+                        //     />
+                        //   );
+                        // case SENTENCE_COMPLETION_TYPE:
+                        //   return (
+                        //     <SentenceCompletion
+                        //       questionsPath={questionsPath}
+                        //       qIndex={qIndex}
+                        //       key={`${question.id}-${questionType}`}
+                        //       onDuplicateQuestion={handleDuplicateQuestion}
+                        //       onRemoveQuestion={handleRemoveQuestion}
+                        //     />
+                        //   );
+                        // case PARAGRAPH_COMPLETION_TYPE:
+                        //   return (
+                        //     <ParagraphCompletion
+                        //       key={`${question.id}-${questionType}`}
+                        //       qIndex={qIndex}
+                        //       questionsPath={questionsPath}
+                        //       onDuplicateQuestion={handleDuplicateQuestion}
+                        //       onRemoveQuestion={handleRemoveQuestion}
+                        //     />
+                        //   );
+                        // case NOTE_COMPLETION_TYPE:
+                        //   return (
+                        //     <NoteCompletion
+                        //       key={`${question.id}-${questionType}`}
+                        //       qIndex={qIndex}
+                        //       questionsPath={questionsPath}
+                        //       onDuplicateQuestion={handleDuplicateQuestion}
+                        //       onRemoveQuestion={handleRemoveQuestion}
+                        //     />
+                        //   );
                         default:
                           return null;
                       }

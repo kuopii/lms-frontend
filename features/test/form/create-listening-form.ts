@@ -1,150 +1,172 @@
 import { baseTestSchema, withAllValidations } from "@/validators/test";
 import { z } from "zod";
 
-const chooseOneSchema = z.object({
-  id: z.string().uuid(),
-  type: z.literal("Choose_the_Correct_Answer"),
-  prompt: z.string().min(1),
-  options: z.array(z.string()).min(1),
-  answer: z.string().min(1, "Answer required"),
-  explanation: z.string().min(1),
+export const QuestionType = z.enum([
+  "choose_correct_answer",
+  "choose_multiple_answer",
+]);
+
+const optionSchema = z.object({
+  option_key: z.string().min(1, "Option key is required"),
+  option_text: z.string().min(1, "Option text is required"),
 });
 
-const chooseMultipleSchema = z.object({
-  id: z.string().uuid(),
-  type: z.literal("Choose_Multiple_Answers"),
-  prompt: z.string().min(1),
-  options: z.array(z.string()).min(1),
-  answer: z.array(z.string()).min(1, "Answer required"),
-  explanation: z.string().min(1),
+export const breakdownSchema = z.object({
+  explanation: z.string().optional(),
 });
 
-const sentenceCompletion = z.object({
-  id: z.string().uuid(),
-  type: z.literal("Sentence_Completion"),
-  prompt: z.string().min(1),
-  options: z
-    .array(
-      z.object({
-        label: z.string(),
-        answer: z.string(),
-      }),
-    )
-    .min(1, "required"),
-  answer: z
-    .array(
-      z.object({
-        optIndex: z.number(),
-        wordIndex: z.number(),
-        word: z.string(),
-      }),
-    )
-    .min(1, "Please mark at least one blank"),
-  explanation: z.string().min(1),
+const chooseCorrectAnswerSchema = z.object({
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_type: z.literal("choose_correct_answer"),
+  question_text: z.string().min(1, "Question text is required"),
+  correct_answer: optionSchema,
+  options: z.array(optionSchema).min(2, "At least 2 options are required"),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  breakdown: breakdownSchema.optional(),
 });
 
-const shortAnswerQuestion = z.object({
-  id: z.string().uuid(),
-  type: z.literal("Short_Answer_Question"),
-  prompt: z.string().min(1),
-  options: z.array(z.string()).min(1),
-  answer: z.array(z.string()).min(1),
-  explanation: z.string().min(1),
+const chooseMultipleAnswerSchema = z.object({
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_type: z.literal("choose_multiple_answer"),
+  question_text: z.string().min(1, "Question text is required"),
+  correct_answer: z.array(optionSchema).min(1).max(2),
+  options: z.array(optionSchema).min(2, "At least 2 options are required"),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  breakdown: breakdownSchema.optional(),
 });
 
-const mapLabeling = z.object({
-  id: z.string().uuid(),
-  type: z.literal("Map_Labeling"),
-  prompt: z.string().min(1),
-  options: z
-    .array(
-      z.object({
-        label: z.string(),
-        answer: z.string(),
-      }),
-    )
-    .min(1, "required"),
-  answer: z.array(z.string()).min(1),
-  explanation: z.string().min(1),
-  image: z.any().optional(),
-});
+// const sentenceCompletion = z.object({
+//   id: z.string().uuid(),
+//   type: z.literal("Sentence_Completion"),
+//   prompt: z.string().min(1),
+//   options: z
+//     .array(
+//       z.object({
+//         label: z.string(),
+//         answer: z.string(),
+//       }),
+//     )
+//     .min(1, "required"),
+//   answer: z
+//     .array(
+//       z.object({
+//         optIndex: z.number(),
+//         wordIndex: z.number(),
+//         word: z.string(),
+//       }),
+//     )
+//     .min(1, "Please mark at least one blank"),
+//   explanation: z.string().min(1),
+// });
 
-const formCompletion = z.object({
-  id: z.string().uuid(),
-  type: z.literal("Form_Completion"),
-  prompt: z.string().min(1),
-  options: z
-    .array(
-      z.object({
-        label: z.string(),
-        answer: z.string(),
-      }),
-    )
-    .min(1, "required"),
-  answer: z.array(z.string()).min(1),
-  explanation: z.string().min(1),
-  image: z.any().optional(),
-});
+// const shortAnswerQuestion = z.object({
+//   id: z.string().uuid(),
+//   type: z.literal("Short_Answer_Question"),
+//   prompt: z.string().min(1),
+//   options: z.array(z.string()).min(1),
+//   answer: z.array(z.string()).min(1),
+//   explanation: z.string().min(1),
+// });
 
-const noteCompletion = z.object({
-  id: z.string().uuid(),
-  type: z.literal("Note_Completion"),
-  prompt: z.string().min(1),
-  options: z
-    .array(
-      z.object({
-        label: z.string(),
-        answer: z.array(
-          z.object({
-            optIndex: z.number().int().nonnegative(),
-            wordIndex: z.number().int().nonnegative(),
-            word: z.string().min(1),
-          }),
-        ),
-      }),
-    )
-    .min(1, "required"),
-  answer: z
-    .array(
-      z.object({
-        optIndex: z.number(),
-        wordIndex: z.number(),
-        word: z.string(),
-      }),
-    )
-    .min(1, "Please mark at least one blank"),
-  explanation: z.string().min(1),
-});
+// const mapLabeling = z.object({
+//   id: z.string().uuid(),
+//   type: z.literal("Map_Labeling"),
+//   prompt: z.string().min(1),
+//   options: z
+//     .array(
+//       z.object({
+//         label: z.string(),
+//         answer: z.string(),
+//       }),
+//     )
+//     .min(1, "required"),
+//   answer: z.array(z.string()).min(1),
+//   explanation: z.string().min(1),
+//   image: z.any().optional(),
+// });
 
-const summaryCompletion = z.object({
-  id: z.string().uuid(),
-  type: z.literal("Summary_Completion"),
-  prompt: z.string().min(1),
-  options: z
-    .array(
-      z.object({
-        label: z.string(),
-        answer: z.array(
-          z.object({
-            optIndex: z.number().int().nonnegative(),
-            wordIndex: z.number().int().nonnegative(),
-            word: z.string().min(1),
-          }),
-        ),
-      }),
-    )
-    .min(1, "required"),
-  answer: z
-    .array(
-      z.object({
-        optIndex: z.number(),
-        wordIndex: z.number(),
-        word: z.string(),
-      }),
-    )
-    .min(1, "Please mark at least one blank"),
-  explanation: z.string().min(1),
-});
+// const formCompletion = z.object({
+//   id: z.string().uuid(),
+//   type: z.literal("Form_Completion"),
+//   prompt: z.string().min(1),
+//   options: z
+//     .array(
+//       z.object({
+//         label: z.string(),
+//         answer: z.string(),
+//       }),
+//     )
+//     .min(1, "required"),
+//   answer: z.array(z.string()).min(1),
+//   explanation: z.string().min(1),
+//   image: z.any().optional(),
+// });
+
+// const noteCompletion = z.object({
+//   id: z.string().uuid(),
+//   type: z.literal("Note_Completion"),
+//   prompt: z.string().min(1),
+//   options: z
+//     .array(
+//       z.object({
+//         label: z.string(),
+//         answer: z.array(
+//           z.object({
+//             optIndex: z.number().int().nonnegative(),
+//             wordIndex: z.number().int().nonnegative(),
+//             word: z.string().min(1),
+//           }),
+//         ),
+//       }),
+//     )
+//     .min(1, "required"),
+//   answer: z
+//     .array(
+//       z.object({
+//         optIndex: z.number(),
+//         wordIndex: z.number(),
+//         word: z.string(),
+//       }),
+//     )
+//     .min(1, "Please mark at least one blank"),
+//   explanation: z.string().min(1),
+// });
+
+// const summaryCompletion = z.object({
+//   id: z.string().uuid(),
+//   type: z.literal("Summary_Completion"),
+//   prompt: z.string().min(1),
+//   options: z
+//     .array(
+//       z.object({
+//         label: z.string(),
+//         answer: z.array(
+//           z.object({
+//             optIndex: z.number().int().nonnegative(),
+//             wordIndex: z.number().int().nonnegative(),
+//             word: z.string().min(1),
+//           }),
+//         ),
+//       }),
+//     )
+//     .min(1, "required"),
+//   answer: z
+//     .array(
+//       z.object({
+//         optIndex: z.number(),
+//         wordIndex: z.number(),
+//         word: z.string(),
+//       }),
+//     )
+//     .min(1, "Please mark at least one blank"),
+//   explanation: z.string().min(1),
+// });
 
 const transcriptValueSchema = z.discriminatedUnion("type", [
   z.object({
@@ -175,15 +197,15 @@ const transcriptValueSchema = z.discriminatedUnion("type", [
   }),
 ]);
 
-const questionSchema = z.discriminatedUnion("type", [
-  chooseOneSchema,
-  chooseMultipleSchema,
-  sentenceCompletion,
-  shortAnswerQuestion,
-  mapLabeling,
-  formCompletion,
-  noteCompletion,
-  summaryCompletion,
+export const questionSchema = z.discriminatedUnion("question_type", [
+  chooseCorrectAnswerSchema,
+  chooseMultipleAnswerSchema,
+  // sentenceCompletion,
+  // shortAnswerQuestion,
+  // mapLabeling,
+  // formCompletion,
+  // noteCompletion,
+  // summaryCompletion,
 ]);
 
 const questionGroupSchema = z.object({

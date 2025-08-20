@@ -11,7 +11,7 @@ import {
   createListeningTestSchema,
 } from "../form/create-listening-form";
 import { PassageSection } from "../listening/components/passage-section";
-import { questionTemplates } from "../listening/types/question-templates";
+import { defaultListeningQuestion } from "../constant/default-listening-question";
 
 const CreateListeningTestPage = () => {
   const { setTitle, setTrigger } = useFormStore();
@@ -48,12 +48,7 @@ const CreateListeningTestPage = () => {
                 text: "",
                 title: "",
               },
-              questions: [
-                {
-                  id: crypto.randomUUID(),
-                  ...questionTemplates["Choose_the_Correct_Answer"](),
-                },
-              ],
+              questions: [defaultListeningQuestion["choose_correct_answer"]],
             },
           ],
         },
@@ -73,27 +68,26 @@ const CreateListeningTestPage = () => {
   const { handleSubmit } = form;
 
   const handleAddPassage = useCallback(() => {
-    const newQuestion = {
-      ...questionTemplates["Choose_the_Correct_Answer"](),
-      id: crypto.randomUUID(),
-    };
     appendPassage({
       title: "",
       description: "",
       questionGroups: [
         {
           instruction: "",
-          questions: [newQuestion],
+          questions: [defaultListeningQuestion["choose_correct_answer"]],
         },
       ],
     });
   }, [appendPassage]);
 
-  const onSubmit = useCallback((values: CreateListeningTestSchema) => {
-    alert("Form submitted");
-    console.log("Form values:", values);
-    form.reset();
-  }, []);
+  const onSubmit = useCallback(
+    (values: CreateListeningTestSchema) => {
+      alert("Form submitted");
+      console.log("Form values:", values);
+      form.reset();
+    },
+    [form],
+  );
 
   useEffect(() => {
     setTitle("Create a New Listening Test");
