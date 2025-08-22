@@ -139,7 +139,7 @@ const ChooseMultipleAnswer = ({
       </div>
 
       <QuestionBreakdown
-        name={`${questionsPath}.${qIndex}.breakdown.explanation`}
+        breakdownPath={`${questionsPath}.${qIndex}.breakdown`}
       />
     </div>
   );

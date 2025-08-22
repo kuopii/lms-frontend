@@ -126,6 +126,17 @@
   body {
     @apply bg-background text-foreground;
   }
+  .npm__react-simple-code-editor__textarea:focus {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .npm__react-simple-code-editor__textarea:focus {
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 body {

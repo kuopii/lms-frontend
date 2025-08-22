@@ -141,7 +141,7 @@ const TrueFalseNotGiven = ({
         </div>
       </div>
 
-      <QuestionBreakdown name={`${questionPath}.breakdown.explanation`} />
+      <QuestionBreakdown breakdownPath={`${questionPath}.breakdown`} />
     </div>
   );
 };
