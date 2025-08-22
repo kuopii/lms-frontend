@@ -1,14 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import QuestionBreakdown from "@/features/test/components/question-breakdown";
-import { useFieldArray, useFormContext } from "react-hook-form";
-import { FaTrash } from "react-icons/fa";
-import { PiCopyFill } from "react-icons/pi";
-import QuestionHeader from "@/features/test/components/question-header";
-import OptionFieldArray from "@/features/test/components/options-field-array";
-import AnswerKeyField from "@/features/test/components/answer-key-field";
 import {
   FormControl,
   FormField,
@@ -16,6 +8,15 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import AnswerKeyField from "@/features/test/components/answer-key-field";
+import OptionFieldArray from "@/features/test/components/options-field-array";
+import QuestionBreakdown from "@/features/test/components/question-breakdown";
+import QuestionHeader from "@/features/test/components/question-header";
+import { QuestionType } from "@/types/test";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { FaTrash } from "react-icons/fa";
+import { PiCopyFill } from "react-icons/pi";
 
 type OptionType = {
   option_key: string;
@@ -27,11 +28,26 @@ const ChooseCorrectAnswer = ({
   questionsPath,
   onDuplicateQuestion,
   onRemoveQuestion,
+  // tambahan
+  globalNumber,
+  handleChangeType,
+  nestIndex,
+  groupIndex,
 }: {
   qIndex: number;
   questionsPath: string;
   onDuplicateQuestion?: (index: number) => void;
   onRemoveQuestion?: (index: number) => void;
+  // tambahan
+  nestIndex: number;
+  groupIndex: number;
+  globalNumber: number;
+  handleChangeType: (
+    nestIndex: number,
+    groupIndex: number,
+    qIndex: number,
+    newType: QuestionType,
+  ) => void;
 }) => {
   const { control, watch } = useFormContext();
 
@@ -54,6 +70,11 @@ const ChooseCorrectAnswer = ({
           questionsPath={`${questionPath}.question_text`}
           variant="input"
           typePath={`${questionPath}.question_type`}
+          // tambahan
+          nestIndex={nestIndex}
+          groupIndex={groupIndex}
+          globalNumber={globalNumber}
+          handleChangeType={handleChangeType}
         />
 
         <OptionFieldArray

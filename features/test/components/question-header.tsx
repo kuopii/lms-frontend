@@ -15,10 +15,11 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  readingQuestionTypes,
   listeningQuestionTypes,
+  readingQuestionTypes,
 } from "@/data/test-filter-options";
 import { cn } from "@/lib/utils";
+import { QuestionType } from "@/types/test";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React from "react";
@@ -42,6 +43,16 @@ interface QuestionHeaderProps {
   className?: string;
   textHeader?: string;
   questionPlaceholder?: string;
+  // tambahan
+  nestIndex: number;
+  groupIndex: number;
+  globalNumber: number;
+  handleChangeType: (
+    nestIndex: number,
+    groupIndex: number,
+    qIndex: number,
+    newType: QuestionType,
+  ) => void;
 }
 
 const QuestionHeader: React.FC<QuestionHeaderProps> = ({
@@ -53,6 +64,11 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
   withNumber = true,
   className = "",
   textHeader = "",
+  // tambahan
+  nestIndex,
+  groupIndex,
+  globalNumber,
+  handleChangeType,
 }) => {
   const { control } = useFormContext();
   const pathname = usePathname();
@@ -62,7 +78,7 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
   return (
     <div className={cn("flex items-center justify-between gap-7", className)}>
       {withNumber && (
-        <span className="text-medium text-primary text-xl">{qIndex + 1}</span>
+        <span className="text-medium text-primary text-xl">{globalNumber}</span>
       )}
       <div className="flex w-full flex-1 flex-col items-center justify-between gap-4 md:flex-row">
         {variant === "input" && (
@@ -109,7 +125,18 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
           name={typePath}
           render={({ field }) => (
             <FormItem className="w-full md:w-64">
-              <Select onValueChange={field.onChange} value={field.value}>
+              <Select
+                value={field.value}
+                onValueChange={(val) => {
+                  field.onChange;
+                  handleChangeType?.(
+                    nestIndex,
+                    groupIndex,
+                    qIndex,
+                    val as QuestionType,
+                  );
+                }}
+              >
                 <FormControl>
                   <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select Question Type" />
