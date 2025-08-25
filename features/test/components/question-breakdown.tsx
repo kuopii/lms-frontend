@@ -15,6 +15,10 @@ import { useFormContext } from "react-hook-form";
 import { usePathname } from "next/navigation";
 import Editor from "react-simple-code-editor";
 import { getVariantFromPath } from "./question-header";
+import { useVocabularyModalStore } from "@/store/vocab-store";
+import { CreateVocabularyType } from "@/validators/vocabulary";
+import { useCreateVocabulary } from "@/features/dashboard/vocabulary/api/use-create-vocabulary";
+import { toast } from "sonner";
 
 // Types
 type Range = { start: number; end: number };
@@ -157,6 +161,7 @@ const adjustHighlights = (
 };
 
 const QuestionBreakdown = ({ breakdownPath }: { breakdownPath: string }) => {
+  const { openCreateModal, closeModal } = useVocabularyModalStore();
   const pathname = usePathname();
   const { control, watch, setValue } = useFormContext();
   const [selection, setSelection] = useState({ text: "", start: 0, end: 0 });
@@ -293,6 +298,20 @@ const QuestionBreakdown = ({ breakdownPath }: { breakdownPath: string }) => {
     [handleSelection],
   );
 
+  const { mutate: createVocabulary } = useCreateVocabulary({
+    onError: (e) => {
+      toast.error(e.message || "Something went wrong");
+      console.error(e);
+    },
+    onSuccess: () => {
+      toast.success("Vocabulary created successfully");
+      closeModal();
+    },
+  });
+
+  const handleAddVocabulary = (data: CreateVocabularyType) =>
+    createVocabulary(data);
+
   return (
     <div className="space-y-4 rounded-3xl bg-[#e4ecd7] p-3 md:p-4 lg:p-5">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -316,6 +335,20 @@ const QuestionBreakdown = ({ breakdownPath }: { breakdownPath: string }) => {
               type="button"
               size="xsm"
               variant="outline"
+              onClick={() => {
+                openCreateModal(
+                  {
+                    word: selection.text || "",
+                    category: "",
+                    category_id: "",
+                    spelling: "",
+                    translation: "",
+                    wordExplanation: "",
+                  },
+                  handleAddVocabulary,
+                );
+                setSelection({ text: "", start: 0, end: 0 });
+              }}
               className="border-primary hover:bg-primary w-full rounded-full text-[#333333] hover:text-white lg:w-fit"
             >
               <Plus className="mr-2 h-4 w-4" />
