@@ -73,7 +73,7 @@ export const PassageSection = ({
         <div className="flex justify-between">
           <div className="flex gap-[50px]">
             <div className="flex w-[156px] items-center justify-start border-r border-[#dedede]">
-              <p className="typoSubHeadlines">Passage {index + 1}</p>
+              <p className="typoSubHeadlines">Section {index + 1}</p>
             </div>
 
             <div className="flex flex-col gap-2">
