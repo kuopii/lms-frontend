@@ -1,5 +1,8 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   FormControl,
   FormField,
@@ -7,20 +10,17 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Button } from "@/components/ui/button";
 import { ChevronDown } from "lucide-react";
 
 type OptionType = {
@@ -109,6 +109,14 @@ const AnswerKeyField = ({ name, variant, options }: AnswerKeyFieldProps) => {
             ? field.value
             : [];
 
+          const syncValue = currentValue.filter((ans) =>
+            validOptions.some((opt) => opt.option_key === ans.option_key),
+          );
+
+          if (syncValue.length !== currentValue.length) {
+            field.onChange(syncValue);
+          }
+
           return (
             <FormItem className="line-clamp-1 w-full space-y-2 md:w-fit">
               <div className="flex flex-wrap gap-3">
@@ -117,7 +125,7 @@ const AnswerKeyField = ({ name, variant, options }: AnswerKeyFieldProps) => {
                     <Button
                       variant={"outline"}
                       size={"xsm"}
-                      className="text-muted-foreground hover:text-muted-foreground h-12 overflow-hidden text-sm font-normal hover:bg-transparent md:max-w-64 w-full"
+                      className="text-muted-foreground hover:text-muted-foreground h-12 w-full overflow-hidden text-sm font-normal hover:bg-transparent md:max-w-64"
                     >
                       {currentValue.length > 0 ? (
                         <div className="flex items-center gap-3">
@@ -146,7 +154,7 @@ const AnswerKeyField = ({ name, variant, options }: AnswerKeyFieldProps) => {
                   </PopoverTrigger>
                   <PopoverContent className="flex w-fit flex-col justify-start gap-2 rounded-3xl p-2">
                     {validOptions.map((option) => {
-                      const isChecked = currentValue.some(
+                      const isChecked = syncValue.some(
                         (v) => v.option_key === option.option_key,
                       );
 
@@ -158,9 +166,9 @@ const AnswerKeyField = ({ name, variant, options }: AnswerKeyFieldProps) => {
                           <Checkbox
                             checked={isChecked}
                             className="group-hover:border-black"
-                            disabled={!isChecked && currentValue.length >= 2}
+                            disabled={!isChecked && syncValue.length >= 2}
                             onCheckedChange={(checked) => {
-                              let newValue = [...currentValue];
+                              let newValue = [...syncValue];
 
                               if (checked) {
                                 if (

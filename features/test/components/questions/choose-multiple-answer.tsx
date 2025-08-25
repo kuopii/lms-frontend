@@ -47,9 +47,9 @@ const ChooseMultipleAnswer = ({
     name: questionsPath,
   });
 
-  const questionOptions = watch(
-    `${questionsPath}.${qIndex}.options`,
-  ) as OptionType[];
+  const questionOptions = watch(`${questionPath}.options`) as OptionType[];
+  const answer = watch(`${questionPath}.correct_answer`);
+  console.log("`${questionPath}.correct_answer -- multiple`", answer);
 
   return (
     <div className="space-y-6">
@@ -67,6 +67,8 @@ const ChooseMultipleAnswer = ({
         <OptionFieldArray
           questionsPath={`${questionPath}.options`}
           variant="editable"
+          answer={answer}
+          questionsPathAnswer={`${questionPath}.correct_answer`}
         />
 
         <Separator />
@@ -74,7 +76,7 @@ const ChooseMultipleAnswer = ({
         {/* ANSWER KEY & ACTION */}
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <AnswerKeyField
-            name={`${questionsPath}.${qIndex}.correct_answer`}
+            name={`${questionPath}.correct_answer`}
             variant={"multiple"}
             options={questionOptions || []}
           />
@@ -83,7 +85,7 @@ const ChooseMultipleAnswer = ({
             <span>Point: </span>
             <FormField
               control={control}
-              name={`${questionsPath}.${qIndex}.points_value`}
+              name={`${questionPath}.points_value`}
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl>
