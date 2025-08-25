@@ -328,14 +328,11 @@ export const QuestionsSection = ({
               watchedQuestion?.question_type || SINGLE_CHOICE_TYPE;
             const isActive = question.id === activeQuestionId;
 
-            // tambahan
             const globalNumber = getGlobalNumberQuestionIndex(
               nestIndex,
               questionGroupIndex,
               qIndex,
             );
-
-            console.log("globalNumber", globalNumber);
 
             return (
               <SortableItem key={question.id} id={question.id}>
@@ -373,7 +370,6 @@ export const QuestionsSection = ({
                               questionsPath={questionsPath}
                               onDuplicateQuestion={handleDuplicateQuestion}
                               onRemoveQuestion={handleRemoveQuestion}
-                              // tambahan
                               nestIndex={nestIndex}
                               groupIndex={questionGroupIndex}
                               globalNumber={globalNumber}
@@ -388,7 +384,6 @@ export const QuestionsSection = ({
                               questionsPath={questionsPath}
                               onDuplicateQuestion={handleDuplicateQuestion}
                               onRemoveQuestion={handleRemoveQuestion}
-                              // tambahan
                               nestIndex={nestIndex}
                               groupIndex={questionGroupIndex}
                               globalNumber={globalNumber}
