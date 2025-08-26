@@ -26,7 +26,6 @@ const OptionFieldArray = ({
   withNumber = true,
   placeholder = "",
   inputVariant = "ghost",
-  // tambahan
   answer,
   questionsPathAnswer,
 }: {
@@ -35,7 +34,6 @@ const OptionFieldArray = ({
   withNumber?: boolean;
   placeholder?: string;
   inputVariant?: "ghost" | "underline" | "default";
-  // tambahan
   answer: OptionType | OptionType[];
   questionsPathAnswer: string;
 }) => {
@@ -163,7 +161,7 @@ const OptionFieldArray = ({
               )}
             />
           </div>
-
+          
           {variant === "editable" && (
             <Button
               size={"icon"}
