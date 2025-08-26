@@ -8,14 +8,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Textarea } from "@/components/ui/textarea";
-import { QuestionType } from "@/types/test";
 import dynamic from "next/dynamic";
 import React, { useCallback } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaTrash } from "react-icons/fa";
-import { defaultListeningQuestion } from "../../constant/default-listening-question";
 import TranscriptForm from "../transcript/transcript-form";
 import { AudioDropzone } from "./audio-dropzone";
+import { QuestionType } from "@/types/test";
+import { defaultListeningQuestion } from "../../constant/default-listening-question";
 
 const QuestionsSection = dynamic(() => import("./questions-section"), {
   ssr: false,

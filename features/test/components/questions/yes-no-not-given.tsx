@@ -1,6 +1,14 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import QuestionBreakdown from "@/features/test/components/question-breakdown";
+import { useFieldArray, useFormContext } from "react-hook-form";
+import { FaTrash } from "react-icons/fa";
+import { PiCopyFill } from "react-icons/pi";
+import QuestionHeader from "@/features/test/components/question-header";
+import OptionFieldArray from "@/features/test/components/options-field-array";
+import AnswerKeyField from "@/features/test/components/answer-key-field";
 import {
   FormControl,
   FormField,
@@ -8,14 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import AnswerKeyField from "@/features/test/components/answer-key-field";
-import OptionFieldArray from "@/features/test/components/options-field-array";
-import QuestionBreakdown from "@/features/test/components/question-breakdown";
-import QuestionHeader from "@/features/test/components/question-header";
-import { useFieldArray, useFormContext } from "react-hook-form";
-import { FaTrash } from "react-icons/fa";
-import { PiCopyFill } from "react-icons/pi";
+import { extractIndexes } from "@/helpers/extract-indexes";
 
 type OptionType = {
   option_key: string;
@@ -38,14 +39,6 @@ const YesNoNotGiven = ({
   const { control, watch } = useFormContext();
 
   const questionPath = `${questionsPath}.${qIndex}`;
-
-  const extractIndexes = (path: string) => {
-    const parts = path.split(".");
-    return {
-      nestIndex: Number(parts[1]),
-      questionGroupIndex: Number(parts[3]),
-    };
-  };
 
   const { nestIndex, questionGroupIndex } = extractIndexes(questionsPath);
 

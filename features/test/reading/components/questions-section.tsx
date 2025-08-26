@@ -19,8 +19,8 @@ import {
 import React, { useCallback, useEffect, useRef } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { MdDragIndicator } from "react-icons/md";
-import { defaultReadingQuestion } from "../../constant/default-reading-question";
 import Toolbar from "./toolbar";
+import { defaultReadingQuestion } from "../../constant/default-reading-question";
 // import ChooseMultipleAnswer from "./questions/choose-multiple-answer";
 // import DiagramLabelCompletion from "./questions/diagram-label-completion";
 // import MatchingFeatures from "./questions/matching-features";
@@ -71,7 +71,6 @@ export const QuestionsSection = ({
   const { activeQuestionId, setActiveQuestion, clearActive } =
     useToolbarStore();
   const questionsContainerRef = useRef<HTMLDivElement>(null);
-  const previousQuestionTypesRef = useRef<Record<string, string>>({});
   const isDraggingRef = useRef(false);
 
   const questionsPath = `passages.${nestIndex}.questionGroups.${questionGroupIndex}.questions`;
@@ -94,62 +93,23 @@ export const QuestionsSection = ({
     name: "passages",
   }) as PassageReading[];
 
-  const getGlobalNumberQuestionIndex = (
-    nestIndex: number,
-    groupIndex: number,
-    qIndex: number,
-  ) => {
-    let counter = 0;
-    for (let p = 0; p <= nestIndex; p++) {
-      for (let g = 0; g < passages[p].questionGroups.length; g++) {
-        if (p === nestIndex && g === groupIndex) {
-          return counter + qIndex + 1;
+  const getGlobalNumberQuestionIndex = useCallback(
+    (nestIndex: number, groupIndex: number, qIndex: number) => {
+      let counter = 0;
+
+      for (let p = 0; p <= nestIndex; p++) {
+        for (let g = 0; g < passages[p].questionGroups.length; g++) {
+          if (p === nestIndex && g === groupIndex) {
+            return counter + qIndex + 1;
+          }
+          counter += passages[p].questionGroups[g].questions.length;
         }
-        counter += passages[p].questionGroups[g].questions.length;
       }
-    }
-    setValue(`${questionsPath}.${qIndex}.question_number`, counter + 1);
-    return counter + 1;
-  };
-
-  const handleChangeType = (
-    nestIndex: number,
-    groupIndex: number,
-    qIndex: number,
-    newType: QuestionType,
-  ) => {
-    if (groupIndex == null || qIndex == null || nestIndex == null) return;
-    const passages = getValues("passages");
-    const questionGroup = passages[nestIndex].questionGroups[groupIndex];
-    const question = questionGroup.questions[qIndex];
-
-    const defaultData =
-      defaultReadingQuestion[newType as keyof typeof defaultReadingQuestion];
-
-    if (questionGroup.questions.length === 1) {
-      questionGroup.questions[qIndex] = {
-        ...defaultData,
-        question_type: newType,
-        id: question.id,
-      };
-    } else {
-      const newGroup = {
-        questions: [
-          {
-            ...defaultData,
-            question_type: newType,
-            id: question.id,
-          },
-        ],
-      };
-
-      questionGroup.questions.splice(qIndex, 1);
-
-      passages[nestIndex].questionGroups.splice(groupIndex + 1, 0, newGroup);
-    }
-
-    setValue("passages", passages, { shouldDirty: true, shouldValidate: true });
-  };
+      setValue(`${questionsPath}.${qIndex}.question_number`, counter + 1);
+      return counter + 1;
+    },
+    [passages, setValue, questionsPath],
+  );
 
   // Memoized sensors for drag and drop
   const sensors = useSensors(
@@ -281,7 +241,8 @@ export const QuestionsSection = ({
         });
       });
     });
-  }, [passages, setValue]);
+  }, [passages, setValue, getGlobalNumberQuestionIndex, getValues]);
+
   return (
     <div className="space-y-4" ref={questionsContainerRef}>
       <DndContext
@@ -364,10 +325,7 @@ export const QuestionsSection = ({
                               questionsPath={questionsPath}
                               onDuplicateQuestion={handleDuplicateQuestion}
                               onRemoveQuestion={handleRemoveQuestion}
-                              nestIndex={nestIndex}
-                              groupIndex={questionGroupIndex}
                               globalNumber={globalNumber}
-                              handleChangeType={handleChangeType}
                             />
                           );
                         case YES_NO_TYPE:
@@ -378,10 +336,7 @@ export const QuestionsSection = ({
                               key={`${question.id}-${questionType}`}
                               onDuplicateQuestion={handleDuplicateQuestion}
                               onRemoveQuestion={handleRemoveQuestion}
-                              nestIndex={nestIndex}
-                              groupIndex={questionGroupIndex}
                               globalNumber={globalNumber}
-                              handleChangeType={handleChangeType}
                             />
                           );
                         // case MATCHING_HEADING_TYPE:

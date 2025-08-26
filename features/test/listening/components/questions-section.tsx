@@ -68,23 +68,23 @@ export const QuestionsSection = ({
     name: "passages",
   }) as PassageListening[];
 
-  const getGlobalNumberQuestionIndex = (
-    nestIndex: number,
-    groupIndex: number,
-    qIndex: number,
-  ) => {
-    let counter = 0;
-    for (let p = 0; p <= nestIndex; p++) {
-      for (let g = 0; g < passages[p].questionGroups.length; g++) {
-        if (p === nestIndex && g === groupIndex) {
-          return counter + qIndex + 1;
+  const getGlobalNumberQuestionIndex = useCallback(
+    (nestIndex: number, groupIndex: number, qIndex: number) => {
+      let counter = 0;
+
+      for (let p = 0; p <= nestIndex; p++) {
+        for (let g = 0; g < passages[p].questionGroups.length; g++) {
+          if (p === nestIndex && g === groupIndex) {
+            return counter + qIndex + 1;
+          }
+          counter += passages[p].questionGroups[g].questions.length;
         }
-        counter += passages[p].questionGroups[g].questions.length;
       }
-    }
-    setValue(`${questionsPath}.${qIndex}.question_number`, counter + 1);
-    return counter + 1;
-  };
+      setValue(`${questionsPath}.${qIndex}.question_number`, counter + 1);
+      return counter + 1;
+    },
+    [passages, setValue, questionsPath],
+  );
 
   // Memoized sensors for drag and drop
   const sensors = useSensors(
@@ -150,13 +150,7 @@ export const QuestionsSection = ({
       activeIndex !== -1 ? activeIndex + 1 : questionFields.length;
 
     insertQuestion(insertIndex, newQuestion);
-  }, [
-    activeQuestionId,
-    questionFields,
-    watchedQuestions,
-    insertQuestion,
-    setValue,
-  ]);
+  }, [activeQuestionId, questionFields, watchedQuestions, insertQuestion]);
 
   const handleQuestionClick = useCallback(
     (questionId: string, questionIndex: number, event: React.MouseEvent) => {
@@ -224,7 +218,7 @@ export const QuestionsSection = ({
         });
       });
     });
-  }, [passages, setValue]);
+  }, [passages, setValue, getValues, getGlobalNumberQuestionIndex]);
 
   return (
     <div className="space-y-4" ref={questionsContainerRef}>

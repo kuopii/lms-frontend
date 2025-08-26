@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { QuestionType } from "@/types/test";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import React from "react";
+import React, { useCallback } from "react";
 import { useFormContext } from "react-hook-form";
 import { defaultListeningQuestion } from "../constant/default-listening-question";
 import { defaultReadingQuestion } from "../constant/default-reading-question";
@@ -45,17 +45,15 @@ interface QuestionHeaderProps {
   className?: string;
   textHeader?: string;
   questionPlaceholder?: string;
-  // tambahan
   nestIndex: number;
   groupIndex: number;
   globalNumber: number;
-  // handleChangeType: (
-  //   nestIndex: number,
-  //   groupIndex: number,
-  //   qIndex: number,
-  //   newType: QuestionType,
-  // ) => void;
 }
+
+const defaultQuestion = {
+  listening: defaultListeningQuestion,
+  reading: defaultReadingQuestion,
+};
 
 const QuestionHeader: React.FC<QuestionHeaderProps> = ({
   qIndex,
@@ -76,50 +74,52 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
 
   const selectOptionsVariant = getVariantFromPath(pathname);
 
-  const defaultQuestion = {
-    listening: defaultListeningQuestion,
-    reading: defaultReadingQuestion,
-  };
+  const handleChangeType = useCallback(
+    (
+      nestIndex: number,
+      groupIndex: number,
+      qIndex: number,
+      newType: QuestionType,
+      type: "listening" | "reading",
+    ) => {
+      if (groupIndex == null || qIndex == null || nestIndex == null) return;
 
-  const handleChangeType = (
-    nestIndex: number,
-    groupIndex: number,
-    qIndex: number,
-    newType: QuestionType,
-    type: "listening" | "reading",
-  ) => {
-    if (groupIndex == null || qIndex == null || nestIndex == null) return;
-    const passages = getValues("passages");
-    const questionGroup = passages[nestIndex].questionGroups[groupIndex];
-    const question = questionGroup.questions[qIndex];
+      const passages = getValues("passages");
+      const questionGroup = passages[nestIndex].questionGroups[groupIndex];
+      const question = questionGroup.questions[qIndex];
 
-    const defaults = defaultQuestion[type];
-    const defaultData = defaults[newType as keyof typeof defaults];
+      const defaults = defaultQuestion[type];
+      const defaultData = defaults[newType as keyof typeof defaults];
 
-    if (questionGroup.questions.length === 1) {
-      questionGroup.questions[qIndex] = {
-        ...defaultData,
-        question_type: newType,
-        id: question.id,
-      };
-    } else {
-      const newGroup = {
-        questions: [
-          {
-            ...defaultData,
-            question_type: newType,
-            id: question.id,
-          },
-        ],
-      };
+      if (questionGroup.questions.length === 1) {
+        questionGroup.questions[qIndex] = {
+          ...defaultData,
+          question_type: newType,
+          id: question.id,
+        };
+      } else {
+        const newGroup = {
+          questions: [
+            {
+              ...defaultData,
+              question_type: newType,
+              id: question.id,
+            },
+          ],
+        };
 
-      questionGroup.questions.splice(qIndex, 1);
+        questionGroup.questions.splice(qIndex, 1);
 
-      passages[nestIndex].questionGroups.splice(groupIndex + 1, 0, newGroup);
-    }
+        passages[nestIndex].questionGroups.splice(groupIndex + 1, 0, newGroup);
+      }
 
-    setValue("passages", passages, { shouldDirty: true, shouldValidate: true });
-  };
+      setValue("passages", passages, {
+        shouldDirty: true,
+        shouldValidate: true,
+      });
+    },
+    [getValues, setValue],
+  );
 
   return (
     <div className={cn("flex items-center justify-between gap-7", className)}>
@@ -174,7 +174,7 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
               <Select
                 value={field.value}
                 onValueChange={(val) => {
-                  field.onChange;
+                  field.onChange(val);
                   handleChangeType?.(
                     nestIndex,
                     groupIndex,
