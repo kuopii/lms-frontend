@@ -97,8 +97,6 @@ const CreateListeningTestPage = () => {
     setTrigger(handleSubmit(onSubmit));
   }, [handleSubmit, setTrigger, onSubmit]);
 
-  console.log("passage length ?", passageFields.length);
-
   return (
     <FormProvider {...form}>
       <form onSubmit={handleSubmit(onSubmit)}>

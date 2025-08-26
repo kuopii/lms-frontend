@@ -39,7 +39,7 @@ const TrueFalseNotGiven = ({
   const { control, watch } = useFormContext();
 
   const questionPath = `${questionsPath}.${qIndex}`;
-  
+
   const { nestIndex, questionGroupIndex } = extractIndexes(questionsPath);
 
   const { fields: questionFields } = useFieldArray({
@@ -50,6 +50,8 @@ const TrueFalseNotGiven = ({
   const questionOptions = watch(
     `${questionsPath}.${qIndex}.options`,
   ) as OptionType[];
+
+  const answer = watch(`${questionPath}.correct_answer`);
 
   return (
     <div className="space-y-6">
@@ -67,6 +69,8 @@ const TrueFalseNotGiven = ({
         <OptionFieldArray
           questionsPath={`${questionPath}.options`}
           variant="readonly"
+          answer={answer}
+          questionsPathAnswer={`${questionPath}.correct_answer`}
         />
 
         <Separator />

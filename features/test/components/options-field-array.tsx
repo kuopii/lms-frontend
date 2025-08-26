@@ -11,9 +11,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { indexToLetter } from "@/helpers/index-to-letter";
 import { cn } from "@/lib/utils";
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { RiDeleteBack2Fill } from "react-icons/ri";
+
+type OptionType = {
+  option_key: string;
+  option_text: string;
+};
 
 const OptionFieldArray = ({
   questionsPath,
@@ -21,12 +26,16 @@ const OptionFieldArray = ({
   withNumber = true,
   placeholder = "",
   inputVariant = "ghost",
+  answer,
+  questionsPathAnswer,
 }: {
   variant?: "editable" | "readonly";
   questionsPath: string;
   withNumber?: boolean;
   placeholder?: string;
   inputVariant?: "ghost" | "underline" | "default";
+  answer: OptionType | OptionType[];
+  questionsPathAnswer: string;
 }) => {
   const form = useFormContext();
   const { control, watch } = form;
@@ -83,6 +92,22 @@ const OptionFieldArray = ({
     }
   };
 
+  function removeAnswerForOption(
+    currentAnswer: OptionType | OptionType[],
+    targetKey: string,
+  ): OptionType | OptionType[] {
+    if (Array.isArray(currentAnswer)) {
+      // multiple answer
+      return currentAnswer.filter((ans) => ans.option_key !== targetKey);
+    } else {
+      // correct answer
+      if (currentAnswer.option_key === targetKey) {
+        return { option_key: "", option_text: "" };
+      }
+      return currentAnswer;
+    }
+  }
+
   return (
     <div className="flex flex-col gap-5">
       {optionFields.map((field, optIndex) => (
@@ -136,12 +161,24 @@ const OptionFieldArray = ({
               )}
             />
           </div>
+          
           {variant === "editable" && (
             <Button
               size={"icon"}
               variant={"ghost"}
               type="button"
-              onClick={() => handleRemoveOption(optIndex)}
+              onClick={() => {
+                if (optionFields.length > 0) {
+                  const targetKey = optionsData[optIndex]?.option_key;
+                  console.log("targetKey", targetKey);
+
+                  form.setValue(
+                    questionsPathAnswer,
+                    removeAnswerForOption(answer, targetKey),
+                  );
+                }
+                handleRemoveOption(optIndex);
+              }}
               disabled={optionFields.length <= 1}
               className="[&_svg:not([class*='size-'])]:size-5"
             >
@@ -150,6 +187,7 @@ const OptionFieldArray = ({
           )}
         </div>
       ))}
+
       {variant === "editable" && (
         <div className="flex items-center gap-4 p-2.5">
           {withNumber && (
