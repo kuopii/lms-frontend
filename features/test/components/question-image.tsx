@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import { useToolbarStore } from "@/store/toolbar-store";
 import { Upload, X } from "lucide-react";
 import Image from "next/image";
@@ -25,6 +26,148 @@ interface ImageItem {
   file: File;
   previewUrl: string;
 }
+
+export const ImagePreview = ({
+  images,
+  onClearAll,
+  onRemove,
+  showActions,
+  className,
+  containerClassName,
+  itemClassName,
+  title,
+}: {
+  images: File[] | undefined;
+  onRemove?: (index: number) => void;
+  onClearAll?: () => void;
+  showActions?: boolean;
+  containerClassName?: string;
+  className?: string;
+  itemClassName?: string;
+  title?: string;
+}) => {
+  const [imageItems, setImageItems] = useState<ImageItem[]>([]);
+
+  useEffect(() => {
+    if (images && Array.isArray(images)) {
+      const items: ImageItem[] = images.map((file, index) => ({
+        id: `preview-${index}-${file.name}`,
+        file,
+        previewUrl: URL.createObjectURL(file),
+      }));
+      setImageItems(items);
+
+      // Cleanup function
+      return () => {
+        items.forEach((item) => {
+          URL.revokeObjectURL(item.previewUrl);
+        });
+      };
+    } else {
+      setImageItems([]);
+    }
+  }, [images]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      imageItems.forEach((item) => {
+        URL.revokeObjectURL(item.previewUrl);
+      });
+    };
+  }, [imageItems]);
+
+  const handleRemoveImage = useCallback(
+    (index: number) => {
+      if (onRemove) {
+        onRemove(index);
+      }
+    },
+    [onRemove],
+  );
+
+  const handleClearAll = useCallback(() => {
+    if (onClearAll) {
+      onClearAll();
+    }
+  }, [onClearAll]);
+
+  // Don't render if no images
+  if (!images || !Array.isArray(images) || images.length === 0) {
+    return null;
+  }
+
+  return (
+    <div className={cn("space-y-3", className)}>
+      <div className="flex items-center justify-between">
+        <Label>
+          {title || `Images`} ({images.length})
+        </Label>
+        {showActions && onClearAll && (
+          <Button
+            type="button"
+            variant="outline"
+            size="xsm"
+            onClick={handleClearAll}
+          >
+            <X className="mr-1 h-4 w-4" />
+            Clear All
+          </Button>
+        )}
+      </div>
+
+      <div
+        className={cn(
+          "grid gap-4 overflow-y-auto rounded-lg p-2",
+          containerClassName,
+        )}
+      >
+        {imageItems.map((imageItem, index) => (
+          <div key={imageItem.id} className="group relative">
+            <div
+              className={
+                (cn(
+                  "aspect-square overflow-hidden rounded-lg border-2 border-dashed border-gray-300",
+                ),
+                itemClassName)
+              }
+            >
+              <Image
+                width={150}
+                height={150}
+                src={imageItem.previewUrl}
+                alt={`Preview ${imageItem.file.name}`}
+                className="h-full w-full object-cover"
+                onError={() => {
+                  console.error(`Failed to load image: ${imageItem.file.name}`);
+                }}
+              />
+            </div>
+
+            {showActions && onRemove && (
+              <Button
+                type="button"
+                variant="destructive"
+                size="iconSm"
+                className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 opacity-0 transition-opacity group-hover:opacity-100"
+                onClick={() => handleRemoveImage(index)}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+            )}
+
+            <div className="absolute right-0 bottom-0 left-0 truncate bg-black/50 p-1 text-xs text-white">
+              {imageItem.file.name}
+            </div>
+            <div className="mt-1 text-center text-xs text-gray-500">
+              {(imageItem.file.size / 1024).toFixed(1)} KB
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const QuestionImage = ({
   isDialogOpen,
@@ -110,13 +253,13 @@ const QuestionImage = ({
     e.target.value = "";
   };
 
-  const handleRemoveImage = useCallback((id: string) => {
+  const handleRemoveImage = useCallback((index: number) => {
     setSelectedImages((prev) => {
-      const imageToRemove = prev.find((img) => img.id === id);
+      const imageToRemove = prev[index];
       if (imageToRemove && imageToRemove.previewUrl.startsWith("blob:")) {
         URL.revokeObjectURL(imageToRemove.previewUrl);
       }
-      return prev.filter((img) => img.id !== id);
+      return prev.filter((_, i) => i !== index);
     });
   }, []);
 
@@ -147,6 +290,9 @@ const QuestionImage = ({
     // Prevent dialog from closing when clicking inside dialog content
     e.stopPropagation();
   };
+
+  // Convert selectedImages to File array for ImagePreview
+  const selectedFiles = selectedImages.map((item) => item.file);
 
   return (
     <DialogContent
@@ -186,102 +332,30 @@ const QuestionImage = ({
           </p>
         </div>
 
-        {/* Selected Images Preview */}
-        {selectedImages.length > 0 && (
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <Label>Selected Images ({selectedImages.length})</Label>
-              <Button
-                type="button"
-                variant="outline"
-                size="xsm"
-                onClick={handleClearAll}
-              >
-                <X className="mr-1 h-4 w-4" />
-                Clear All
-              </Button>
-            </div>
-            <div className="grid max-h-60 grid-cols-2 gap-4 overflow-y-auto rounded-lg p-2 md:grid-cols-3">
-              {selectedImages.map((imageItem) => (
-                <div key={imageItem.id} className="group relative">
-                  <div className="aspect-square overflow-hidden rounded-lg border-2 border-dashed border-gray-300">
-                    <Image
-                      width={150}
-                      height={150}
-                      src={imageItem.previewUrl}
-                      alt={`Preview ${imageItem.file.name}`}
-                      className="h-full w-full object-cover"
-                      onError={() => {
-                        console.error(
-                          `Failed to load image: ${imageItem.file.name}`,
-                        );
-                      }}
-                    />
-                  </div>
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    size="iconSm"
-                    className="absolute -top-2 -right-2 h-6 w-6 rounded-full p-0 opacity-0 transition-opacity group-hover:opacity-100"
-                    onClick={() => handleRemoveImage(imageItem.id)}
-                  >
-                    <X className="h-3 w-3" />
-                  </Button>
-                  <div className="absolute right-0 bottom-0 left-0 truncate bg-black/50 p-1 text-xs text-white">
-                    {imageItem.file.name}
-                  </div>
-                  <div className="mt-1 text-center text-xs text-gray-500">
-                    {(imageItem.file.size / 1024).toFixed(1)} KB
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+        {/* Selected Images Preview using ImagePreview component */}
+        <ImagePreview
+          images={selectedFiles}
+          onRemove={handleRemoveImage}
+          onClearAll={handleClearAll}
+          showActions={true}
+          title="Selected Images"
+          containerClassName="max-h-60 grid-cols-2 md:grid-cols-3"
+        />
+
+        {/* Current Images Display (from form context) using ImagePreview component */}
+        {selectedImages.length === 0 && (
+          <ImagePreview
+            images={currentContext}
+            title="Current Images"
+            onRemove={handleRemoveImage}
+            onClearAll={handleClearAll}
+            containerClassName="max-h-60 grid-cols-2 md:grid-cols-3"
+            showActions={true}
+          />
         )}
 
-        {/* Current Images Display (from form context) */}
-        {currentContext &&
-          Array.isArray(currentContext) &&
-          currentContext.length > 0 &&
-          selectedImages.length === 0 && (
-            <div className="space-y-3">
-              <Label>Current Images ({currentContext.length})</Label>
-              <div className="grid max-h-60 grid-cols-2 gap-4 overflow-y-auto rounded-lg md:grid-cols-3">
-                {currentContext.map((item, index) => (
-                  <div key={`current-${index}`} className="relative">
-                    {item instanceof File ? (
-                      <>
-                        <div className="aspect-square overflow-hidden rounded-lg border border-dashed border-gray-200">
-                          <Image
-                            width={150}
-                            height={150}
-                            src={URL.createObjectURL(item)}
-                            alt={`Current ${item.name}`}
-                            className="h-full w-full object-cover"
-                          />
-                        </div>
-                        <div className="absolute right-0 bottom-0 left-0 truncate bg-black/50 p-1 text-xs text-white">
-                          {item.name}
-                        </div>
-                        <div className="mt-1 text-center text-xs text-gray-500">
-                          {(item.size / 1024).toFixed(1)} KB
-                        </div>
-                      </>
-                    ) : (
-                      <div className="flex aspect-square items-center justify-center rounded-lg border-2 border-gray-200">
-                        <div className="text-center text-sm text-gray-500">
-                          Unknown format
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
-          )}
-
         {/* Action Buttons */}
-        <div className="flex items-center justify-between pt-4">
+        <div className="flex flex-col items-center justify-between gap-4 pt-4 md:flex-row">
           <div className="text-sm text-gray-300">
             {selectedImages.length > 0 &&
               `${selectedImages.length} image(s) selected`}

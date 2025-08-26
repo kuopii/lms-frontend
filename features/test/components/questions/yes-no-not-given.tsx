@@ -17,6 +17,7 @@ import { extractIndexes } from "@/helpers/extract-indexes";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaTrash } from "react-icons/fa";
 import { PiCopyFill } from "react-icons/pi";
+import { ImagePreview } from "../question-image";
 
 type OptionType = {
   option_key: string;
@@ -47,6 +48,10 @@ const YesNoNotGiven = ({
     name: questionsPath,
   });
 
+  const currentImages = watch(
+    `${questionsPath}.${qIndex}.question_data.images`,
+  );
+
   const questionOptions = watch(
     `${questionsPath}.${qIndex}.options`,
   ) as OptionType[];
@@ -65,6 +70,14 @@ const YesNoNotGiven = ({
           groupIndex={questionGroupIndex}
           globalNumber={globalNumber}
         />
+
+        <div className="mx-auto max-w-md">
+          <ImagePreview
+            images={currentImages}
+            showActions={false}
+            containerClassName="grid-cols-3 md:grid-cols-4"
+          />
+        </div>
 
         <OptionFieldArray
           questionsPath={`${questionPath}.options`}
