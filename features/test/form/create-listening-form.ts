@@ -231,3 +231,5 @@ export const createListeningTestSchema = withAllValidations(
 export type CreateListeningTestSchema = z.infer<
   typeof createListeningTestSchema
 >;
+
+export type PassageListening = z.infer<typeof passageSchema>;

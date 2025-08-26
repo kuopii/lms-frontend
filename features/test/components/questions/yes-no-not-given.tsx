@@ -13,7 +13,6 @@ import AnswerKeyField from "@/features/test/components/answer-key-field";
 import OptionFieldArray from "@/features/test/components/options-field-array";
 import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import QuestionHeader from "@/features/test/components/question-header";
-import { QuestionType } from "@/types/test";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaTrash } from "react-icons/fa";
 import { PiCopyFill } from "react-icons/pi";
@@ -29,27 +28,26 @@ const YesNoNotGiven = ({
   onDuplicateQuestion,
   onRemoveQuestion,
   globalNumber,
-  handleChangeType,
-  nestIndex,
-  groupIndex,
 }: {
   qIndex: number;
   questionsPath: string;
   onDuplicateQuestion?: (index: number) => void;
   onRemoveQuestion?: (index: number) => void;
-  nestIndex: number;
-  groupIndex: number;
   globalNumber: number;
-  handleChangeType: (
-    nestIndex: number,
-    groupIndex: number,
-    qIndex: number,
-    newType: QuestionType,
-  ) => void;
 }) => {
   const { control, watch } = useFormContext();
 
   const questionPath = `${questionsPath}.${qIndex}`;
+
+  const extractIndexes = (path: string) => {
+    const parts = path.split(".");
+    return {
+      nestIndex: Number(parts[1]),
+      questionGroupIndex: Number(parts[3]),
+    };
+  };
+
+  const { nestIndex, questionGroupIndex } = extractIndexes(questionsPath);
 
   const { fields: questionFields } = useFieldArray({
     control,
@@ -69,9 +67,8 @@ const YesNoNotGiven = ({
           variant="input"
           typePath={`${questionPath}.question_type`}
           nestIndex={nestIndex}
-          groupIndex={groupIndex}
+          groupIndex={questionGroupIndex}
           globalNumber={globalNumber}
-          handleChangeType={handleChangeType}
         />
 
         <OptionFieldArray

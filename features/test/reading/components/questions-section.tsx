@@ -37,6 +37,7 @@ import ChooseCorrectAnswer from "@/features/test/components/questions/choose-cor
 import ChooseMultipleAnswer from "@/features/test/components/questions/choose-multiple-answer";
 import TrueFalseNotGiven from "@/features/test/components/questions/true-false-not-given";
 import YesNoNotGiven from "@/features/test/components/questions/yes-no-not-given";
+import { PassageReading } from "../../form/create-reading-form";
 
 type QuestionsSectionProps = {
   nestIndex: number;
@@ -89,7 +90,10 @@ export const QuestionsSection = ({
   }) as ReadingQuestion[];
 
   // pengecekan global number
-  const passages = useWatch({ name: "passages" });
+  const passages = useWatch({
+    name: "passages",
+  }) as PassageReading[];
+
   const getGlobalNumberQuestionIndex = (
     nestIndex: number,
     groupIndex: number,
@@ -119,19 +123,16 @@ export const QuestionsSection = ({
     const questionGroup = passages[nestIndex].questionGroups[groupIndex];
     const question = questionGroup.questions[qIndex];
 
-    // default data untuk tipe baru
     const defaultData =
       defaultReadingQuestion[newType as keyof typeof defaultReadingQuestion];
 
     if (questionGroup.questions.length === 1) {
-      // case 1: hanya ada 1 soal : replace ke default
       questionGroup.questions[qIndex] = {
         ...defaultData,
         question_type: newType,
         id: question.id,
       };
     } else {
-      // case 2: ada lebih dari 1 soal : pindahkan jadi grup baru
       const newGroup = {
         questions: [
           {
@@ -142,14 +143,11 @@ export const QuestionsSection = ({
         ],
       };
 
-      // hapus soal dari group lama
       questionGroup.questions.splice(qIndex, 1);
 
-      // tambahkan group baru setelah group saat ini
       passages[nestIndex].questionGroups.splice(groupIndex + 1, 0, newGroup);
     }
 
-    // update form state
     setValue("passages", passages, { shouldDirty: true, shouldValidate: true });
   };
 
@@ -263,15 +261,27 @@ export const QuestionsSection = ({
 
   // Inject question_number setiap question
   useEffect(() => {
-    questionFields.map((_, qIndex) => {
-      const globalNumber = getGlobalNumberQuestionIndex(
-        nestIndex,
-        questionGroupIndex,
-        qIndex,
-      );
-      setValue(`${questionsPath}.${qIndex}.question_number`, globalNumber);
+    passages?.forEach((p, pIndex) => {
+      p.questionGroups?.forEach((g, gIndex) => {
+        g.questions?.forEach((_, qIndex) => {
+          const globalNumber = getGlobalNumberQuestionIndex(
+            pIndex,
+            gIndex,
+            qIndex,
+          );
+          const path =
+            `passages.${pIndex}.questionGroups.${gIndex}.questions.${qIndex}.question_number` as const;
+          const current = getValues(path);
+          if (current !== globalNumber) {
+            setValue(path, globalNumber, {
+              shouldDirty: false,
+              shouldValidate: false,
+            });
+          }
+        });
+      });
     });
-  }, [questionFields, nestIndex, questionGroupIndex, setValue]);
+  }, [passages, setValue]);
   return (
     <div className="space-y-4" ref={questionsContainerRef}>
       <DndContext
@@ -332,10 +342,7 @@ export const QuestionsSection = ({
                               questionsPath={questionsPath}
                               onDuplicateQuestion={handleDuplicateQuestion}
                               onRemoveQuestion={handleRemoveQuestion}
-                              nestIndex={nestIndex}
-                              groupIndex={questionGroupIndex}
                               globalNumber={globalNumber}
-                              handleChangeType={handleChangeType}
                             />
                           );
                         case MULTIPLE_CHOICE_TYPE:
@@ -346,10 +353,7 @@ export const QuestionsSection = ({
                               questionsPath={questionsPath}
                               onDuplicateQuestion={handleDuplicateQuestion}
                               onRemoveQuestion={handleRemoveQuestion}
-                              nestIndex={nestIndex}
-                              groupIndex={questionGroupIndex}
                               globalNumber={globalNumber}
-                              handleChangeType={handleChangeType}
                             />
                           );
                         case TRUE_FALSE_TYPE:

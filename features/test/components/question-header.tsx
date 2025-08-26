@@ -24,6 +24,8 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React from "react";
 import { useFormContext } from "react-hook-form";
+import { defaultListeningQuestion } from "../constant/default-listening-question";
+import { defaultReadingQuestion } from "../constant/default-reading-question";
 
 function getVariantFromPath(pathname: string): "reading" | "listening" {
   const segments = pathname.split("/").filter(Boolean);
@@ -47,12 +49,12 @@ interface QuestionHeaderProps {
   nestIndex: number;
   groupIndex: number;
   globalNumber: number;
-  handleChangeType: (
-    nestIndex: number,
-    groupIndex: number,
-    qIndex: number,
-    newType: QuestionType,
-  ) => void;
+  // handleChangeType: (
+  //   nestIndex: number,
+  //   groupIndex: number,
+  //   qIndex: number,
+  //   newType: QuestionType,
+  // ) => void;
 }
 
 const QuestionHeader: React.FC<QuestionHeaderProps> = ({
@@ -64,16 +66,60 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
   withNumber = true,
   className = "",
   textHeader = "",
-  // tambahan
   nestIndex,
   groupIndex,
   globalNumber,
-  handleChangeType,
 }) => {
   const { control } = useFormContext();
   const pathname = usePathname();
+  const { getValues, setValue } = useFormContext();
 
   const selectOptionsVariant = getVariantFromPath(pathname);
+
+  const defaultQuestion = {
+    listening: defaultListeningQuestion,
+    reading: defaultReadingQuestion,
+  };
+
+  const handleChangeType = (
+    nestIndex: number,
+    groupIndex: number,
+    qIndex: number,
+    newType: QuestionType,
+    type: "listening" | "reading",
+  ) => {
+    if (groupIndex == null || qIndex == null || nestIndex == null) return;
+    const passages = getValues("passages");
+    const questionGroup = passages[nestIndex].questionGroups[groupIndex];
+    const question = questionGroup.questions[qIndex];
+
+    const defaults = defaultQuestion[type];
+    const defaultData = defaults[newType as keyof typeof defaults];
+
+    if (questionGroup.questions.length === 1) {
+      questionGroup.questions[qIndex] = {
+        ...defaultData,
+        question_type: newType,
+        id: question.id,
+      };
+    } else {
+      const newGroup = {
+        questions: [
+          {
+            ...defaultData,
+            question_type: newType,
+            id: question.id,
+          },
+        ],
+      };
+
+      questionGroup.questions.splice(qIndex, 1);
+
+      passages[nestIndex].questionGroups.splice(groupIndex + 1, 0, newGroup);
+    }
+
+    setValue("passages", passages, { shouldDirty: true, shouldValidate: true });
+  };
 
   return (
     <div className={cn("flex items-center justify-between gap-7", className)}>
@@ -134,6 +180,7 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
                     groupIndex,
                     qIndex,
                     val as QuestionType,
+                    selectOptionsVariant,
                   );
                 }}
               >

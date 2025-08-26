@@ -13,7 +13,6 @@ import AnswerKeyField from "@/features/test/components/answer-key-field";
 import OptionFieldArray from "@/features/test/components/options-field-array";
 import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import QuestionHeader from "@/features/test/components/question-header";
-import { QuestionType } from "@/types/test";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaTrash } from "react-icons/fa";
 import { PiCopyFill } from "react-icons/pi";
@@ -25,42 +24,36 @@ type OptionType = {
 
 const ChooseMultipleAnswer = ({
   qIndex,
-  questionsPath,
   onDuplicateQuestion,
   onRemoveQuestion,
-  // tambahan
   globalNumber,
-  handleChangeType,
-  nestIndex,
-  groupIndex,
+  questionsPath,
 }: {
   qIndex: number;
-  questionsPath: string;
   onDuplicateQuestion?: (index: number) => void;
   onRemoveQuestion?: (index: number) => void;
-  // tambahan
-  nestIndex: number;
-  groupIndex: number;
+  questionsPath: string;
   globalNumber: number;
-  handleChangeType: (
-    nestIndex: number,
-    groupIndex: number,
-    qIndex: number,
-    newType: QuestionType,
-  ) => void;
 }) => {
   const { control, watch } = useFormContext();
-
   const questionPath = `${questionsPath}.${qIndex}`;
+
+  const extractIndexes = (path: string) => {
+    const parts = path.split(".");
+    return {
+      nestIndex: Number(parts[1]),
+      questionGroupIndex: Number(parts[3]),
+    };
+  };
+
+  const { nestIndex, questionGroupIndex } = extractIndexes(questionsPath);
 
   const { fields: questionFields } = useFieldArray({
     control,
     name: questionsPath,
   });
 
-  const questionOptions = watch(
-    `${questionsPath}.${qIndex}.options`,
-  ) as OptionType[];
+  const questionOptions = watch(`${questionPath}.options`) as OptionType[];
 
   return (
     <div className="space-y-6">
@@ -70,11 +63,9 @@ const ChooseMultipleAnswer = ({
           questionsPath={`${questionPath}.question_text`}
           variant="input"
           typePath={`${questionPath}.question_type`}
-          // tambahan
           nestIndex={nestIndex}
-          groupIndex={groupIndex}
+          groupIndex={questionGroupIndex}
           globalNumber={globalNumber}
-          handleChangeType={handleChangeType}
         />
 
         <OptionFieldArray

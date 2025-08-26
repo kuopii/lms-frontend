@@ -22,6 +22,7 @@ import React, { useCallback, useEffect, useRef } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { MdDragIndicator } from "react-icons/md";
 import { defaultListeningQuestion } from "../../constant/default-listening-question";
+import { PassageListening } from "../../form/create-listening-form";
 import Toolbar from "../../reading/components/toolbar";
 
 type QuestionsSectionProps = {
@@ -63,7 +64,10 @@ export const QuestionsSection = ({
   }) as ReadingQuestion[];
 
   // pengecekan global number
-  const passages = useWatch({ name: "passages" });
+  const passages = useWatch({
+    name: "passages",
+  }) as PassageListening[];
+
   const getGlobalNumberQuestionIndex = (
     nestIndex: number,
     groupIndex: number,
@@ -81,112 +85,6 @@ export const QuestionsSection = ({
     setValue(`${questionsPath}.${qIndex}.question_number`, counter + 1);
     return counter + 1;
   };
-
-  const handleChangeType = (
-    nestIndex: number,
-    groupIndex: number,
-    qIndex: number,
-    newType: QuestionType,
-  ) => {
-    if (groupIndex == null || qIndex == null || nestIndex == null) return;
-    const passages = getValues("passages");
-    const questionGroup = passages[nestIndex].questionGroups[groupIndex];
-    const question = questionGroup.questions[qIndex];
-
-    // default data untuk tipe baru
-    const defaultData =
-      defaultListeningQuestion[
-        newType as keyof typeof defaultListeningQuestion
-      ];
-
-    if (questionGroup.questions.length === 1) {
-      // case 1: hanya ada 1 soal : replace ke default
-      questionGroup.questions[qIndex] = {
-        ...defaultData,
-        question_type: newType,
-        id: question.id,
-      };
-    } else {
-      // case 2: ada lebih dari 1 soal : pindahkan jadi grup baru
-      const newGroup = {
-        questions: [
-          {
-            ...defaultData,
-            question_type: newType,
-            id: question.id,
-          },
-        ],
-      };
-
-      // hapus soal dari group lama
-      questionGroup.questions.splice(qIndex, 1);
-
-      // tambahkan group baru setelah group saat ini
-      passages[nestIndex].questionGroups.splice(groupIndex + 1, 0, newGroup);
-    }
-
-    // update form state
-    setValue("passages", passages, { shouldDirty: true, shouldValidate: true });
-  };
-
-  // useEffect(() => {
-  //   // Skip during drag operations
-  //   if (isDraggingRef.current) return;
-
-  //   if (!questionTypes.length) return;
-
-  //   questionTypes.forEach(
-  //     ({ id: questionId, question_type: questionType, index }) => {
-  //       if (!questionType || !questionId) return;
-
-  //       const previousType = previousQuestionTypesRef.current[questionId];
-
-  //       if (previousType && previousType !== questionType) {
-  //         // If only 1 question, replace it with default question
-  //         if (questionFields.length === 1) {
-  //           const defaultData =
-  //             defaultListeningQuestion[
-  //               questionType as keyof typeof defaultListeningQuestion
-  //             ];
-
-  //           if (defaultData) {
-  //             // Use setTimeout to avoid conflicts with drag operations
-  //             setTimeout(() => {
-  //               // Create completely new question with default values
-  //               const newQuestion = {
-  //                 ...defaultData,
-  //                 question_Type: questionType,
-  //                 id: questionId, // Keep the same ID to maintain references
-  //               };
-
-  //               // Remove old question and insert new one at the same position
-  //               insertQuestion(index, newQuestion);
-  //               removeQuestion(index);
-  //             }, 0);
-  //           }
-  //         } else {
-  //           // If more than 1 question, call onAddQuestionGroup and remove current question
-  //           if (onAddQuestionGroup) {
-  //             setTimeout(() => {
-  //               onAddQuestionGroup(questionType as QuestionType);
-  //               // Remove the question that changed type
-  //               removeQuestion(index);
-  //             }, 0);
-  //           }
-  //         }
-  //       }
-
-  //       // Update ref without causing re-render
-  //       previousQuestionTypesRef.current[questionId] = questionType;
-  //     },
-  //   );
-  // }, [
-  //   questionTypes,
-  //   questionFields.length,
-  //   removeQuestion,
-  //   insertQuestion,
-  //   onAddQuestionGroup,
-  // ]);
 
   // Memoized sensors for drag and drop
   const sensors = useSensors(
@@ -252,7 +150,13 @@ export const QuestionsSection = ({
       activeIndex !== -1 ? activeIndex + 1 : questionFields.length;
 
     insertQuestion(insertIndex, newQuestion);
-  }, [activeQuestionId, questionFields, watchedQuestions, insertQuestion]);
+  }, [
+    activeQuestionId,
+    questionFields,
+    watchedQuestions,
+    insertQuestion,
+    setValue,
+  ]);
 
   const handleQuestionClick = useCallback(
     (questionId: string, questionIndex: number, event: React.MouseEvent) => {
@@ -300,15 +204,27 @@ export const QuestionsSection = ({
 
   // Inject question_number setiap question
   useEffect(() => {
-    questionFields.map((_, qIndex) => {
-      const globalNumber = getGlobalNumberQuestionIndex(
-        nestIndex,
-        questionGroupIndex,
-        qIndex,
-      );
-      setValue(`${questionsPath}.${qIndex}.question_number`, globalNumber);
+    passages?.forEach((p, pIndex) => {
+      p.questionGroups?.forEach((g, gIndex) => {
+        g.questions?.forEach((_, qIndex) => {
+          const globalNumber = getGlobalNumberQuestionIndex(
+            pIndex,
+            gIndex,
+            qIndex,
+          );
+          const path =
+            `passages.${pIndex}.questionGroups.${gIndex}.questions.${qIndex}.question_number` as const;
+          const current = getValues(path);
+          if (current !== globalNumber) {
+            setValue(path, globalNumber, {
+              shouldDirty: false,
+              shouldValidate: false,
+            });
+          }
+        });
+      });
     });
-  }, [questionFields, nestIndex, questionGroupIndex, setValue]);
+  }, [passages, setValue]);
 
   return (
     <div className="space-y-4" ref={questionsContainerRef}>
@@ -366,28 +282,22 @@ export const QuestionsSection = ({
                           return (
                             <ChooseCorrectAnswer
                               key={`${question.id}-${questionType}`}
-                              qIndex={qIndex}
                               questionsPath={questionsPath}
+                              qIndex={qIndex}
                               onDuplicateQuestion={handleDuplicateQuestion}
                               onRemoveQuestion={handleRemoveQuestion}
-                              nestIndex={nestIndex}
-                              groupIndex={questionGroupIndex}
                               globalNumber={globalNumber}
-                              handleChangeType={handleChangeType}
                             />
                           );
                         case MULTIPLE_CHOICE_TYPE:
                           return (
                             <ChooseMultipleAnswer
                               key={`${question.id}-${questionType}`}
-                              qIndex={qIndex}
                               questionsPath={questionsPath}
+                              qIndex={qIndex}
                               onDuplicateQuestion={handleDuplicateQuestion}
                               onRemoveQuestion={handleRemoveQuestion}
-                              nestIndex={nestIndex}
-                              groupIndex={questionGroupIndex}
                               globalNumber={globalNumber}
-                              handleChangeType={handleChangeType}
                             />
                           );
                         default:
