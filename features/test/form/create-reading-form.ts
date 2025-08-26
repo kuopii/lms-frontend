@@ -238,3 +238,4 @@ export const createReadingTestSchema = withAllValidations(
 );
 
 export type CreateReadingTestSchema = z.infer<typeof createReadingTestSchema>;
+export type PassageReading = z.infer<typeof passageSchema>;

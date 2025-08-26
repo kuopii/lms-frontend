@@ -16,6 +16,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { extractIndexes } from "@/helpers/extract-indexes";
 
 type OptionType = {
   option_key: string;
@@ -27,15 +28,19 @@ const ChooseCorrectAnswer = ({
   questionsPath,
   onDuplicateQuestion,
   onRemoveQuestion,
+  globalNumber,
 }: {
   qIndex: number;
   questionsPath: string;
   onDuplicateQuestion?: (index: number) => void;
   onRemoveQuestion?: (index: number) => void;
+  globalNumber: number;
 }) => {
   const { control, watch } = useFormContext();
 
   const questionPath = `${questionsPath}.${qIndex}`;
+
+  const { nestIndex, questionGroupIndex } = extractIndexes(questionsPath);
 
   const { fields: questionFields } = useFieldArray({
     control,
@@ -54,6 +59,9 @@ const ChooseCorrectAnswer = ({
           questionsPath={`${questionPath}.question_text`}
           variant="input"
           typePath={`${questionPath}.question_type`}
+          nestIndex={nestIndex}
+          groupIndex={questionGroupIndex}
+          globalNumber={globalNumber}
         />
 
         <OptionFieldArray
