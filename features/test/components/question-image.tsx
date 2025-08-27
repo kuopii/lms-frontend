@@ -184,9 +184,9 @@ const QuestionImage = ({
   const [selectedImages, setSelectedImages] = useState<ImageItem[]>([]);
   const previousDialogState = useRef<boolean>(false);
 
-  // Load existing images from context only when context changes
+  // Load existing images from context only when dialog opens
   useEffect(() => {
-    if (currentContext && Array.isArray(currentContext)) {
+    if (isDialogOpen && currentContext && Array.isArray(currentContext)) {
       const loadedImages: ImageItem[] = [];
       currentContext.forEach((item, index) => {
         if (item instanceof File) {
@@ -198,10 +198,10 @@ const QuestionImage = ({
         }
       });
       setSelectedImages(loadedImages);
-    } else {
+    } else if (isDialogOpen) {
       setSelectedImages([]);
     }
-  }, [currentContext]);
+  }, [isDialogOpen, currentContext]);
 
   // Handle dialog close/open changes
   useEffect(() => {
@@ -286,6 +286,26 @@ const QuestionImage = ({
     setIsDialogOpen(false);
   }, [selectedImages, setValue, imagePath, setIsDialogOpen]);
 
+  const handleCancelDialog = useCallback(() => {
+    // Reset to original state
+    if (currentContext && Array.isArray(currentContext)) {
+      const loadedImages: ImageItem[] = [];
+      currentContext.forEach((item, index) => {
+        if (item instanceof File) {
+          loadedImages.push({
+            id: `existing-${index}`,
+            file: item,
+            previewUrl: URL.createObjectURL(item),
+          });
+        }
+      });
+      setSelectedImages(loadedImages);
+    } else {
+      setSelectedImages([]);
+    }
+    onDialogOpenChange(false);
+  }, [currentContext, onDialogOpenChange]);
+
   const handleDialogContentClick = (e: React.MouseEvent) => {
     // Prevent dialog from closing when clicking inside dialog content
     e.stopPropagation();
@@ -332,7 +352,7 @@ const QuestionImage = ({
           </p>
         </div>
 
-        {/* Selected Images Preview using ImagePreview component */}
+        {/* FIXED: Selected Images Preview - show all selected images */}
         <ImagePreview
           images={selectedFiles}
           onRemove={handleRemoveImage}
@@ -342,17 +362,15 @@ const QuestionImage = ({
           containerClassName="max-h-60 grid-cols-2 md:grid-cols-3"
         />
 
-        {/* Current Images Display (from form context) using ImagePreview component */}
-        {selectedImages.length === 0 && (
-          <ImagePreview
-            images={currentContext}
-            title="Current Images"
-            onRemove={handleRemoveImage}
-            onClearAll={handleClearAll}
-            containerClassName="max-h-60 grid-cols-2 md:grid-cols-3"
-            showActions={true}
-          />
-        )}
+        {/* Show current saved images info */}
+        {currentContext &&
+          Array.isArray(currentContext) &&
+          currentContext.length > 0 &&
+          selectedImages.length === 0 && (
+            <div className="text-sm text-gray-400">
+              Current saved images: {currentContext.length} image(s)
+            </div>
+          )}
 
         {/* Action Buttons */}
         <div className="flex flex-col items-center justify-between gap-4 pt-4 md:flex-row">
@@ -365,16 +383,11 @@ const QuestionImage = ({
               type="button"
               size="xsm"
               variant="outline"
-              onClick={() => onDialogOpenChange(false)}
+              onClick={handleCancelDialog}
             >
               Cancel
             </Button>
-            <Button
-              type="button"
-              size="xsm"
-              onClick={handleSaveImages}
-              disabled={selectedImages.length === 0}
-            >
+            <Button type="button" size="xsm" onClick={handleSaveImages}>
               Save Images ({selectedImages.length})
             </Button>
           </div>
