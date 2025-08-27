@@ -12,6 +12,7 @@ import { useCallback, useEffect } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { defaultReadingQuestion } from "../constant/default-reading-question";
 import { PassageSection } from "../reading/components/passage-section";
+import VocabularyModal from "@/features/dashboard/vocabulary/components/vocabulary-modal";
 
 const CreateReadingTestPage = () => {
   const { setTrigger, setTitle } = useFormStore();
@@ -89,30 +90,33 @@ const CreateReadingTestPage = () => {
   }, [handleSubmit, setTrigger, onSubmit]);
 
   return (
-    <FormProvider {...form}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <BaseForm />
+    <>
+      <FormProvider {...form}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <BaseForm />
 
-        <Separator className="my-20" />
+          <Separator className="my-20" />
 
-        <div className="flex flex-col gap-16">
-          {passageFields.map((field, index) => {
-            return (
-              <PassageSection
-                key={field.id}
-                index={index}
-                isLast={passageFields.length === 1}
-                onRemove={removePassage}
-                onAddPassage={handleAddPassage}
-              />
-            );
-          })}
-        </div>
-      </form>
-      <pre className="mt-6 overflow-auto rounded-md bg-black p-4 text-sm text-white">
-        {JSON.stringify(form.watch(), null, 2)}
-      </pre>
-    </FormProvider>
+          <div className="flex flex-col gap-16">
+            {passageFields.map((field, index) => {
+              return (
+                <PassageSection
+                  key={field.id}
+                  index={index}
+                  isLast={passageFields.length === 1}
+                  onRemove={removePassage}
+                  onAddPassage={handleAddPassage}
+                />
+              );
+            })}
+          </div>
+        </form>
+        <pre className="mt-6 overflow-auto rounded-md bg-black p-4 text-sm text-white">
+          {JSON.stringify(form.watch(), null, 2)}
+        </pre>
+      </FormProvider>
+      <VocabularyModal />
+    </>
   );
 };
 

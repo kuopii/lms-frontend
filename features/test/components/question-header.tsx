@@ -27,7 +27,7 @@ import { useFormContext } from "react-hook-form";
 import { defaultListeningQuestion } from "../constant/default-listening-question";
 import { defaultReadingQuestion } from "../constant/default-reading-question";
 
-function getVariantFromPath(pathname: string): "reading" | "listening" {
+export function getVariantFromPath(pathname: string): "reading" | "listening" {
   const segments = pathname.split("/").filter(Boolean);
 
   const variant = segments[1];

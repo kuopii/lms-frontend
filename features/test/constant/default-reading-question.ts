@@ -28,6 +28,8 @@ export const defaultReadingQuestion: Record<
     points_value: 0,
     breakdown: {
       explanation: "",
+      has_highlight: false,
+      highlights: [],
     },
   },
   choose_multiple_answer: {
@@ -44,6 +46,8 @@ export const defaultReadingQuestion: Record<
     points_value: 0,
     breakdown: {
       explanation: "",
+      has_highlight: false,
+      highlights: [],
     },
   },
   true_false_not_given: {
@@ -71,6 +75,8 @@ export const defaultReadingQuestion: Record<
     points_value: 0,
     breakdown: {
       explanation: "",
+      has_highlight: false,
+      highlights: [],
     },
   },
   yes_no_not_given: {
@@ -98,6 +104,8 @@ export const defaultReadingQuestion: Record<
     points_value: 0,
     breakdown: {
       explanation: "",
+      has_highlight: false,
+      highlights: [],
     },
   },
   // matching_heading: {

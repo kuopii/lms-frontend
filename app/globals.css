@@ -126,10 +126,40 @@
   body {
     @apply bg-background text-foreground;
   }
+  .npm__react-simple-code-editor__textarea:focus {
+    outline: none !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .npm__react-simple-code-editor__textarea:focus {
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent;
+  }
 }
 
 body {
   font-family: var(--font-geologica), sans-serif;
+}
+
+.super-thin-scrollbar::-webkit-scrollbar {
+  width: 4px; /* Scrollbar Width */
+}
+
+.super-thin-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(156, 163, 175, 0.7); /* Thumb color */
+  border-radius: 10px; /* Rounding the thumb */
+  transition: background 0.5s ease; /* Smooth hover effect */
+}
+
+.super-thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.9); /* Thumb color on hover */
+}
+
+.super-thin-scrollbar::-webkit-scrollbar-track {
+  background: rgba(243, 244, 246, 0.7); /* Track color */
+  border-radius: 10px;
 }
 
 @layer utilities {

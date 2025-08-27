@@ -18,7 +18,7 @@ const badgeVariants = cva(
         outline:
           "text-foreground [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         custom:
-          "border-primary bg-transparent px-[10px] py-[5px] rounded-[15px]",
+          "border-primary bg-transparent px-2.5 py-1.5 rounded-2xl",
       },
       size: {
         default: "px-2 py-0.5 gap-1 [&>svg]:size-3",
