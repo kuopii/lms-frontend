@@ -233,7 +233,6 @@ const passageSchema = z.object({
 
 const withPointsValidation = <T extends z.ZodTypeAny>(schema: T) =>
   schema.superRefine((data: z.infer<T>, ctx) => {
-    // Hitung total points dari semua questions
     let totalPoints = 0;
 
     data.passages?.forEach((passage: Passage) => {
@@ -244,21 +243,12 @@ const withPointsValidation = <T extends z.ZodTypeAny>(schema: T) =>
       });
     });
 
-    // Validasi total points tidak boleh lebih dari 100
-    if (totalPoints > 100) {
+    // Validasi total points harus tepat 100
+    if (totalPoints !== 100) {
       ctx.addIssue({
         path: ["passages"],
         code: z.ZodIssueCode.custom,
-        message: `Total points (${totalPoints}) cannot exceed 100. Please adjust the points for each question.`,
-      });
-    }
-
-    // Optional: Validasi minimum total points
-    if (totalPoints < 50) {
-      ctx.addIssue({
-        path: ["passages"],
-        code: z.ZodIssueCode.custom,
-        message: `Total points (${totalPoints}) should be at least 50 for a proper test.`,
+        message: `Total points must equal 100, but currently is ${totalPoints}. Please adjust the points for each question.`,
       });
     }
   });
