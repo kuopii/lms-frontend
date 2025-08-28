@@ -63,6 +63,9 @@ export type Question = {
   points_value: number;
   options?: Option[];
   breakdown: Breakdown;
+  question_data?: {
+    images?: File[];
+  };
 };
 
 export type ReadingTypeQuestion =

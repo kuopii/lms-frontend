@@ -12,11 +12,7 @@ import AnswerKeyField from "@/features/test/components/answer-key-field";
 import { extractIndexes } from "@/helpers/extract-indexes";
 import { ImagePreview } from "../question-image";
 import PointsField from "../points-field";
-
-type OptionType = {
-  option_key: string;
-  option_text: string;
-};
+import { Option } from "@/types/test";
 
 const TrueFalseNotGiven = ({
   qIndex,
@@ -48,7 +44,7 @@ const TrueFalseNotGiven = ({
 
   const questionOptions = watch(
     `${questionsPath}.${qIndex}.options`,
-  ) as OptionType[];
+  ) as Option[];
 
   const answer = watch(`${questionPath}.correct_answer`);
 

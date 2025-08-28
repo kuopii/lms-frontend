@@ -12,11 +12,7 @@ import AnswerKeyField from "@/features/test/components/answer-key-field";
 import { extractIndexes } from "@/helpers/extract-indexes";
 import { ImagePreview } from "../question-image";
 import PointsField from "../points-field";
-
-type OptionType = {
-  option_key: string;
-  option_text: string;
-};
+import { Option } from "@/types/test";
 
 const ChooseCorrectAnswer = ({
   qIndex,
@@ -42,10 +38,10 @@ const ChooseCorrectAnswer = ({
     name: questionsPath,
   });
 
-  const questionOptions = watch(`${questionPath}.options`) as OptionType[];
+  const questionOptions = watch(`${questionPath}.options`) as Option[];
 
   const answer = watch(`${questionPath}.correct_answer`);
-  
+
   const currentImages = watch(
     `${questionsPath}.${qIndex}.question_data.images`,
   );

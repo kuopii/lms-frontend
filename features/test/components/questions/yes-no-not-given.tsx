@@ -12,11 +12,7 @@ import { FaTrash } from "react-icons/fa";
 import { PiCopyFill } from "react-icons/pi";
 import { ImagePreview } from "../question-image";
 import PointsField from "../points-field";
-
-type OptionType = {
-  option_key: string;
-  option_text: string;
-};
+import { Option } from "@/types/test";
 
 const YesNoNotGiven = ({
   qIndex,
@@ -48,7 +44,7 @@ const YesNoNotGiven = ({
 
   const questionOptions = watch(
     `${questionsPath}.${qIndex}.options`,
-  ) as OptionType[];
+  ) as Option[];
 
   const answer = watch(`${questionPath}.correct_answer`);
 
