@@ -1,13 +1,6 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import {
-  FormControl,
-  FormField,
-  FormItem,
-  FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import AnswerKeyField from "@/features/test/components/answer-key-field";
 import OptionFieldArray from "@/features/test/components/options-field-array";
@@ -18,6 +11,7 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaTrash } from "react-icons/fa";
 import { PiCopyFill } from "react-icons/pi";
 import { ImagePreview } from "../question-image";
+import PointsField from "../points-field";
 
 type OptionType = {
   option_key: string;
@@ -97,58 +91,38 @@ const YesNoNotGiven = ({
           />
 
           <div className="flex w-full items-center justify-between gap-4 md:w-fit">
-            <span>Point: </span>
-            <FormField
-              control={control}
-              name={`${questionsPath}.${qIndex}.points_value`}
-              render={({ field }) => (
-                <FormItem className="w-full">
-                  <FormControl>
-                    <Input
-                      type="number"
-                      max={100}
-                      min={0}
-                      variant="underline"
-                      placeholder="Score Point"
-                      value={field.value ?? ""}
-                      onChange={(e) => {
-                        const val = e.target.value;
-                        field.onChange(val === "" ? undefined : Number(val));
-                      }}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <Button
-              type="button"
-              size="iconSm"
-              variant="ghost"
-              onClick={(e) => {
-                e.stopPropagation();
-                onDuplicateQuestion?.(qIndex);
-              }}
-              className="-rotate-90 [&_svg:not([class*='size-'])]:size-6"
-            >
-              <PiCopyFill />
-            </Button>
-            <Button
-              size="iconSm"
-              type="button"
-              variant="ghost"
-              onClick={
-                questionFields.length > 0
-                  ? (e) => {
-                      e.stopPropagation();
-                      onRemoveQuestion?.(qIndex);
-                    }
-                  : undefined
-              }
-              className="text-destructive hover:text-destructive [&_svg:not([class*='size-'])]:size-5"
-            >
-              <FaTrash />
-            </Button>
+            <PointsField questionPath={questionPath} />
+
+            <div className="flex items-center gap-2">
+              <Button
+                type="button"
+                size="iconSm"
+                variant="ghost"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDuplicateQuestion?.(qIndex);
+                }}
+                className="-rotate-90 [&_svg:not([class*='size-'])]:size-6"
+              >
+                <PiCopyFill />
+              </Button>
+              <Button
+                size="iconSm"
+                type="button"
+                variant="ghost"
+                onClick={
+                  questionFields.length > 0
+                    ? (e) => {
+                        e.stopPropagation();
+                        onRemoveQuestion?.(qIndex);
+                      }
+                    : undefined
+                }
+                className="text-destructive hover:text-destructive [&_svg:not([class*='size-'])]:size-5"
+              >
+                <FaTrash />
+              </Button>
+            </div>
           </div>
         </div>
       </div>

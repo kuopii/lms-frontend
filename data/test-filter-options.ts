@@ -25,7 +25,7 @@ export const readingQuestionTypes = [
   { label: "Flowchart Completion", value: "flowchart_completion" },
   { label: "Diagram Label Completion", value: "diagram_label_completion" },
   { label: "Short Answer Question", value: "short_answer_question" },
-];
+] as const;
 
 export const listeningQuestionTypes = [
   { label: "Choose the Correct Answer", value: "choose_correct_answer" },
@@ -38,4 +38,4 @@ export const listeningQuestionTypes = [
   { label: "Note Completion", value: "note_completion" },
   { label: "Flowchart Completion", value: "flowchart_completion" },
   { label: "Summary Completion", value: "summary_completion" },
-];
+] as const;

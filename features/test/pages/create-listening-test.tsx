@@ -12,6 +12,8 @@ import {
 } from "../form/create-listening-form";
 import { PassageSection } from "../listening/components/passage-section";
 import { defaultListeningQuestion } from "../constant/default-listening-question";
+import { toast } from "sonner";
+import { flattenErrors, prettyPath } from "@/helpers/flattern-error";
 
 const CreateListeningTestPage = () => {
   const { setTitle, setTrigger } = useFormStore();
@@ -89,17 +91,27 @@ const CreateListeningTestPage = () => {
     [form],
   );
 
+  const onError = useCallback(
+    (errors: typeof form.formState.errors) => {
+      const flat = flattenErrors(errors);
+      flat.forEach((err) => {
+        toast.error(`${prettyPath(err.path)}: ${err.message}`);
+      });
+    },
+    [form],
+  );
+
   useEffect(() => {
     setTitle("Create a New Listening Test");
   }, [setTitle]);
 
   useEffect(() => {
-    setTrigger(handleSubmit(onSubmit));
-  }, [handleSubmit, setTrigger, onSubmit]);
+    setTrigger(handleSubmit(onSubmit, onError));
+  }, [handleSubmit, setTrigger, onSubmit, onError]);
 
   return (
     <FormProvider {...form}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit, onError)}>
         <BaseForm />
 
         <Separator className="my-20" />
