@@ -19,7 +19,7 @@ import {
 import React, { useCallback, useEffect, useRef } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { MdDragIndicator } from "react-icons/md";
-import Toolbar from "./toolbar";
+import Toolbar from "@/features/test/components/toolbar";
 import { defaultReadingQuestion } from "../../constant/default-reading-question";
 // import ChooseMultipleAnswer from "./questions/choose-multiple-answer";
 // import DiagramLabelCompletion from "./questions/diagram-label-completion";
@@ -208,9 +208,19 @@ export const QuestionsSection = ({
         target.closest('[role="listbox"]') ||
         target.closest("[data-radix-select-content]") ||
         target.closest("[data-radix-popper-content-wrapper]");
+      const isDialogClick =
+        target.closest("[data-radix-dialog-content]") ||
+        target.closest("[role='dialog']") ||
+        target.closest(".dialog-content");
       const isContainerClick = questionsContainerRef.current?.contains(target);
 
-      if (!isToolbarClick && !isSelectClick && !isContainerClick) {
+      // Don't clear active state if clicking on dialog, toolbar, select, or container
+      if (
+        !isToolbarClick &&
+        !isSelectClick &&
+        !isDialogClick &&
+        !isContainerClick
+      ) {
         clearActive();
       }
     };

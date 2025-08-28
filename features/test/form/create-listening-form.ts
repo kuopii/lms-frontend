@@ -15,6 +15,12 @@ export const breakdownSchema = z.object({
   explanation: z.string().optional(),
 });
 
+export const questionDataSchema = z.object({
+  images: z
+    .array(z.instanceof(File, { message: "Each image must be a valid file" }))
+    .optional(),
+});
+
 const chooseCorrectAnswerSchema = z.object({
   question_number: z.number({
     required_error: "Question number is required",
@@ -25,6 +31,7 @@ const chooseCorrectAnswerSchema = z.object({
   correct_answer: optionSchema,
   options: z.array(optionSchema).min(2, "At least 2 options are required"),
   points_value: z.number().min(1, "Points value must be at least 1"),
+  question_data: questionDataSchema.optional(),
   breakdown: breakdownSchema.optional(),
 });
 
@@ -38,6 +45,7 @@ const chooseMultipleAnswerSchema = z.object({
   correct_answer: z.array(optionSchema).min(1).max(2),
   options: z.array(optionSchema).min(2, "At least 2 options are required"),
   points_value: z.number().min(1, "Points value must be at least 1"),
+  question_data: questionDataSchema.optional(),
   breakdown: breakdownSchema.optional(),
 });
 

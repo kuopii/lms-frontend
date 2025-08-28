@@ -17,6 +17,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { extractIndexes } from "@/helpers/extract-indexes";
+import { ImagePreview } from "../question-image";
 
 type OptionType = {
   option_key: string;
@@ -50,6 +51,10 @@ const ChooseMultipleAnswer = ({
   const questionOptions = watch(`${questionPath}.options`) as OptionType[];
 
   const answer = watch(`${questionPath}.correct_answer`);
+  
+  const currentImages = watch(
+    `${questionsPath}.${qIndex}.question_data.images`,
+  );
 
   return (
     <div className="space-y-6">
@@ -63,6 +68,14 @@ const ChooseMultipleAnswer = ({
           groupIndex={questionGroupIndex}
           globalNumber={globalNumber}
         />
+
+        <div className="mx-auto max-w-md">
+          <ImagePreview
+            images={currentImages}
+            showActions={false}
+            containerClassName="grid-cols-3 md:grid-cols-4"
+          />
+        </div>
 
         <OptionFieldArray
           questionsPath={`${questionPath}.options`}
