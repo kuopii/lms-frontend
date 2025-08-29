@@ -23,6 +23,7 @@ import {
 import React, { useCallback, useEffect, useRef } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { MdDragIndicator } from "react-icons/md";
+import SentenceCompletion from "../../components/questions/sentence-completion";
 import { defaultListeningQuestion } from "../../constant/default-listening-question";
 import { PassageListening } from "../../form/create-listening-form";
 
@@ -321,7 +322,7 @@ export const QuestionsSection = ({
                           );
                         case SENTENCE_COMPLETION:
                           return (
-                            <NoteCompletion
+                            <SentenceCompletion
                               key={`${question.id}-${questionType}`}
                               questionsPath={questionsPath}
                               qIndex={qIndex}
