@@ -21,22 +21,19 @@ import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { MdDragIndicator } from "react-icons/md";
 import Toolbar from "@/features/test/components/toolbar";
 import { defaultReadingQuestion } from "../../constant/default-reading-question";
-// import ChooseMultipleAnswer from "./questions/choose-multiple-answer";
 // import DiagramLabelCompletion from "./questions/diagram-label-completion";
 // import MatchingFeatures from "./questions/matching-features";
 // import MatchingHeading from "./questions/matching-heading";
 // import MatchingInformation from "./questions/matching-information";
 // import MatchingSentenceEnding from "./questions/matching-sentence-ending";
-// import NoteCompletion from "./questions/note-completion";
 // import ParagraphCompletion from "./questions/paragraph-completion";
 // import SentenceCompletion from "./questions/sentence-completion";
 // import ShortAnswer from "./questions/short-answer";
-// import TrueFalseNotGiven from "./questions/true-false-not-given";
-// import YesNoNotGiven from "./questions/yes-no-not-given";
 import ChooseCorrectAnswer from "@/features/test/components/questions/choose-correct-answer";
 import ChooseMultipleAnswer from "@/features/test/components/questions/choose-multiple-answer";
 import TrueFalseNotGiven from "@/features/test/components/questions/true-false-not-given";
 import YesNoNotGiven from "@/features/test/components/questions/yes-no-not-given";
+import NoteCompletion from "@/features/test/components/questions/note-completion";
 import { PassageReading } from "../../form/create-reading-form";
 
 type QuestionsSectionProps = {
@@ -58,7 +55,7 @@ const SINGLE_CHOICE_TYPE = "choose_correct_answer";
 // const DIAGRAM_LABEL_COMPLETION_TYPE = "diagram_label_completion";
 // const SENTENCE_COMPLETION_TYPE = "sentence_completion";
 // const PARAGRAPH_COMPLETION_TYPE = "paragraph_completion";
-// const NOTE_COMPLETION_TYPE = "note_completion";
+const NOTE_COMPLETION_TYPE = "note_completion";
 
 export const QuestionsSection = ({
   nestIndex,
@@ -419,16 +416,17 @@ export const QuestionsSection = ({
                         //       onRemoveQuestion={handleRemoveQuestion}
                         //     />
                         //   );
-                        // case NOTE_COMPLETION_TYPE:
-                        //   return (
-                        //     <NoteCompletion
-                        //       key={`${question.id}-${questionType}`}
-                        //       qIndex={qIndex}
-                        //       questionsPath={questionsPath}
-                        //       onDuplicateQuestion={handleDuplicateQuestion}
-                        //       onRemoveQuestion={handleRemoveQuestion}
-                        //     />
-                        //   );
+                        case NOTE_COMPLETION_TYPE:
+                          return (
+                            <NoteCompletion
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                            />
+                          );
                         default:
                           return null;
                       }
