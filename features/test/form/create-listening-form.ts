@@ -6,6 +6,7 @@ export const QuestionType = z.enum([
   "choose_correct_answer",
   "choose_multiple_answer",
   "note_completion",
+  "sentence_completion",
 ]);
 
 const optionSchema = z.object({
@@ -15,6 +16,12 @@ const optionSchema = z.object({
 
 export const breakdownSchema = z.object({
   explanation: z.string().optional(),
+  has_highlight: z.boolean().default(false),
+  highlights: z
+    .array(
+      z.object({ start_char_index: z.number(), end_char_index: z.number() }),
+    )
+    .optional(),
 });
 
 export const questionDataSchema = z.object({
@@ -51,29 +58,17 @@ const chooseMultipleAnswerSchema = z.object({
   breakdown: breakdownSchema.optional(),
 });
 
-// const sentenceCompletion = z.object({
-//   id: z.string().uuid(),
-//   type: z.literal("Sentence_Completion"),
-//   prompt: z.string().min(1),
-//   options: z
-//     .array(
-//       z.object({
-//         label: z.string(),
-//         answer: z.string(),
-//       }),
-//     )
-//     .min(1, "required"),
-//   answer: z
-//     .array(
-//       z.object({
-//         optIndex: z.number(),
-//         wordIndex: z.number(),
-//         word: z.string(),
-//       }),
-//     )
-//     .min(1, "Please mark at least one blank"),
-//   explanation: z.string().min(1),
-// });
+const sentenceCompletion = z.object({
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_type: z.literal("sentence_completion"),
+  question_text: z.string().min(1, "Question text is required"),
+  correct_answer: z.array(optionSchema).min(1).max(2),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  breakdown: breakdownSchema.optional(),
+});
 
 // const shortAnswerQuestion = z.object({
 //   id: z.string().uuid(),
@@ -195,7 +190,7 @@ const transcriptValueSchema = z.discriminatedUnion("type", [
 export const questionSchema = z.discriminatedUnion("question_type", [
   chooseCorrectAnswerSchema,
   chooseMultipleAnswerSchema,
-  // sentenceCompletion,
+  sentenceCompletion,
   // shortAnswerQuestion,
   // mapLabeling,
   // formCompletion,
