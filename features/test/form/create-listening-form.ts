@@ -1,3 +1,4 @@
+import { Passage, Question, QuestionGroup } from "@/types/test";
 import { baseTestSchema, withAllValidations } from "@/validators/test";
 import { z } from "zod";
 
@@ -230,10 +231,36 @@ const passageSchema = z.object({
     .optional(),
 });
 
-export const createListeningTestSchema = withAllValidations(
-  baseTestSchema.extend({
-    passages: z.array(passageSchema).min(1, "At least one passage is required"),
-  }),
+const withPointsValidation = <T extends z.ZodTypeAny>(schema: T) =>
+  schema.superRefine((data: z.infer<T>, ctx) => {
+    let totalPoints = 0;
+
+    data.passages?.forEach((passage: Passage) => {
+      passage.questionGroups?.forEach((group: QuestionGroup) => {
+        group.questions?.forEach((question: Question) => {
+          totalPoints += question.points_value || 0;
+        });
+      });
+    });
+
+    // Validasi total points harus tepat 100
+    if (totalPoints !== 100) {
+      ctx.addIssue({
+        path: ["passages"],
+        code: z.ZodIssueCode.custom,
+        message: `Total points must equal 100, but currently is ${totalPoints}. Please adjust the points for each question.`,
+      });
+    }
+  });
+
+export const createListeningTestSchema = withPointsValidation(
+  withAllValidations(
+    baseTestSchema.extend({
+      passages: z
+        .array(passageSchema)
+        .min(1, "At least one passage is required"),
+    }),
+  ),
 );
 
 export type CreateListeningTestSchema = z.infer<

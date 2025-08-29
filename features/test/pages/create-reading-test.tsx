@@ -13,6 +13,8 @@ import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { defaultReadingQuestion } from "../constant/default-reading-question";
 import { PassageSection } from "../reading/components/passage-section";
 import VocabularyModal from "@/features/dashboard/vocabulary/components/vocabulary-modal";
+import { toast } from "sonner";
+import { flattenErrors, prettyPath } from "@/helpers/flattern-error";
 
 const CreateReadingTestPage = () => {
   const { setTrigger, setTitle } = useFormStore();
@@ -72,6 +74,16 @@ const CreateReadingTestPage = () => {
     console.log("Form values:", values);
   }, []);
 
+  const onError = useCallback(
+    (errors: typeof form.formState.errors) => {
+      const flat = flattenErrors(errors);
+      flat.forEach((err) => {
+        toast.error(`${prettyPath(err.path)}: ${err.message}`);
+      });
+    },
+    [form],
+  );
+
   const handleAddPassage = useCallback(() => {
     appendPassage({
       title: "",
@@ -86,13 +98,13 @@ const CreateReadingTestPage = () => {
   }, [appendPassage]);
 
   useEffect(() => {
-    setTrigger(handleSubmit(onSubmit));
-  }, [handleSubmit, setTrigger, onSubmit]);
+    setTrigger(handleSubmit(onSubmit, onError));
+  }, [handleSubmit, setTrigger, onSubmit, onError]);
 
   return (
     <>
       <FormProvider {...form}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit, onError)}>
           <BaseForm />
 
           <Separator className="my-20" />
