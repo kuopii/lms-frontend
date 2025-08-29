@@ -16,6 +16,12 @@ const optionSchema = z.object({
 
 export const breakdownSchema = z.object({
   explanation: z.string().optional(),
+  has_highlight: z.boolean().default(false),
+  highlights: z
+    .array(
+      z.object({ start_char_index: z.number(), end_char_index: z.number() }),
+    )
+    .optional(),
 });
 
 export const questionDataSchema = z.object({
