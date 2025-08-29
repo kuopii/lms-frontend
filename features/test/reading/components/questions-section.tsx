@@ -48,13 +48,13 @@ const TRUE_FALSE_TYPE = "true_false_not_given";
 const YES_NO_TYPE = "yes_no_not_given";
 const MULTIPLE_CHOICE_TYPE = "choose_multiple_answer";
 const SINGLE_CHOICE_TYPE = "choose_correct_answer";
+const SENTENCE_COMPLETION = "sentence_completion";
 // const MATCHING_HEADING_TYPE = "matching_heading";
 // const SHORT_ANSWER_TYPE = "short_answer_question";
 // const MATCHING_FEATURES_TYPE = "matching_features";
 // const MATCHING_SENTENCE_ENDING_TYPE = "matching_sentence_ending";
 // const MATCHING_INFORMATION_TYPE = "matching_information";
 // const DIAGRAM_LABEL_COMPLETION_TYPE = "diagram_label_completion";
-const SENTENCE_COMPLETION_TYPE = "sentence_completion";
 // const PARAGRAPH_COMPLETION_TYPE = "paragraph_completion";
 const NOTE_COMPLETION_TYPE = "note_completion";
 
@@ -347,7 +347,7 @@ export const QuestionsSection = ({
                               globalNumber={globalNumber}
                             />
                           );
-                        case SENTENCE_COMPLETION_TYPE:
+                        case SENTENCE_COMPLETION:
                           return (
                             <SentenceCompletion
                               key={`${question.id}-${questionType}`}
@@ -408,16 +408,7 @@ export const QuestionsSection = ({
                         //       questionsPath={questionsPath}
                         //     />
                         //   );
-                        // case SENTENCE_COMPLETION_TYPE:
-                        //   return (
-                        //     <SentenceCompletion
-                        //       questionsPath={questionsPath}
-                        //       qIndex={qIndex}
-                        //       key={`${question.id}-${questionType}`}
-                        //       onDuplicateQuestion={handleDuplicateQuestion}
-                        //       onRemoveQuestion={handleRemoveQuestion}
-                        //     />
-                        //   );
+                        //
                         // case PARAGRAPH_COMPLETION_TYPE:
                         //   return (
                         //     <ParagraphCompletion
