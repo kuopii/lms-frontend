@@ -5,6 +5,7 @@ import { z } from "zod";
 export const QuestionType = z.enum([
   "choose_correct_answer",
   "choose_multiple_answer",
+  "note_completion",
 ]);
 
 const optionSchema = z.object({
@@ -117,35 +118,20 @@ const chooseMultipleAnswerSchema = z.object({
 //   image: z.any().optional(),
 // });
 
-// const noteCompletion = z.object({
-//   id: z.string().uuid(),
-//   type: z.literal("Note_Completion"),
-//   prompt: z.string().min(1),
-//   options: z
-//     .array(
-//       z.object({
-//         label: z.string(),
-//         answer: z.array(
-//           z.object({
-//             optIndex: z.number().int().nonnegative(),
-//             wordIndex: z.number().int().nonnegative(),
-//             word: z.string().min(1),
-//           }),
-//         ),
-//       }),
-//     )
-//     .min(1, "required"),
-//   answer: z
-//     .array(
-//       z.object({
-//         optIndex: z.number(),
-//         wordIndex: z.number(),
-//         word: z.string(),
-//       }),
-//     )
-//     .min(1, "Please mark at least one blank"),
-//   explanation: z.string().min(1),
-// });
+const noteCompletionSchema = z.object({
+  question_type: z.literal("note_completion"),
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_text: z.string().min(1, "Question text is required"),
+  question_data: questionDataSchema.optional(),
+  correct_answer: z
+    .array(optionSchema)
+    .min(2, "At least 2 correct answers are required"),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  breakdown: breakdownSchema.optional(),
+});
 
 // const summaryCompletion = z.object({
 //   id: z.string().uuid(),
@@ -213,7 +199,7 @@ export const questionSchema = z.discriminatedUnion("question_type", [
   // shortAnswerQuestion,
   // mapLabeling,
   // formCompletion,
-  // noteCompletion,
+  noteCompletionSchema,
   // summaryCompletion,
 ]);
 

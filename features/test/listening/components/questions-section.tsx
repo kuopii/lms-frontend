@@ -3,6 +3,7 @@
 import SortableItem from "@/components/ui/sortable-item";
 import ChooseCorrectAnswer from "@/features/test/components/questions/choose-correct-answer";
 import ChooseMultipleAnswer from "@/features/test/components/questions/choose-multiple-answer";
+import NoteCompletion from "@/features/test/components/questions/note-completion";
 import { cn } from "@/lib/utils";
 import { useToolbarStore } from "@/store/toolbar-store";
 import { QuestionType, ReadingQuestion } from "@/types/test";
@@ -34,6 +35,7 @@ type QuestionsSectionProps = {
 
 const SINGLE_CHOICE_TYPE = "choose_correct_answer";
 const MULTIPLE_CHOICE_TYPE = "choose_multiple_answer";
+const NOTE_COMPLETION_TYPE = "note_completion";
 
 export const QuestionsSection = ({
   nestIndex,
@@ -297,6 +299,17 @@ export const QuestionsSection = ({
                         case MULTIPLE_CHOICE_TYPE:
                           return (
                             <ChooseMultipleAnswer
+                              key={`${question.id}-${questionType}`}
+                              questionsPath={questionsPath}
+                              qIndex={qIndex}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                            />
+                          );
+                        case NOTE_COMPLETION_TYPE:
+                          return (
+                            <NoteCompletion
                               key={`${question.id}-${questionType}`}
                               questionsPath={questionsPath}
                               qIndex={qIndex}

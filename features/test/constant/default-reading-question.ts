@@ -188,15 +188,21 @@ export const defaultReadingQuestion: Record<
   //   answerKey: [""],
   //   breakdown: "",
   // },
-  // note_completion: {
-  //   type: "note_completion",
-  //   paragraph: "",
-  //   answerKey: [
-  //     {
-  //       number: "1",
-  //       answer: "",
-  //     },
-  //   ],
-  //   breakdown: "",
-  // },
+  note_completion: {
+    question_type: "note_completion",
+    question_number: 0,
+    question_text: "",
+    correct_answer: [
+      {
+        option_key: "1",
+        option_text: "",
+      },
+    ],
+    points_value: 0,
+    breakdown: {
+      explanation: "",
+      has_highlight: false,
+      highlights: [],
+    },
+  },
 };
