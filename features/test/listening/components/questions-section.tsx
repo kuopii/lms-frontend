@@ -23,7 +23,6 @@ import {
 import React, { useCallback, useEffect, useRef } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { MdDragIndicator } from "react-icons/md";
-import SentenceCompletion from "../../components/questions/sentence-completion";
 import { defaultListeningQuestion } from "../../constant/default-listening-question";
 import { PassageListening } from "../../form/create-listening-form";
 
@@ -38,6 +37,7 @@ const SINGLE_CHOICE_TYPE = "choose_correct_answer";
 const MULTIPLE_CHOICE_TYPE = "choose_multiple_answer";
 const NOTE_COMPLETION_TYPE = "note_completion";
 const SENTENCE_COMPLETION = "sentence_completion";
+const NOTE_COMPLETION_TYPE = "note_completion";
 
 export const QuestionsSection = ({
   nestIndex,
@@ -320,10 +320,20 @@ export const QuestionsSection = ({
                               globalNumber={globalNumber}
                             />
                           );
-
+                        case NOTE_COMPLETION_TYPE:
+                          return (
+                            <NoteCompletion
+                              key={`${question.id}-${questionType}`}
+                              questionsPath={questionsPath}
+                              qIndex={qIndex}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                            />
+                          );
                         case SENTENCE_COMPLETION:
                           return (
-                            <SentenceCompletion
+                            <NoteCompletion
                               key={`${question.id}-${questionType}`}
                               questionsPath={questionsPath}
                               qIndex={qIndex}
