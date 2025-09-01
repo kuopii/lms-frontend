@@ -8,6 +8,7 @@ export const QuestionType = z.enum([
   "note_completion",
   "sentence_completion",
   "note_completion",
+  "sentence_completion",
 ]);
 
 const optionSchema = z.object({

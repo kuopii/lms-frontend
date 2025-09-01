@@ -1,5 +1,5 @@
-import { QuestionType, questionSchema } from "../form/create-reading-form";
 import { z } from "zod";
+import { QuestionType, questionSchema } from "../form/create-reading-form";
 
 // Ambil union literal dari Zod enum
 type QuestionTypeValue = z.infer<typeof QuestionType>;
@@ -108,6 +108,18 @@ export const defaultReadingQuestion: Record<
       highlights: [],
     },
   },
+  sentence_completion: {
+    question_number: 0,
+    question_type: "sentence_completion",
+    question_text: "",
+    correct_answer: [{ option_key: "", option_text: "" }],
+    points_value: 0,
+    breakdown: {
+      explanation: "",
+      has_highlight: false,
+      highlights: [],
+    },
+  },
   // matching_heading: {
   //   type: "matching_heading",
   //   options: ["Heading 1"],
@@ -167,16 +179,6 @@ export const defaultReadingQuestion: Record<
   //     {
   //       answerKey: "",
   //       label: "A",
-  //     },
-  //   ],
-  //   breakdown: "",
-  // },
-  // sentence_completion: {
-  //   type: "sentence_completion",
-  //   items: [
-  //     {
-  //       question: "",
-  //       answerKey: "",
   //     },
   //   ],
   //   breakdown: "",

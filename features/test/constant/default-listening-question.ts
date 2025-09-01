@@ -71,7 +71,6 @@ export const defaultListeningQuestion: Record<
       highlights: [],
     },
   },
-
   sentence_completion: {
     question_number: 0,
     question_type: "sentence_completion",
