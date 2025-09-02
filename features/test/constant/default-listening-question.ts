@@ -63,4 +63,14 @@ export const defaultListeningQuestion: Record<
       explanation: "",
     },
   },
+  sentence_completion: {
+    question_number: 0,
+    question_type: "sentence_completion",
+    question_text: "",
+    correct_answer: [{ option_key: "", option_text: "" }],
+    points_value: 0,
+    breakdown: {
+      explanation: "",
+    },
+  },
 };

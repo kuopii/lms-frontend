@@ -309,7 +309,7 @@ const NoteCompletion: React.FC<NoteCompletionProps> = ({
   );
 
   // Check if question can be removed
-  const canRemoveQuestion = questionFields.length > 1;
+  const canRemoveQuestion = questionFields.length > 0;
 
   const currentImages = watch(`${questionPath}.question_data.images`);
 

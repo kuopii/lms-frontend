@@ -161,7 +161,7 @@ const OptionFieldArray = ({
               )}
             />
           </div>
-          
+
           {variant === "editable" && (
             <Button
               size={"icon"}

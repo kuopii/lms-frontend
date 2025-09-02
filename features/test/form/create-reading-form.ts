@@ -7,13 +7,13 @@ export const QuestionType = z.enum([
   "choose_multiple_answer",
   "true_false_not_given",
   "yes_no_not_given",
+  "sentence_completion",
   // "matching_heading",
   // "short_answer_question",
   // "matching_features",
   // "matching_sentence_ending",
   // "matching_information",
   // "diagram_label_completion",
-  // "sentence_completion",
   // "paragraph_completion",
   "note_completion",
 ]);
@@ -182,18 +182,17 @@ const yesNoNotGiven = z.object({
 //   breakdown: z.string().optional(),
 // });
 
-// const sentenceCompletionSchema = z.object({
-//   type: z.literal("sentence_completion"),
-//   items: z
-//     .array(
-//       z.object({
-//         question: z.string().min(1, "Pertanyaan wajib diisi"),
-//         answerKey: z.string().min(1, "Jawaban wajib diisi"),
-//       }),
-//     )
-//     .min(1, "Minimal 1 kalimat harus disediakan"),
-//   breakdown: z.string().optional(),
-// });
+const sentenceCompletion = z.object({
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_type: z.literal("sentence_completion"),
+  question_text: z.string().min(1, "Question text is required"),
+  correct_answer: z.array(optionSchema).min(1).max(2),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  breakdown: breakdownSchema.optional(),
+});
 
 // const paragraphCompletionSchema = z.object({
 //   type: z.literal("paragraph_completion"),
@@ -224,12 +223,12 @@ export const questionSchema = z.discriminatedUnion("question_type", [
   trueFalseNotGiven,
   // matchingHeadingSchema,
   yesNoNotGiven,
+  sentenceCompletion,
   // shortAnswerSchema,
   // matchingFeaturesSchema,
   // matchingSentenceEndingSchema,
   // matchingInformationSchema,
   // diagramLabelCompletionSchema,
-  // sentenceCompletionSchema,
   // paragraphCompletionSchema,
   noteCompletionSchema,
 ]);

@@ -151,7 +151,7 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
           </h4>
         )}
         {variant === "tips" && (
-          <div className="flex items-center gap-3 rounded-4xl bg-[#DEDEDE] px-4 py-2">
+          <div className="flex items-center gap-3 rounded-4xl bg-[#DEDEDE] px-4 py-2 w-full">
             <Image
               width={45}
               height={45}

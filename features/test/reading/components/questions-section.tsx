@@ -1,6 +1,7 @@
 "use client";
 
 import SortableItem from "@/components/ui/sortable-item";
+import Toolbar from "@/features/test/components/toolbar";
 import { cn } from "@/lib/utils";
 import { useToolbarStore } from "@/store/toolbar-store";
 import { QuestionType, ReadingQuestion } from "@/types/test";
@@ -19,7 +20,6 @@ import {
 import React, { useCallback, useEffect, useRef } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { MdDragIndicator } from "react-icons/md";
-import Toolbar from "@/features/test/components/toolbar";
 import { defaultReadingQuestion } from "../../constant/default-reading-question";
 // import DiagramLabelCompletion from "./questions/diagram-label-completion";
 // import MatchingFeatures from "./questions/matching-features";
@@ -31,9 +31,10 @@ import { defaultReadingQuestion } from "../../constant/default-reading-question"
 // import ShortAnswer from "./questions/short-answer";
 import ChooseCorrectAnswer from "@/features/test/components/questions/choose-correct-answer";
 import ChooseMultipleAnswer from "@/features/test/components/questions/choose-multiple-answer";
+import NoteCompletion from "@/features/test/components/questions/note-completion";
 import TrueFalseNotGiven from "@/features/test/components/questions/true-false-not-given";
 import YesNoNotGiven from "@/features/test/components/questions/yes-no-not-given";
-import NoteCompletion from "@/features/test/components/questions/note-completion";
+import SentenceCompletion from "../../components/questions/sentence-completion";
 import { PassageReading } from "../../form/create-reading-form";
 
 type QuestionsSectionProps = {
@@ -47,13 +48,13 @@ const TRUE_FALSE_TYPE = "true_false_not_given";
 const YES_NO_TYPE = "yes_no_not_given";
 const MULTIPLE_CHOICE_TYPE = "choose_multiple_answer";
 const SINGLE_CHOICE_TYPE = "choose_correct_answer";
+const SENTENCE_COMPLETION = "sentence_completion";
 // const MATCHING_HEADING_TYPE = "matching_heading";
 // const SHORT_ANSWER_TYPE = "short_answer_question";
 // const MATCHING_FEATURES_TYPE = "matching_features";
 // const MATCHING_SENTENCE_ENDING_TYPE = "matching_sentence_ending";
 // const MATCHING_INFORMATION_TYPE = "matching_information";
 // const DIAGRAM_LABEL_COMPLETION_TYPE = "diagram_label_completion";
-// const SENTENCE_COMPLETION_TYPE = "sentence_completion";
 // const PARAGRAPH_COMPLETION_TYPE = "paragraph_completion";
 const NOTE_COMPLETION_TYPE = "note_completion";
 
@@ -165,7 +166,7 @@ export const QuestionsSection = ({
 
     const defaultData =
       defaultReadingQuestion[activeType as keyof typeof defaultReadingQuestion];
-    const newQuestion = { ...defaultData, id: crypto.randomUUID() };
+    const newQuestion = { ...defaultData };
     const insertIndex =
       activeIndex !== -1 ? activeIndex + 1 : questionFields.length;
 
@@ -346,6 +347,17 @@ export const QuestionsSection = ({
                               globalNumber={globalNumber}
                             />
                           );
+                        case SENTENCE_COMPLETION:
+                          return (
+                            <SentenceCompletion
+                              key={`${question.id}-${questionType}`}
+                              questionsPath={questionsPath}
+                              qIndex={qIndex}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                            />
+                          );
                         // case MATCHING_HEADING_TYPE:
                         //   return (
                         //     <MatchingHeading
@@ -396,16 +408,7 @@ export const QuestionsSection = ({
                         //       questionsPath={questionsPath}
                         //     />
                         //   );
-                        // case SENTENCE_COMPLETION_TYPE:
-                        //   return (
-                        //     <SentenceCompletion
-                        //       questionsPath={questionsPath}
-                        //       qIndex={qIndex}
-                        //       key={`${question.id}-${questionType}`}
-                        //       onDuplicateQuestion={handleDuplicateQuestion}
-                        //       onRemoveQuestion={handleRemoveQuestion}
-                        //     />
-                        //   );
+                        //
                         // case PARAGRAPH_COMPLETION_TYPE:
                         //   return (
                         //     <ParagraphCompletion

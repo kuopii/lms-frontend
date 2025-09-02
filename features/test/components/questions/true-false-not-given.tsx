@@ -2,17 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import AnswerKeyField from "@/features/test/components/answer-key-field";
+import OptionFieldArray from "@/features/test/components/options-field-array";
 import QuestionBreakdown from "@/features/test/components/question-breakdown";
+import QuestionHeader from "@/features/test/components/question-header";
+import { extractIndexes } from "@/helpers/extract-indexes";
+import { Option } from "@/types/test";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaTrash } from "react-icons/fa";
 import { PiCopyFill } from "react-icons/pi";
-import QuestionHeader from "@/features/test/components/question-header";
-import OptionFieldArray from "@/features/test/components/options-field-array";
-import AnswerKeyField from "@/features/test/components/answer-key-field";
-import { extractIndexes } from "@/helpers/extract-indexes";
-import { ImagePreview } from "../question-image";
 import PointsField from "../points-field";
-import { Option } from "@/types/test";
+import { ImagePreview } from "../question-image";
 
 const TrueFalseNotGiven = ({
   qIndex,

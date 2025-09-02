@@ -4,6 +4,7 @@ import SortableItem from "@/components/ui/sortable-item";
 import ChooseCorrectAnswer from "@/features/test/components/questions/choose-correct-answer";
 import ChooseMultipleAnswer from "@/features/test/components/questions/choose-multiple-answer";
 import NoteCompletion from "@/features/test/components/questions/note-completion";
+import Toolbar from "@/features/test/components/toolbar";
 import { cn } from "@/lib/utils";
 import { useToolbarStore } from "@/store/toolbar-store";
 import { QuestionType, ReadingQuestion } from "@/types/test";
@@ -22,7 +23,7 @@ import {
 import React, { useCallback, useEffect, useRef } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { MdDragIndicator } from "react-icons/md";
-import Toolbar from "@/features/test/components/toolbar";
+import SentenceCompletion from "../../components/questions/sentence-completion";
 import { defaultListeningQuestion } from "../../constant/default-listening-question";
 import { PassageListening } from "../../form/create-listening-form";
 
@@ -36,6 +37,7 @@ type QuestionsSectionProps = {
 const SINGLE_CHOICE_TYPE = "choose_correct_answer";
 const MULTIPLE_CHOICE_TYPE = "choose_multiple_answer";
 const NOTE_COMPLETION_TYPE = "note_completion";
+const SENTENCE_COMPLETION = "sentence_completion";
 
 export const QuestionsSection = ({
   nestIndex,
@@ -147,7 +149,7 @@ export const QuestionsSection = ({
       defaultListeningQuestion[
         activeType as keyof typeof defaultListeningQuestion
       ];
-    const newQuestion = { ...defaultData, id: crypto.randomUUID() };
+    const newQuestion = { ...defaultData };
     const insertIndex =
       activeIndex !== -1 ? activeIndex + 1 : questionFields.length;
 
@@ -310,6 +312,17 @@ export const QuestionsSection = ({
                         case NOTE_COMPLETION_TYPE:
                           return (
                             <NoteCompletion
+                              key={`${question.id}-${questionType}`}
+                              questionsPath={questionsPath}
+                              qIndex={qIndex}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                            />
+                          );
+                        case SENTENCE_COMPLETION:
+                          return (
+                            <SentenceCompletion
                               key={`${question.id}-${questionType}`}
                               questionsPath={questionsPath}
                               qIndex={qIndex}
