@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -17,11 +19,9 @@ import { GrSelect } from "react-icons/gr";
 import { PiCopyFill } from "react-icons/pi";
 import QuestionBreakdown from "../question-breakdown";
 import QuestionHeader from "../question-header";
-
-type CorrectAnswerType = {
-  option_key: string;
-  option_text: string;
-};
+import { Option } from "@/types/test";
+import PointsField from "../points-field";
+import { ImagePreview } from "../question-image";
 
 interface SentenceCompletionProps {
   qIndex: number;
@@ -45,7 +45,7 @@ const SentenceCompletion = ({
 
   const correctAnswerPath = useMemo(
     () => `${questionPath}.correct_answer`,
-    [questionsPath, qIndex],
+    [questionPath],
   );
 
   const { fields: correctAnswerField } = useFieldArray({
@@ -63,9 +63,6 @@ const SentenceCompletion = ({
       (_, index) => `${correctAnswerPath}.${index}.option_text`,
     ),
   );
-
-  //   console.log("correctAnswerPath??", correctAnswerPath);
-  console.log("allAnswerKeys??", allAnswerKeys);
 
   const BLANK_PLACEHOLDER = "____";
 
@@ -91,8 +88,7 @@ const SentenceCompletion = ({
 
     const currentQuestion = getValues(`${questionPath}.question_text`);
     const correctAnswers =
-      (getValues(`${questionPath}.correct_answer`) as CorrectAnswerType[]) ??
-      [];
+      (getValues(`${questionPath}.correct_answer`) as Option[]) ?? [];
 
     const selectedText = currentQuestion.substring(start, end);
     if (!selectedText) {
@@ -149,8 +145,7 @@ const SentenceCompletion = ({
   const resetItem = useCallback(() => {
     const currentQuestion = getValues(`${questionPath}.question_text`);
     const correctAnswers =
-      (getValues(`${questionPath}.correct_answer`) as CorrectAnswerType[]) ??
-      [];
+      (getValues(`${questionPath}.correct_answer`) as Option[]) ?? [];
     const originalWord = correctAnswers[0]?.option_text;
     if (!originalWord) return;
 
@@ -167,126 +162,122 @@ const SentenceCompletion = ({
         option_text: "",
       },
     ]);
-  }, [setValue]);
+  }, [setValue, getValues, questionPath]);
+
+  const currentImages = watch(
+    `${questionsPath}.${qIndex}.question_data.images`,
+  );
 
   return (
     <div className="space-y-6">
-      <QuestionHeader
-        qIndex={qIndex}
-        questionsPath={`${questionPath}.question_text`}
-        variant="tips"
-        typePath={`${questionPath}.question_type`}
-        nestIndex={nestIndex}
-        groupIndex={questionGroupIndex}
-        globalNumber={globalNumber}
-      />
-
-      <div className="flex items-center justify-between gap-4">
-        <FormField
-          name={`${questionPath}.question_text`}
-          control={control}
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormControl>
-                <Input {...field} ref={inputRefs} />
-              </FormControl>
-            </FormItem>
-          )}
+      <div className="space-y-6 rounded-3xl bg-[#333333] p-3 md:p-4 lg:p-5">
+        <QuestionHeader
+          qIndex={qIndex}
+          questionsPath={`${questionPath}.question_text`}
+          variant="tips"
+          typePath={`${questionPath}.question_type`}
+          nestIndex={nestIndex}
+          groupIndex={questionGroupIndex}
+          globalNumber={globalNumber}
         />
-      </div>
 
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-        <Button
-          size="xs"
-          onClick={() => markAsBlank()}
-          className="rounded-3xl [&_svg:not([class*='size-'])]:size-5"
-          type="button"
-          aria-label="Mark selected text as blank"
-        >
-          <GrSelect />
-          Mark as Blank
-        </Button>
-
-        <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            onClick={() => resetItem()}
-            size="icon"
-            variant="ghost"
-            className="mr-2"
-            disabled={allAnswerKeys[0] === ""}
-            aria-label="Reset sentence"
-          >
-            <RotateCcw />
-          </Button>
-          <span className="text-sm text-white/70">Answer:</span>
-          <Badge
-            className="bg-white/10 text-white"
-            size="lg"
-            aria-label={`Answer: ${allAnswerKeys[0] || "Not set"}`}
-          >
-            {allAnswerKeys[0] || "-"}
-          </Badge>
+        <div className="mx-auto max-w-md">
+          <ImagePreview
+            images={currentImages}
+            showActions={false}
+            containerClassName="grid-cols-3 md:grid-cols-4"
+          />
         </div>
-      </div>
 
-      <Separator />
-
-      <div className="flex w-full items-center justify-end">
-        <div className="flex w-full items-center justify-between gap-4 md:w-fit">
-          <span>Point: </span>
+        <div className="flex flex-col items-center justify-between gap-4 py-3 md:flex-row md:py-5">
           <FormField
+            name={`${questionPath}.question_text`}
             control={control}
-            name={`${questionPath}.points_value`}
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
                   <Input
-                    type="number"
-                    max={100}
-                    min={0}
+                    {...field}
+                    ref={inputRefs}
                     variant="underline"
-                    placeholder="Score Point"
-                    value={field.value ?? ""}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      field.onChange(val === "" ? undefined : Number(val));
-                    }}
+                    placeholder="Type the sentence here..."
                   />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
+          <div className="flex w-full items-center gap-2 md:w-fit">
+            <Button
+              type="button"
+              onClick={() => resetItem()}
+              size="icon"
+              variant="ghost"
+              disabled={allAnswerKeys[0] === ""}
+              aria-label="Reset sentence"
+            >
+              <RotateCcw />
+            </Button>
+            <Button
+              size="xs"
+              onClick={() => markAsBlank()}
+              className="flex-1 rounded-3xl md:w-fit [&_svg:not([class*='size-'])]:size-5"
+              type="button"
+              aria-label="Mark selected text as blank"
+            >
+              <GrSelect />
+              Mark as Blank
+            </Button>
+          </div>
+        </div>
 
-          <Button
-            type="button"
-            size="iconSm"
-            variant="ghost"
-            onClick={(e) => {
-              e.stopPropagation();
-              onDuplicateQuestion?.(qIndex);
-            }}
-            className="-rotate-90 [&_svg:not([class*='size-'])]:size-6"
-          >
-            <PiCopyFill />
-          </Button>
-          <Button
-            size="iconSm"
-            type="button"
-            variant="ghost"
-            onClick={
-              questionFields.length > 0
-                ? (e) => {
-                    e.stopPropagation();
-                    onRemoveQuestion?.(qIndex);
-                  }
-                : undefined
-            }
-            className="text-destructive hover:text-destructive [&_svg:not([class*='size-'])]:size-5"
-          >
-            <FaTrash />
-          </Button>
+        <Separator />
+
+        <div className="flex w-full flex-col items-center justify-between gap-4 md:flex-row">
+          <div className="flex w-full items-center gap-2 md:w-fit">
+            <span className="text-sm text-white/70">Answer: </span>
+            <Badge
+              className="flex-1 bg-white/10 text-white"
+              size="lg"
+              aria-label={`Answer: ${allAnswerKeys[0] || "Not set"}`}
+            >
+              {allAnswerKeys[0] || "-"}
+            </Badge>
+          </div>
+
+          <div className="flex w-full items-center justify-between gap-4 md:w-fit">
+            <PointsField questionPath={questionPath} />
+
+            <Button
+              type="button"
+              size="iconSm"
+              variant="ghost"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDuplicateQuestion?.(qIndex);
+              }}
+              className="-rotate-90 [&_svg:not([class*='size-'])]:size-6"
+            >
+              <PiCopyFill />
+            </Button>
+            <Button
+              size="iconSm"
+              type="button"
+              variant="ghost"
+              disabled={questionFields.length < 1}
+              onClick={
+                questionFields.length > 0
+                  ? (e) => {
+                      e.stopPropagation();
+                      onRemoveQuestion?.(qIndex);
+                    }
+                  : undefined
+              }
+              className="text-destructive hover:text-destructive [&_svg:not([class*='size-'])]:size-5"
+            >
+              <FaTrash />
+            </Button>
+          </div>
         </div>
       </div>
 
