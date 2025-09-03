@@ -28,9 +28,14 @@ jobs:
           rsync -az --delete -e "ssh -o StrictHostKeyChecking=no" ./ root@${{ secrets.VPS_HOST }}:/srv/apps/koupii-frontend/current
 
       - name: Inject env (optional)
-        if: ${{ secrets.NEXT_PUBLIC_BACKEND_URL != '' }}
+        env:
+          NEXT_PUBLIC_BACKEND_URL: ${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
         run: |
-          ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} "bash -lc 'printf %s\\n "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" > /srv/apps/koupii-frontend/current/.env'"
+          if [ -n "${NEXT_PUBLIC_BACKEND_URL}" ]; then
+            ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} "bash -lc 'printf %s\\n "NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}" > /srv/apps/koupii-frontend/current/.env'"
+          else
+            echo "NEXT_PUBLIC_BACKEND_URL not set; skipping .env injection"
+          fi
 
       - name: Build & Up (parallel to current manual app)
         run: |
