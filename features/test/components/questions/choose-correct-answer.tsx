@@ -40,8 +40,6 @@ const ChooseCorrectAnswer = ({
 
   const questionOptions = watch(`${questionPath}.options`) as Option[];
 
-  const answer = watch(`${questionPath}.correct_answer`);
-
   const currentImages = watch(
     `${questionsPath}.${qIndex}.question_data.images`,
   );
@@ -67,12 +65,7 @@ const ChooseCorrectAnswer = ({
           />
         </div>
 
-        <OptionFieldArray
-          questionsPath={`${questionPath}.options`}
-          variant="editable"
-          answer={answer}
-          questionsPathAnswer={`${questionPath}.correct_answer`}
-        />
+        <OptionFieldArray variant="editable" questionPath={questionPath} />
 
         <Separator />
 

@@ -151,7 +151,7 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
           </h4>
         )}
         {variant === "tips" && (
-          <div className="flex items-center gap-3 rounded-4xl bg-[#DEDEDE] px-4 py-2 w-full">
+          <div className="flex w-full items-center gap-3 rounded-4xl bg-[#DEDEDE] px-4 py-2">
             <Image
               width={45}
               height={45}
@@ -159,10 +159,14 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
               alt="tips"
               src="/icons/tips.svg"
             />
-            <h4 className="text-sm text-black">
-              Select a word or phrase in the sentence and click
-              <span className="text-primary">“Mark as Blank”</span>
-              to create a gap for students to fill.
+            <h4 className="text-sm text-[#111]">
+              {textHeader || (
+                <>
+                  Select a word or phrase in the sentence and click{" "}
+                  <span className="text-primary">“Mark as Blank”</span> to
+                  create a gap for students to fill.
+                </>
+              )}
             </h4>
           </div>
         )}

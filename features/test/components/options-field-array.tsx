@@ -11,48 +11,41 @@ import {
 import { Input } from "@/components/ui/input";
 import { indexToLetter } from "@/helpers/index-to-letter";
 import { cn } from "@/lib/utils";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { RiDeleteBack2Fill } from "react-icons/ri";
-
-type OptionType = {
-  option_key: string;
-  option_text: string;
-};
+import { Option } from "@/types/test";
 
 const OptionFieldArray = ({
-  questionsPath,
   variant = "editable",
   withNumber = true,
   placeholder = "",
   inputVariant = "ghost",
-  answer,
-  questionsPathAnswer,
+  questionPath,
+  correctAnswerPath,
 }: {
   variant?: "editable" | "readonly";
-  questionsPath: string;
   withNumber?: boolean;
   placeholder?: string;
   inputVariant?: "ghost" | "underline" | "default";
-  answer: OptionType | OptionType[];
-  questionsPathAnswer: string;
+  questionPath: string;
+  correctAnswerPath?: string;
 }) => {
-  const form = useFormContext();
-  const { control, watch } = form;
-  const optionsData = watch(questionsPath) || [];
-  const [lastAddedIndex, setLastAddedIndex] = useState<number | null>(null);
+  const { control, watch, getValues, setValue } = useFormContext();
 
-  // Function to update option_keys after any change
-  const updateOptionKeys = () => {
-    const currentOptions = form.getValues(questionsPath) || [];
-    const updatedOptions = currentOptions.map(
-      (option: { option_key: string; option_text: string }, index: number) => ({
-        ...option,
-        option_key: indexToLetter(index),
-      }),
-    );
-    form.setValue(questionsPath, updatedOptions);
-  };
+  // Memoize paths untuk menghindari string concatenation berulang
+  const paths = useMemo(
+    () => ({
+      options: `${questionPath}.options`,
+      correctAnswer: correctAnswerPath || `${questionPath}.correct_answer`,
+    }),
+    [questionPath, correctAnswerPath],
+  );
+
+  const watchOptionsData = watch(paths.options) || [];
+  const watchCorrectAnswer = watch(paths.correctAnswer);
+
+  const [lastAddedIndex, setLastAddedIndex] = useState<number | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const {
@@ -61,9 +54,39 @@ const OptionFieldArray = ({
     remove: removeOption,
   } = useFieldArray({
     control,
-    name: questionsPath,
+    name: paths.options,
   });
 
+  // Memoize function untuk update option keys
+  const updateOptionKeys = useCallback(() => {
+    const currentOptions = getValues(paths.options) || [];
+    const updatedOptions = currentOptions.map(
+      (option: Option, index: number) => ({
+        ...option,
+        option_key: indexToLetter(index),
+      }),
+    );
+    setValue(paths.options, updatedOptions);
+  }, [getValues, setValue, paths.options]);
+
+  // Memoize function untuk remove answer
+  const removeAnswerForOption = useCallback(
+    (
+      currentAnswer: Option | Option[],
+      targetKey: string,
+    ): Option | Option[] => {
+      if (Array.isArray(currentAnswer)) {
+        return currentAnswer.filter((ans) => ans.option_key !== targetKey);
+      } else {
+        return currentAnswer.option_key === targetKey
+          ? { option_key: "", option_text: "" }
+          : currentAnswer;
+      }
+    },
+    [],
+  );
+
+  // Focus pada input yang baru ditambah
   useEffect(() => {
     if (lastAddedIndex !== null && inputRefs.current[lastAddedIndex]) {
       const inputElement = inputRefs.current[lastAddedIndex];
@@ -74,39 +97,33 @@ const OptionFieldArray = ({
   }, [optionFields.length, lastAddedIndex]);
 
   const handleAddOption = () => {
-    if (variant === "editable") {
-      const newIndex = optionFields.length;
-      const newOptionKey = indexToLetter(newIndex);
-      appendOption({
-        option_key: newOptionKey,
-        option_text: "",
-      });
-      setLastAddedIndex(newIndex);
-    }
+    if (variant !== "editable") return;
+
+    const newIndex = optionFields.length;
+    const newOptionKey = indexToLetter(newIndex);
+    appendOption({
+      option_key: newOptionKey,
+      option_text: "",
+    });
+    setLastAddedIndex(newIndex);
   };
 
   const handleRemoveOption = (index: number) => {
-    if (variant === "editable") {
-      removeOption(index);
-      setTimeout(() => updateOptionKeys(), 0);
-    }
-  };
+    if (optionFields.length === 0 || variant !== "editable") return;
 
-  function removeAnswerForOption(
-    currentAnswer: OptionType | OptionType[],
-    targetKey: string,
-  ): OptionType | OptionType[] {
-    if (Array.isArray(currentAnswer)) {
-      // multiple answer
-      return currentAnswer.filter((ans) => ans.option_key !== targetKey);
-    } else {
-      // correct answer
-      if (currentAnswer.option_key === targetKey) {
-        return { option_key: "", option_text: "" };
-      }
-      return currentAnswer;
+    const targetKey = watchOptionsData[index]?.option_key;
+
+    if (watchCorrectAnswer && targetKey) {
+      setValue(
+        paths.correctAnswer,
+        removeAnswerForOption(watchCorrectAnswer, targetKey),
+      );
     }
-  }
+
+    removeOption(index);
+    // Gunakan setTimeout untuk memastikan DOM sudah diupdate
+    setTimeout(() => updateOptionKeys(), 0);
+  };
 
   return (
     <div className="flex flex-col gap-5">
@@ -118,12 +135,13 @@ const OptionFieldArray = ({
           <div className="flex flex-1 items-center gap-4">
             {withNumber && (
               <Badge size={"icon"}>
-                {optionsData[optIndex]?.option_key || indexToLetter(optIndex)}
+                {watchOptionsData[optIndex]?.option_key ||
+                  indexToLetter(optIndex)}
               </Badge>
             )}
             <FormField
               control={control}
-              name={`${questionsPath}.${optIndex}.option_text`}
+              name={`${paths.options}.${optIndex}.option_text`}
               render={({ field }) => (
                 <FormItem className="w-full">
                   <FormControl>
@@ -167,18 +185,7 @@ const OptionFieldArray = ({
               size={"icon"}
               variant={"ghost"}
               type="button"
-              onClick={() => {
-                if (optionFields.length > 0) {
-                  const targetKey = optionsData[optIndex]?.option_key;
-                  console.log("targetKey", targetKey);
-
-                  form.setValue(
-                    questionsPathAnswer,
-                    removeAnswerForOption(answer, targetKey),
-                  );
-                }
-                handleRemoveOption(optIndex);
-              }}
+              onClick={() => handleRemoveOption(optIndex)}
               disabled={optionFields.length <= 1}
               className="[&_svg:not([class*='size-'])]:size-5"
             >

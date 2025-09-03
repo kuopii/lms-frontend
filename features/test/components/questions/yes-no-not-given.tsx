@@ -46,8 +46,6 @@ const YesNoNotGiven = ({
     `${questionsPath}.${qIndex}.options`,
   ) as Option[];
 
-  const answer = watch(`${questionPath}.correct_answer`);
-
   return (
     <div className="space-y-6">
       <div className="space-y-6 rounded-3xl bg-[#333333] p-3 md:p-4 lg:p-5">
@@ -69,12 +67,7 @@ const YesNoNotGiven = ({
           />
         </div>
 
-        <OptionFieldArray
-          questionsPath={`${questionPath}.options`}
-          variant="readonly"
-          answer={answer}
-          questionsPathAnswer={`${questionPath}.correct_answer`}
-        />
+        <OptionFieldArray variant="readonly" questionPath={questionPath} />
 
         <Separator />
 
