@@ -2,7 +2,7 @@ name: Deploy Frontend
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
   deploy:
@@ -30,9 +30,7 @@ jobs:
       - name: Inject env (optional)
         if: ${{ secrets.NEXT_PUBLIC_BACKEND_URL != '' }}
         run: |
-          ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} "bash -lc 'cat > /srv/apps/koupii-frontend/current/.env <<EOF
-NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
-EOF'"
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} "bash -lc 'printf %s\\n "NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}" > /srv/apps/koupii-frontend/current/.env'"
 
       - name: Build & Up (parallel to current manual app)
         run: |
