@@ -8,7 +8,7 @@ export const QuestionType = z.enum([
   "true_false_not_given",
   "yes_no_not_given",
   "sentence_completion",
-  // "matching_heading",
+  "matching_heading",
   // "short_answer_question",
   // "matching_features",
   // "matching_sentence_ending",
@@ -81,21 +81,28 @@ const trueFalseNotGiven = z.object({
   breakdown: breakdownSchema.optional(),
 });
 
-// const matchingHeadingSchema = z.object({
-//   type: z.literal("matching_heading"),
-//   options: z
-//     .array(z.string().min(1, "Heading tidak boleh kosong"))
-//     .min(1, "Minimal 1 heading"),
-//   items: z
-//     .array(
-//       z.object({
-//         text: z.string().min(1, "Teks item wajib diisi"),
-//         answerKey: z.string().min(1, "Jawaban wajib diisi"),
-//         breakdown: z.string().optional(),
-//       }),
-//     )
-//     .min(1, "Minimal 1 item untuk dicocokkan"),
-// });
+const matchingHeadingSchema = z.object({
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_type: z.literal("matching_heading"),
+  question_data: questionDataSchema.optional(),
+  options: z.array(optionSchema).min(2, "At least 2 options are required"),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  items: z
+    .array(
+      z.object({
+        question_number: z.number({
+          required_error: "Question number is required",
+          invalid_type_error: "Question number must be a number",
+        }),
+        correct_answer: optionSchema,
+      }),
+    )
+    .min(1, "Minimum 1 item to match"),
+  breakdown: breakdownSchema.optional(),
+});
 
 const yesNoNotGiven = z.object({
   question_number: z.number({
@@ -221,7 +228,7 @@ export const questionSchema = z.discriminatedUnion("question_type", [
   chooseCorrectAnswerSchema,
   chooseMultipleAnswerSchema,
   trueFalseNotGiven,
-  // matchingHeadingSchema,
+  matchingHeadingSchema,
   yesNoNotGiven,
   sentenceCompletion,
   // shortAnswerSchema,

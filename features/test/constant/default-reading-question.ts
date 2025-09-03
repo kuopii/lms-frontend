@@ -120,17 +120,23 @@ export const defaultReadingQuestion: Record<
       highlights: [],
     },
   },
-  // matching_heading: {
-  //   type: "matching_heading",
-  //   options: ["Heading 1"],
-  //   items: [
-  //     {
-  //       text: "",
-  //       answerKey: "",
-  //       breakdown: "",
-  //     },
-  //   ],
-  // },
+  matching_heading: {
+    question_number: 0,
+    question_type: "matching_heading",
+    options: [
+      {
+        option_key: "A",
+        option_text: "Option 1",
+      },
+    ],
+    points_value: 0,
+    items: [],
+    breakdown: {
+      explanation: "",
+      has_highlight: false,
+      highlights: [],
+    },
+  },
   // short_answer_question: {
   //   type: "short_answer_question",
   //   question: "",
