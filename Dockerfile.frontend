@@ -1,0 +1,29 @@
+# Dockerfile.frontend
+FROM node:20-alpine AS deps
+WORKDIR /app
+COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* ./
+RUN \
+  if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; \
+  elif [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable && pnpm i --frozen-lockfile; \
+  else npm i --no-audit --no-fund; fi
+
+FROM node:20-alpine AS build
+WORKDIR /app
+ENV NODE_ENV=production
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
+# Build Next.js; standalone runtime
+RUN npx next build --no-lint && \
+    mkdir -p .next/standalone/public && \
+    cp -r public .next/standalone/public || true && \
+    cp -r .next/static .next/standalone/.next/static
+
+FROM node:20-alpine AS runner
+WORKDIR /app
+ENV NODE_ENV=production
+# USER node  # optional non-root
+COPY --from=build /app/.next/standalone ./
+COPY --from=build /app/public ./public
+EXPOSE 3000
+CMD ["node", "server.js"]
