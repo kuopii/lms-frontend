@@ -22,16 +22,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ChevronDown } from "lucide-react";
-
-type OptionType = {
-  option_key: string;
-  option_text: string;
-};
+import { Option } from "@/types/test";
 
 type AnswerKeyFieldProps = {
   name: string;
   variant: "single" | "multiple";
-  options: OptionType[];
+  options: Option[];
 };
 
 const AnswerKeyField = ({ name, variant, options }: AnswerKeyFieldProps) => {
@@ -43,58 +39,78 @@ const AnswerKeyField = ({ name, variant, options }: AnswerKeyFieldProps) => {
     return (
       <FormField
         name={name}
-        render={({ field }) => (
-          <FormItem className="w-full md:w-fit md:max-w-64">
-            <Select
-              onValueChange={(value) => {
-                const selectedOption = validOptions.find(
-                  (opt) => opt.option_key === value,
-                );
-                if (selectedOption) {
-                  field.onChange({
-                    option_key: selectedOption.option_key,
-                    option_text: selectedOption.option_text,
-                  });
+        render={({ field }) => {
+          // Sync logic for single variant - check if current selection is still valid
+          if (
+            field.value &&
+            typeof field.value === "object" &&
+            "option_key" in field.value
+          ) {
+            const currentOptionKey = field.value.option_key;
+            const optionExists = validOptions.some(
+              (opt) => opt.option_key === currentOptionKey,
+            );
+
+            // If the selected option no longer exists, clear the field
+            if (!optionExists) {
+              // Use setTimeout to avoid state update during render
+              setTimeout(() => field.onChange({}), 0);
+            }
+          }
+
+          return (
+            <FormItem className="w-full md:w-fit md:max-w-64">
+              <Select
+                onValueChange={(value) => {
+                  const selectedOption = validOptions.find(
+                    (opt) => opt.option_key === value,
+                  );
+                  if (selectedOption) {
+                    field.onChange({
+                      option_key: selectedOption.option_key,
+                      option_text: selectedOption.option_text,
+                    });
+                  }
+                }}
+                value={
+                  field.value &&
+                  typeof field.value === "object" &&
+                  "option_key" in field.value
+                    ? field.value.option_key
+                    : ""
                 }
-              }}
-              value={
-                field.value &&
-                typeof field.value === "object" &&
-                "option_key" in field.value
-                  ? field.value.option_key
-                  : ""
-              }
-            >
-              <FormControl>
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Answer Key" />
-                </SelectTrigger>
-              </FormControl>
-              <SelectContent>
-                {validOptions.length === 0 ? (
-                  <SelectItem value="no-options" disabled>
-                    No valid options
-                  </SelectItem>
-                ) : (
-                  validOptions.map((option) => (
-                    <SelectItem
-                      key={option.option_key}
-                      value={option.option_key}
-                    >
-                      <div className="flex items-center gap-4">
-                        <Badge className="rounded-full" size="icon">
-                          {option.option_key}
-                        </Badge>
-                        {option.option_text}
-                      </div>
+              >
+                <FormControl>
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Answer Key" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {validOptions.length === 0 ? (
+                    <SelectItem value="no-options" disabled>
+                      No valid options
                     </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-            <FormMessage />
-          </FormItem>
-        )}
+                  ) : (
+                    validOptions.map((option) => (
+                      <SelectItem
+                        key={option.option_key}
+                        value={option.option_key}
+                      >
+                        <div className="flex items-center gap-4">
+                          <Badge className="rounded-full" size="icon">
+                            {option.option_key}
+                          </Badge>
+                          {option.option_text}
+                        </div>
+                      </SelectItem>
+                    ))
+                  )}
+                </SelectContent>
+              </Select>
+              <FormMessage />
+            </FormItem>
+          );
+        }}
       />
     );
   }
@@ -104,17 +120,20 @@ const AnswerKeyField = ({ name, variant, options }: AnswerKeyFieldProps) => {
       <FormField
         name={name}
         render={({ field }) => {
-          // Ensure field.value is always an array of OptionType objects
-          const currentValue: OptionType[] = Array.isArray(field.value)
+          // Ensure field.value is always an array of Option objects
+          const currentValue: Option[] = Array.isArray(field.value)
             ? field.value
             : [];
 
+          // Enhanced sync logic - filter out invalid options
           const syncValue = currentValue.filter((ans) =>
             validOptions.some((opt) => opt.option_key === ans.option_key),
           );
 
+          // If sync is needed, update the field value
           if (syncValue.length !== currentValue.length) {
-            field.onChange(syncValue);
+            // Use setTimeout to avoid state update during render
+            setTimeout(() => field.onChange(syncValue), 0);
           }
 
           return (
@@ -127,9 +146,9 @@ const AnswerKeyField = ({ name, variant, options }: AnswerKeyFieldProps) => {
                       size={"xsm"}
                       className="text-muted-foreground hover:text-muted-foreground h-12 w-full overflow-hidden text-sm font-normal hover:bg-transparent md:max-w-64"
                     >
-                      {currentValue.length > 0 ? (
+                      {syncValue.length > 0 ? (
                         <div className="flex items-center gap-3">
-                          {currentValue.map((selectedOption: OptionType) => (
+                          {syncValue.map((selectedOption: Option) => (
                             <div
                               key={selectedOption.option_key}
                               className="flex items-center gap-2"
@@ -187,7 +206,7 @@ const AnswerKeyField = ({ name, variant, options }: AnswerKeyFieldProps) => {
                                 }
                               } else {
                                 newValue = newValue.filter(
-                                  (v: OptionType) =>
+                                  (v: Option) =>
                                     v.option_key !== option.option_key,
                                 );
                               }
@@ -205,7 +224,7 @@ const AnswerKeyField = ({ name, variant, options }: AnswerKeyFieldProps) => {
                       );
                     })}
                     <span className="text-muted-foreground my-1 px-4 text-sm">
-                      {currentValue.length}/2 selected
+                      {syncValue.length}/2 selected
                     </span>
                   </PopoverContent>
                 </Popover>

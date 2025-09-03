@@ -66,6 +66,7 @@ export type Question = {
   question_data?: {
     images?: File[];
   };
+  items?: Item[];
 };
 
 export type ReadingTypeQuestion =
@@ -77,6 +78,11 @@ export type ListeningTypeQuestion =
 export type Option = {
   option_key: string;
   option_text: string;
+};
+
+export type Item = {
+  question_number: number;
+  correct_answer: Option;
 };
 
 export type Breakdown = {

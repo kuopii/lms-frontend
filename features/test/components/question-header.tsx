@@ -26,6 +26,7 @@ import React, { useCallback } from "react";
 import { useFormContext } from "react-hook-form";
 import { defaultListeningQuestion } from "../constant/default-listening-question";
 import { defaultReadingQuestion } from "../constant/default-reading-question";
+import { extractIndexes } from "@/helpers/extract-indexes";
 
 export function getVariantFromPath(pathname: string): "reading" | "listening" {
   const segments = pathname.split("/").filter(Boolean);
@@ -39,15 +40,12 @@ export function getVariantFromPath(pathname: string): "reading" | "listening" {
 interface QuestionHeaderProps {
   variant: "input" | "text" | "tips";
   qIndex: number;
-  questionsPath?: string;
-  typePath: string;
   withNumber?: boolean;
   className?: string;
   textHeader?: string;
   questionPlaceholder?: string;
-  nestIndex: number;
-  groupIndex: number;
   globalNumber: number;
+  questionPath: string;
 }
 
 const defaultQuestion = {
@@ -57,16 +55,13 @@ const defaultQuestion = {
 
 const QuestionHeader: React.FC<QuestionHeaderProps> = ({
   qIndex,
-  questionsPath,
   questionPlaceholder = "Type your question here...",
-  typePath,
   variant = "input",
   withNumber = true,
   className = "",
   textHeader = "",
-  nestIndex,
-  groupIndex,
   globalNumber,
+  questionPath,
 }) => {
   const { control } = useFormContext();
   const pathname = usePathname();
@@ -121,6 +116,8 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
     [getValues, setValue],
   );
 
+  const { nestIndex, questionGroupIndex } = extractIndexes(questionPath);
+
   return (
     <div className={cn("flex items-center justify-between gap-7", className)}>
       {withNumber && (
@@ -130,7 +127,7 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
         {variant === "input" && (
           <FormField
             control={control}
-            name={questionsPath || ""}
+            name={`${questionPath}.question_text` || ""}
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl>
@@ -151,7 +148,7 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
           </h4>
         )}
         {variant === "tips" && (
-          <div className="flex items-center gap-3 rounded-4xl bg-[#DEDEDE] px-4 py-2 w-full">
+          <div className="flex w-full items-center gap-3 rounded-4xl bg-[#DEDEDE] px-4 py-2">
             <Image
               width={45}
               height={45}
@@ -159,16 +156,20 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
               alt="tips"
               src="/icons/tips.svg"
             />
-            <h4 className="text-sm text-black">
-              Select a word or phrase in the sentence and click
-              <span className="text-primary">“Mark as Blank”</span>
-              to create a gap for students to fill.
+            <h4 className="text-sm text-[#111]">
+              {textHeader || (
+                <>
+                  Select a word or phrase in the sentence and click{" "}
+                  <span className="text-primary">“Mark as Blank”</span> to
+                  create a gap for students to fill.
+                </>
+              )}
             </h4>
           </div>
         )}
         <FormField
           control={control}
-          name={typePath}
+          name={`${questionPath}.question_type`}
           render={({ field }) => (
             <FormItem className="w-full md:w-64">
               <Select
@@ -177,7 +178,7 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
                   field.onChange(val);
                   handleChangeType?.(
                     nestIndex,
-                    groupIndex,
+                    questionGroupIndex,
                     qIndex,
                     val as QuestionType,
                     selectOptionsVariant,

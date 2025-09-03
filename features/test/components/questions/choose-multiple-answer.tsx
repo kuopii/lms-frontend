@@ -6,7 +6,6 @@ import AnswerKeyField from "@/features/test/components/answer-key-field";
 import OptionFieldArray from "@/features/test/components/options-field-array";
 import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import QuestionHeader from "@/features/test/components/question-header";
-import { extractIndexes } from "@/helpers/extract-indexes";
 import { Option } from "@/types/test";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaTrash } from "react-icons/fa";
@@ -31,16 +30,12 @@ const ChooseMultipleAnswer = ({
 
   const questionPath = `${questionsPath}.${qIndex}`;
 
-  const { nestIndex, questionGroupIndex } = extractIndexes(questionsPath);
-
   const { fields: questionFields } = useFieldArray({
     control,
     name: questionsPath,
   });
 
   const questionOptions = watch(`${questionPath}.options`) as Option[];
-
-  const answer = watch(`${questionPath}.correct_answer`);
 
   const currentImages = watch(
     `${questionsPath}.${qIndex}.question_data.images`,
@@ -51,12 +46,9 @@ const ChooseMultipleAnswer = ({
       <div className="space-y-6 rounded-3xl bg-[#333333] p-3 md:p-4 lg:p-5">
         <QuestionHeader
           qIndex={qIndex}
-          questionsPath={`${questionPath}.question_text`}
           variant="input"
-          typePath={`${questionPath}.question_type`}
-          nestIndex={nestIndex}
-          groupIndex={questionGroupIndex}
           globalNumber={globalNumber}
+          questionPath={questionPath}
         />
 
         <div className="mx-auto max-w-md">
@@ -67,12 +59,7 @@ const ChooseMultipleAnswer = ({
           />
         </div>
 
-        <OptionFieldArray
-          questionsPath={`${questionPath}.options`}
-          variant="editable"
-          answer={answer}
-          questionsPathAnswer={`${questionPath}.correct_answer`}
-        />
+        <OptionFieldArray variant="editable" questionPath={questionPath} />
 
         <Separator />
 
