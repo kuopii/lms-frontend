@@ -27,6 +27,13 @@ jobs:
           ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} 'mkdir -p /srv/apps/koupii-frontend/current'
           rsync -az --delete -e "ssh -o StrictHostKeyChecking=no" ./ root@${{ secrets.VPS_HOST }}:/srv/apps/koupii-frontend/current
 
+      - name: Inject env (optional)
+        if: ${{ secrets.NEXT_PUBLIC_BACKEND_URL != '' }}
+        run: |
+          ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} "bash -lc 'cat > /srv/apps/koupii-frontend/current/.env <<EOF
+NEXT_PUBLIC_BACKEND_URL=${{ secrets.NEXT_PUBLIC_BACKEND_URL }}
+EOF'"
+
       - name: Build & Up (parallel to current manual app)
         run: |
           ssh -o StrictHostKeyChecking=no root@${{ secrets.VPS_HOST }} '
