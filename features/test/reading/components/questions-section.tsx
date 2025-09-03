@@ -35,6 +35,7 @@ import NoteCompletion from "@/features/test/components/questions/note-completion
 import TrueFalseNotGiven from "@/features/test/components/questions/true-false-not-given";
 import YesNoNotGiven from "@/features/test/components/questions/yes-no-not-given";
 import SentenceCompletion from "../../components/questions/sentence-completion";
+import MatchingHeading from "@/features/test/components/questions/matching-heading";
 import { PassageReading } from "../../form/create-reading-form";
 
 type QuestionsSectionProps = {
@@ -49,7 +50,7 @@ const YES_NO_TYPE = "yes_no_not_given";
 const MULTIPLE_CHOICE_TYPE = "choose_multiple_answer";
 const SINGLE_CHOICE_TYPE = "choose_correct_answer";
 const SENTENCE_COMPLETION = "sentence_completion";
-// const MATCHING_HEADING_TYPE = "matching_heading";
+const MATCHING_HEADING_TYPE = "matching_heading";
 // const SHORT_ANSWER_TYPE = "short_answer_question";
 // const MATCHING_FEATURES_TYPE = "matching_features";
 // const MATCHING_SENTENCE_ENDING_TYPE = "matching_sentence_ending";
@@ -358,14 +359,17 @@ export const QuestionsSection = ({
                               globalNumber={globalNumber}
                             />
                           );
-                        // case MATCHING_HEADING_TYPE:
-                        //   return (
-                        //     <MatchingHeading
-                        //       key={`${question.id}-${questionType}`}
-                        //       qIndex={qIndex}
-                        //       questionsPath={questionsPath}
-                        //     />
-                        //   );
+                        case MATCHING_HEADING_TYPE:
+                          return (
+                            <MatchingHeading
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                            />
+                          );
                         // case SHORT_ANSWER_TYPE:
                         //   return (
                         //     <ShortAnswer
