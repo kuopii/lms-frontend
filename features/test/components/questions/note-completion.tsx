@@ -8,7 +8,6 @@ import { PiCopyFill } from "react-icons/pi";
 import QuestionHeader from "../question-header";
 import PointsField from "../points-field";
 import QuestionBreakdown from "../question-breakdown";
-import { extractIndexes } from "@/helpers/extract-indexes";
 import { Option } from "@/types/test";
 import {
   FormControl,
@@ -68,9 +67,6 @@ const NoteCompletion: React.FC<NoteCompletionProps> = ({
     control,
     name: correctAnswerPath,
   });
-
-  // Extract indexes
-  const { nestIndex, questionGroupIndex } = extractIndexes(questionsPath);
 
   // Watch values
   const watchedQuestionText = watch(`${questionPath}.question_text`) as string;
@@ -319,12 +315,9 @@ const NoteCompletion: React.FC<NoteCompletionProps> = ({
       <div className="space-y-6 rounded-3xl bg-[#333333] p-3 md:p-4 lg:p-5">
         <QuestionHeader
           qIndex={qIndex}
-          questionsPath={`${questionPath}.question_text`}
           variant="tips"
-          typePath={`${questionPath}.question_type`}
-          nestIndex={nestIndex}
-          groupIndex={questionGroupIndex}
           globalNumber={globalNumber}
+          questionPath={questionPath}
         />
 
         <div className="mx-auto max-w-md">

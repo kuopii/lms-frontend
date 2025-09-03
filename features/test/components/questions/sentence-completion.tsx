@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { extractIndexes } from "@/helpers/extract-indexes";
 import { RotateCcw } from "lucide-react";
 import { useCallback, useMemo, useRef } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
@@ -41,7 +40,6 @@ const SentenceCompletion = ({
   const { control, watch, setValue, getValues } = useFormContext();
   const inputRefs = useRef<HTMLInputElement | null>(null);
   const questionPath = `${questionsPath}.${qIndex}`;
-  const { nestIndex, questionGroupIndex } = extractIndexes(questionsPath);
 
   const correctAnswerPath = useMemo(
     () => `${questionPath}.correct_answer`,
@@ -173,11 +171,8 @@ const SentenceCompletion = ({
       <div className="space-y-6 rounded-3xl bg-[#333333] p-3 md:p-4 lg:p-5">
         <QuestionHeader
           qIndex={qIndex}
-          questionsPath={`${questionPath}.question_text`}
           variant="tips"
-          typePath={`${questionPath}.question_type`}
-          nestIndex={nestIndex}
-          groupIndex={questionGroupIndex}
+          questionPath={questionPath}
           globalNumber={globalNumber}
         />
 

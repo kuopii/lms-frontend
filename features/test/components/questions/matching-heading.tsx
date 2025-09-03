@@ -2,7 +2,6 @@
 
 import React from "react";
 import QuestionHeader from "../question-header";
-import { extractIndexes } from "@/helpers/extract-indexes";
 import { ImagePreview } from "../question-image";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import OptionFieldArray from "../options-field-array";
@@ -33,8 +32,6 @@ const MatchingHeading = ({
 }: MatchingHeadingProps) => {
   const { watch, control, setValue } = useFormContext();
   const questionPath = `${questionsPath}.${qIndex}`;
-
-  const { nestIndex, questionGroupIndex } = extractIndexes(questionsPath);
 
   const itemsPath = `${questionsPath}.${qIndex}.items`;
 
@@ -107,10 +104,8 @@ const MatchingHeading = ({
           variant="tips"
           textHeader="For Matching Heading questions, each paragraph in the passage must be labeled with a letter (A, B, C, …) at the beginning before listing the headings."
           withNumber={false}
-          typePath={`${questionPath}.question_type`}
-          nestIndex={nestIndex}
-          groupIndex={questionGroupIndex}
           globalNumber={globalNumber}
+          questionPath={questionPath}
         />
 
         <div className="mx-auto max-w-md">

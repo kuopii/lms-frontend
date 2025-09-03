@@ -6,7 +6,6 @@ import AnswerKeyField from "@/features/test/components/answer-key-field";
 import OptionFieldArray from "@/features/test/components/options-field-array";
 import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import QuestionHeader from "@/features/test/components/question-header";
-import { extractIndexes } from "@/helpers/extract-indexes";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaTrash } from "react-icons/fa";
 import { PiCopyFill } from "react-icons/pi";
@@ -31,8 +30,6 @@ const YesNoNotGiven = ({
 
   const questionPath = `${questionsPath}.${qIndex}`;
 
-  const { nestIndex, questionGroupIndex } = extractIndexes(questionsPath);
-
   const { fields: questionFields } = useFieldArray({
     control,
     name: questionsPath,
@@ -51,12 +48,9 @@ const YesNoNotGiven = ({
       <div className="space-y-6 rounded-3xl bg-[#333333] p-3 md:p-4 lg:p-5">
         <QuestionHeader
           qIndex={qIndex}
-          questionsPath={`${questionPath}.question_text`}
           variant="input"
-          typePath={`${questionPath}.question_type`}
-          nestIndex={nestIndex}
-          groupIndex={questionGroupIndex}
           globalNumber={globalNumber}
+          questionPath={questionPath}
         />
 
         <div className="mx-auto max-w-md">
