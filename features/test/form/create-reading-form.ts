@@ -9,8 +9,7 @@ export const QuestionType = z.enum([
   "yes_no_not_given",
   "sentence_completion",
   "matching_heading",
-  // "short_answer_question",
-  // "matching_features",
+  "matching_features",
   // "matching_sentence_ending",
   // "matching_information",
   // "diagram_label_completion",
@@ -118,31 +117,29 @@ const yesNoNotGiven = z.object({
   breakdown: breakdownSchema.optional(),
 });
 
-// const shortAnswerSchema = z.object({
-//   type: z.literal("short_answer_question"),
-//   question: z.string().min(1, "Soal wajib diisi"),
-//   answerKey: z
-//     .array(z.string().min(1, "Jawaban tidak boleh kosong"))
-//     .min(1, "Minimal 1 jawaban harus diberikan"),
-//   otherAnswerIncorrect: z.boolean(),
-//   breakdown: z.string().optional(),
-// });
-
-// const matchingFeaturesSchema = z.object({
-//   type: z.literal("matching_features"),
-//   options: z
-//     .array(z.string().min(1, "Fitur tidak boleh kosong"))
-//     .min(1, "Minimal 1 fitur harus disediakan"),
-//   items: z
-//     .array(
-//       z.object({
-//         text: z.string().min(1, "Teks item wajib diisi"),
-//         answerKey: z.string().min(1, "Jawaban wajib diisi"),
-//         breakdown: z.string().optional(),
-//       }),
-//     )
-//     .min(1, "Minimal 1 item untuk dicocokkan"),
-// });
+const matchingFeaturesSchema = z.object({
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_type: z.literal("matching_features"),
+  question_data: questionDataSchema.optional(),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  options: z.array(optionSchema).min(2, "At least 2 options are required"),
+  items: z
+    .array(
+      z.object({
+        question_number: z.number({
+          required_error: "Question number is required",
+          invalid_type_error: "Question number must be a number",
+        }),
+        question_text: z.string().min(1, "Question text is required"),
+        correct_answer: optionSchema,
+        breakdown: breakdownSchema.optional(),
+      }),
+    )
+    .min(1, "Minimum 1 item to match"),
+});
 
 // const matchingSentenceEndingSchema = z.object({
 //   type: z.literal("matching_sentence_ending"),
@@ -247,8 +244,7 @@ export const questionSchema = z.discriminatedUnion("question_type", [
   matchingHeadingSchema,
   yesNoNotGiven,
   sentenceCompletion,
-  // shortAnswerSchema,
-  // matchingFeaturesSchema,
+  matchingFeaturesSchema,
   // matchingSentenceEndingSchema,
   // matchingInformationSchema,
   // diagramLabelCompletionSchema,

@@ -36,6 +36,7 @@ import TrueFalseNotGiven from "@/features/test/components/questions/true-false-n
 import YesNoNotGiven from "@/features/test/components/questions/yes-no-not-given";
 import SentenceCompletion from "../../components/questions/sentence-completion";
 import MatchingHeading from "@/features/test/components/questions/matching-heading";
+import { MatchingFeatures } from "@/features/test/components/questions/matching-features";
 import { ParagraphCompletion } from "@/features/test/components/questions/paragraph-completion";
 import { PassageReading } from "../../form/create-reading-form";
 
@@ -52,8 +53,7 @@ const MULTIPLE_CHOICE_TYPE = "choose_multiple_answer";
 const SINGLE_CHOICE_TYPE = "choose_correct_answer";
 const SENTENCE_COMPLETION = "sentence_completion";
 const MATCHING_HEADING_TYPE = "matching_heading";
-// const SHORT_ANSWER_TYPE = "short_answer_question";
-// const MATCHING_FEATURES_TYPE = "matching_features";
+const MATCHING_FEATURES_TYPE = "matching_features";
 // const MATCHING_SENTENCE_ENDING_TYPE = "matching_sentence_ending";
 // const MATCHING_INFORMATION_TYPE = "matching_information";
 // const DIAGRAM_LABEL_COMPLETION_TYPE = "diagram_label_completion";
@@ -371,24 +371,17 @@ export const QuestionsSection = ({
                               globalNumber={globalNumber}
                             />
                           );
-                        // case SHORT_ANSWER_TYPE:
-                        //   return (
-                        //     <ShortAnswer
-                        //       key={`${question.id}-${questionType}`}
-                        //       qIndex={qIndex}
-                        //       questionsPath={questionsPath}
-                        //       onDuplicateQuestion={handleDuplicateQuestion}
-                        //       onRemoveQuestion={handleRemoveQuestion}
-                        //     />
-                        //   );
-                        // case MATCHING_FEATURES_TYPE:
-                        //   return (
-                        //     <MatchingFeatures
-                        //       key={`${question.id}-${questionType}`}
-                        //       questionsPath={questionsPath}
-                        //       qIndex={qIndex}
-                        //     />
-                        //   );
+                        case MATCHING_FEATURES_TYPE:
+                          return (
+                            <MatchingFeatures
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                            />
+                          );
                         // case MATCHING_SENTENCE_ENDING_TYPE:
                         //   return (
                         //     <MatchingSentenceEnding

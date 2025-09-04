@@ -137,24 +137,19 @@ export const defaultReadingQuestion: Record<
       highlights: [],
     },
   },
-  // short_answer_question: {
-  //   type: "short_answer_question",
-  //   question: "",
-  //   answerKey: ["Type the correct answer here..."],
-  //   otherAnswerIncorrect: false,
-  //   breakdown: "",
-  // },
-  // matching_features: {
-  //   type: "matching_features",
-  //   options: ["Type the feature options here..."],
-  //   items: [
-  //     {
-  //       text: "",
-  //       answerKey: "",
-  //       breakdown: "",
-  //     },
-  //   ],
-  // },
+  matching_features: {
+    question_number: 0,
+    question_type: "matching_features",
+    points_value: 0,
+
+    options: [
+      {
+        option_key: "A",
+        option_text: "Option 1",
+      },
+    ],
+    items: [],
+  },
   // matching_sentence_ending: {
   //   type: "matching_sentence_ending",
   //   options: ["Type the sentence endings here"],
