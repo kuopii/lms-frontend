@@ -36,6 +36,7 @@ import TrueFalseNotGiven from "@/features/test/components/questions/true-false-n
 import YesNoNotGiven from "@/features/test/components/questions/yes-no-not-given";
 import SentenceCompletion from "../../components/questions/sentence-completion";
 import MatchingHeading from "@/features/test/components/questions/matching-heading";
+import { ParagraphCompletion } from "@/features/test/components/questions/paragraph-completion";
 import { PassageReading } from "../../form/create-reading-form";
 
 type QuestionsSectionProps = {
@@ -56,7 +57,7 @@ const MATCHING_HEADING_TYPE = "matching_heading";
 // const MATCHING_SENTENCE_ENDING_TYPE = "matching_sentence_ending";
 // const MATCHING_INFORMATION_TYPE = "matching_information";
 // const DIAGRAM_LABEL_COMPLETION_TYPE = "diagram_label_completion";
-// const PARAGRAPH_COMPLETION_TYPE = "paragraph_completion";
+const PARAGRAPH_COMPLETION_TYPE = "paragraph_completion";
 const NOTE_COMPLETION_TYPE = "note_completion";
 
 export const QuestionsSection = ({
@@ -413,16 +414,17 @@ export const QuestionsSection = ({
                         //     />
                         //   );
                         //
-                        // case PARAGRAPH_COMPLETION_TYPE:
-                        //   return (
-                        //     <ParagraphCompletion
-                        //       key={`${question.id}-${questionType}`}
-                        //       qIndex={qIndex}
-                        //       questionsPath={questionsPath}
-                        //       onDuplicateQuestion={handleDuplicateQuestion}
-                        //       onRemoveQuestion={handleRemoveQuestion}
-                        //     />
-                        //   );
+                        case PARAGRAPH_COMPLETION_TYPE:
+                          return (
+                            <ParagraphCompletion
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                            />
+                          );
                         case NOTE_COMPLETION_TYPE:
                           return (
                             <NoteCompletion

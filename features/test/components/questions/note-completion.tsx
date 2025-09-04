@@ -1,8 +1,7 @@
 "use client";
 
-import React, { useCallback, useRef, useState } from "react";
+import React, { useCallback, useMemo, useRef } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
-import { GrSelect } from "react-icons/gr";
 import { FaTrash } from "react-icons/fa6";
 import { PiCopyFill } from "react-icons/pi";
 import QuestionHeader from "../question-header";
@@ -15,21 +14,16 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Textarea } from "@/components/ui/textarea";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { RiDeleteBack2Fill } from "react-icons/ri";
 import { ImagePreview } from "../question-image";
-
-interface BlankInText {
-  match: string;
-  number: number;
-  index: number;
-  endIndex: number;
-  originalText: string; // Add this to track original text
-}
+import { ParagraphTextArea } from "../../reading/components/paragraph-text-area";
+import { useTextSelection } from "@/hooks/use-text-selection";
+import { BlankActions } from "../../reading/components/blank-action";
+import { useBlankInText } from "@/hooks/use-blank-in-text";
 
 interface NoteCompletionProps {
   qIndex: number;
@@ -49,167 +43,80 @@ const NoteCompletion: React.FC<NoteCompletionProps> = ({
   const { control, watch, setValue } = useFormContext();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Selection state
-  const [selectedText, setSelectedText] = useState<string>("");
-  const [selectionStart, setSelectionStart] = useState<number>(0);
-  const [selectionEnd, setSelectionEnd] = useState<number>(0);
-
-  // Paths
   const questionPath = `${questionsPath}.${qIndex}`;
-  const correctAnswerPath = `${questionPath}.correct_answer`;
 
-  // Field arrays
   const { fields: questionFields } = useFieldArray({
     control,
     name: questionsPath,
   });
+
+  // Memoized paths
+  const paths = useMemo(
+    () => ({
+      correctAnswer: `${questionPath}.correct_answer`,
+      questionText: `${questionPath}.question_text`,
+      images: `${questionPath}.question_data.images`,
+    }),
+    [questionPath],
+  );
+
   const { fields: correctAnswerFields } = useFieldArray({
     control,
-    name: correctAnswerPath,
+    name: paths.correctAnswer,
   });
 
   // Watch values
-  const watchedQuestionText = watch(`${questionPath}.question_text`) as string;
-  const watchedCorrectAnswer = watch(correctAnswerPath) as Option[];
+  const watchedQuestionText = watch(paths.questionText) as string;
+  const watchedCorrectAnswer = watch(paths.correctAnswer) as Option[];
+  const currentImages = watch(paths.images);
 
-  // Helper function to find blanks in text with their original text
-  const findBlanksInText = useCallback(
-    (paragraph: string, answerKey: Option[]): BlankInText[] => {
-      const blankPattern = /__(\d+)__/g;
-      const blanksInText: BlankInText[] = [];
-      let match;
+  const { reorderBlanksInParagraph, removeBlank } = useBlankInText({
+    questionType: "note",
+  });
 
-      while ((match = blankPattern.exec(paragraph)) !== null) {
-        const number = parseInt(match[1]);
-        const answerItem = answerKey.find(
-          (item) => parseInt(item.option_key) === number,
-        );
+  const {
+    selectedText,
+    selectionStart,
+    selectionEnd,
+    handleTextSelection,
+    clearSelection,
+  } = useTextSelection(watchedQuestionText);
 
-        blanksInText.push({
-          match: match[0],
-          number: number,
-          index: match.index,
-          endIndex: match.index + match[0].length,
-          originalText: answerItem?.option_text || "",
-        });
-      }
-
-      return blanksInText.sort((a, b) => a.index - b.index);
-    },
-    [],
-  );
-
-  // Helper function to create number mapping
-  const createNumberMapping = useCallback(
-    (blanks: BlankInText[]): Record<number, number> => {
-      const mapping: Record<number, number> = {};
-      blanks.forEach((blank, index) => {
-        mapping[blank.number] = index + 1;
-      });
-      return mapping;
-    },
-    [],
-  );
-
-  // Helper function to update paragraph with new numbers
-  const updateParagraphNumbers = useCallback(
-    (
-      paragraph: string,
-      blanks: BlankInText[],
-      mapping: Record<number, number>,
-    ): string => {
-      let updatedParagraph = paragraph;
-
-      // Replace from right to left to avoid index shifting
-      for (let i = blanks.length - 1; i >= 0; i--) {
-        const blank = blanks[i];
-        const newNumber = mapping[blank.number];
-        updatedParagraph =
-          updatedParagraph.substring(0, blank.index) +
-          `__${newNumber}__` +
-          updatedParagraph.substring(blank.endIndex);
-      }
-
-      return updatedParagraph;
-    },
-    [],
-  );
-
-  // Main function to reorder blanks
-  const reorderBlanksInParagraph = useCallback(
-    (paragraph: string, answerKey: Option[]) => {
-      const blanksInText = findBlanksInText(paragraph, answerKey);
-      const numberMapping = createNumberMapping(blanksInText);
-      const updatedParagraph = updateParagraphNumbers(
-        paragraph,
-        blanksInText,
-        numberMapping,
-      );
-
-      // Create new answer key based on the order of blanks in the paragraph
-      const newAnswerKey: Option[] = blanksInText.map((blank, index) => ({
-        option_key: (index + 1).toString(),
-        option_text: blank.originalText,
-      }));
-
-      return { updatedParagraph, newAnswerKey };
-    },
-    [findBlanksInText, createNumberMapping, updateParagraphNumbers],
-  );
-
-  // Handle text selection
-  const handleTextSelection = useCallback(() => {
-    if (!textareaRef.current) return;
-
-    const questionText = watchedQuestionText || "";
-    const start = textareaRef.current.selectionStart;
-    const end = textareaRef.current.selectionEnd;
-    const selected = questionText.substring(start, end);
-
-    if (selected.trim()) {
-      setSelectedText(selected);
-      setSelectionStart(start);
-      setSelectionEnd(end);
-    } else {
-      setSelectedText("");
-    }
-  }, [watchedQuestionText]);
+  const onTextSelection = useCallback(() => {
+    handleTextSelection(textareaRef);
+  }, [handleTextSelection]);
 
   // Create new answer key based on current state
-  const createNewAnswerKey = useCallback(
-    (
-      currentAnswer: Option[],
-      selectedText: string,
-      questionText: string,
-    ): Option[] => {
-      const isFirstBlankAndEmpty =
-        currentAnswer.length === 1 &&
-        currentAnswer[0].option_key === "1" &&
-        currentAnswer[0].option_text === "" &&
-        !questionText.includes("__1__");
+  const createNewAnswerKey = (
+    currentAnswer: Option[],
+    selectedText: string,
+    questionText: string,
+  ): Option[] => {
+    const isFirstBlankAndEmpty =
+      currentAnswer.length === 1 &&
+      currentAnswer[0].option_key === "1" &&
+      currentAnswer[0].option_text === "" &&
+      !questionText.includes("__1__");
 
-      if (isFirstBlankAndEmpty) {
-        return [
-          {
-            option_key: "999", // Temporary, will be reordered
-            option_text: selectedText.trim(),
-          },
-        ];
-      } else {
-        return [
-          ...currentAnswer,
-          {
-            option_key: "999", // Temporary, will be reordered
-            option_text: selectedText.trim(),
-          },
-        ];
-      }
-    },
-    [],
-  );
+    if (isFirstBlankAndEmpty) {
+      return [
+        {
+          option_key: "999", // Temporary, will be reordered
+          option_text: selectedText.trim(),
+        },
+      ];
+    } else {
+      return [
+        ...currentAnswer,
+        {
+          option_key: "999", // Temporary, will be reordered
+          option_text: selectedText.trim(),
+        },
+      ];
+    }
+  };
 
-  // Mark selected text as blank
-  const markAsBlank = useCallback(() => {
+  const markAsBlank = () => {
     if (!selectedText.trim() || !textareaRef.current) return;
 
     const currentQuestionText = watchedQuestionText || "";
@@ -234,80 +141,40 @@ const NoteCompletion: React.FC<NoteCompletionProps> = ({
     );
 
     // Reorder all blanks
-    const { updatedParagraph, newAnswerKey: reorderedAnswerKey } =
+    const { updatedParagraph, newAnswerData: reorderedAnswerKey } =
       reorderBlanksInParagraph(paragraphWithNewBlank, newAnswerKey);
 
     // Update form values
-    setValue(`${questionPath}.question_text`, updatedParagraph);
-    setValue(correctAnswerPath, reorderedAnswerKey);
+    setValue(paths.questionText, updatedParagraph);
+    setValue(paths.correctAnswer, reorderedAnswerKey);
 
     // Clear selection and focus
-    setSelectedText("");
+    clearSelection();
     setTimeout(() => {
       if (textareaRef.current) {
         textareaRef.current.focus();
         textareaRef.current.setSelectionRange(0, 0);
       }
     }, 0);
-  }, [
-    selectedText,
-    selectionStart,
-    selectionEnd,
-    watchedQuestionText,
-    watchedCorrectAnswer,
-    setValue,
-    correctAnswerPath,
-    reorderBlanksInParagraph,
-    questionPath,
-    createNewAnswerKey,
-  ]);
+  };
 
-  // Remove a blank from the paragraph and answer key
-  const removeBlank = useCallback(
-    (indexToRemove: number) => {
-      const currentQuestionText = watchedQuestionText || "";
-      const currentCorrectAnswer = watchedCorrectAnswer || [];
+  const handleRemoveBlank = (indexToRemove: number) => {
+    const currentQuestionText = watchedQuestionText || "";
+    const currentCorrectAnswer = watchedCorrectAnswer || [];
 
-      if (indexToRemove < 0 || indexToRemove >= currentCorrectAnswer.length)
-        return;
+    const { updatedParagraph, newAnswerData } = removeBlank(
+      indexToRemove,
+      currentQuestionText,
+      currentCorrectAnswer,
+    );
 
-      const itemToRemove = currentCorrectAnswer[indexToRemove];
-      const numberToRemove = itemToRemove.option_key;
-
-      // Remove blank from paragraph (replace with original text)
-      const blankPattern = new RegExp(`__${numberToRemove}__`, "g");
-      const paragraphWithoutBlank = currentQuestionText.replace(
-        blankPattern,
-        itemToRemove.option_text, // Use the answer text as replacement
-      );
-
-      // Remove from answer key
-      const newAnswerKey = currentCorrectAnswer.filter(
-        (_, index) => index !== indexToRemove,
-      );
-
-      // Reorder remaining blanks
-      const { updatedParagraph, newAnswerKey: reorderedAnswerKey } =
-        reorderBlanksInParagraph(paragraphWithoutBlank, newAnswerKey);
-
-      // Update form values
-      setValue(`${questionPath}.question_text`, updatedParagraph);
-      setValue(correctAnswerPath, reorderedAnswerKey);
-    },
-    [
-      watchedCorrectAnswer,
-      watchedQuestionText,
-      setValue,
-      reorderBlanksInParagraph,
-      questionPath,
-      correctAnswerPath,
-    ],
-  );
+    // Update form values
+    setValue(paths.questionText, updatedParagraph);
+    setValue(paths.correctAnswer, newAnswerData);
+  };
 
   // Check if question can be removed
   const canRemoveQuestion = questionFields.length > 0;
-
-  const currentImages = watch(`${questionPath}.question_data.images`);
 
   return (
     <div className="space-y-6">
@@ -328,49 +195,20 @@ const NoteCompletion: React.FC<NoteCompletionProps> = ({
           />
         </div>
 
-        <FormField
+        <ParagraphTextArea
           control={control}
-          name={`${questionPath}.question_text`}
-          render={({ field }) => (
-            <FormItem className="w-full">
-              <FormControl>
-                <Textarea
-                  {...field}
-                  ref={textareaRef}
-                  className="min-h-64"
-                  variant="default"
-                  placeholder="Type a sentence here, then select the word you want to make blank..."
-                  onSelect={handleTextSelection}
-                  onMouseUp={handleTextSelection}
-                  onKeyUp={handleTextSelection}
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
+          questionPath={questionPath}
+          textareaRef={textareaRef}
+          onTextSelection={onTextSelection}
         />
 
         <Separator />
 
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-          <div className="flex w-full items-center justify-between gap-4 md:w-fit">
-            <Button
-              size="xs"
-              onClick={markAsBlank}
-              className="rounded-3xl [&_svg:not([class*='size-'])]:size-5"
-              type="button"
-              aria-label="Mark selected text as blank"
-              disabled={!selectedText.trim()}
-            >
-              <GrSelect />
-              Mark as Blank
-            </Button>
-            {selectedText && (
-              <span className="text-sm text-gray-300">
-                Selected: &quot;{selectedText}&quot;
-              </span>
-            )}
-          </div>
+          <BlankActions
+            selectedText={selectedText}
+            onMarkAsBlank={markAsBlank}
+          />
 
           <div className="flex w-full items-center justify-between gap-4 md:w-fit">
             <PointsField questionPath={questionPath} />
@@ -437,7 +275,7 @@ const NoteCompletion: React.FC<NoteCompletionProps> = ({
 
                   <FormField
                     control={control}
-                    name={`${correctAnswerPath}.${index}.option_text`}
+                    name={`${paths.correctAnswer}.${index}.option_text`}
                     render={({ field: answerField }) => (
                       <FormItem className="flex-1">
                         <FormControl>
@@ -457,7 +295,7 @@ const NoteCompletion: React.FC<NoteCompletionProps> = ({
                     type="button"
                     size="iconSm"
                     variant="ghost"
-                    onClick={() => removeBlank(index)}
+                    onClick={() => handleRemoveBlank(index)}
                     className="[&_svg:not([class*='size-'])]:size-5"
                     aria-label={`Remove blank ${typedField.option_key}`}
                   >

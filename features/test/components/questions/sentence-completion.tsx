@@ -39,16 +39,21 @@ const SentenceCompletion = ({
 }: SentenceCompletionProps) => {
   const { control, watch, setValue, getValues } = useFormContext();
   const inputRefs = useRef<HTMLInputElement | null>(null);
+
   const questionPath = `${questionsPath}.${qIndex}`;
 
-  const correctAnswerPath = useMemo(
-    () => `${questionPath}.correct_answer`,
+  const paths = useMemo(
+    () => ({
+      correctAnswer: `${questionPath}.correct_answer`,
+      questionText: `${questionPath}.question_text`,
+      images: `${questionPath}.question_data.images`,
+    }),
     [questionPath],
   );
 
   const { fields: correctAnswerField } = useFieldArray({
     control,
-    name: correctAnswerPath,
+    name: paths.correctAnswer,
   });
 
   const { fields: questionFields } = useFieldArray({
@@ -58,7 +63,7 @@ const SentenceCompletion = ({
 
   const allAnswerKeys = watch(
     correctAnswerField.map(
-      (_, index) => `${correctAnswerPath}.${index}.option_text`,
+      (_, index) => `${paths.correctAnswer}.${index}.option_text`,
     ),
   );
 
@@ -84,9 +89,8 @@ const SentenceCompletion = ({
       return;
     }
 
-    const currentQuestion = getValues(`${questionPath}.question_text`);
-    const correctAnswers =
-      (getValues(`${questionPath}.correct_answer`) as Option[]) ?? [];
+    const currentQuestion = getValues(paths.questionText);
+    const correctAnswers = (getValues(paths.correctAnswer) as Option[]) ?? [];
 
     const selectedText = currentQuestion.substring(start, end);
     if (!selectedText) {
@@ -105,8 +109,8 @@ const SentenceCompletion = ({
         originalWord,
       );
 
-      setValue(`${questionPath}.question_text`, restoredText);
-      setValue(`${questionPath}.correct_answer`, [
+      setValue(paths.questionText, restoredText);
+      setValue(paths.correctAnswer, [
         {
           option_key: "",
           option_text: "",
@@ -118,10 +122,10 @@ const SentenceCompletion = ({
         BLANK_PLACEHOLDER +
         currentQuestion.substring(end);
 
-      setValue(`${questionPath}.question_text`, updateText);
+      setValue(paths.questionText, updateText);
 
       setValue(
-        `${questionPath}.correct_answer`,
+        paths.correctAnswer,
         [
           {
             option_key: selectedText,
@@ -138,12 +142,11 @@ const SentenceCompletion = ({
     // Reset selection and blur input
     inputElement.setSelectionRange(0, 0);
     inputElement.blur();
-  }, [setValue, getValues, questionPath]);
+  }, [setValue, getValues, paths.correctAnswer, paths.questionText]);
 
   const resetItem = useCallback(() => {
-    const currentQuestion = getValues(`${questionPath}.question_text`);
-    const correctAnswers =
-      (getValues(`${questionPath}.correct_answer`) as Option[]) ?? [];
+    const currentQuestion = getValues(paths.questionText);
+    const correctAnswers = (getValues(paths.correctAnswer) as Option[]) ?? [];
     const originalWord = correctAnswers[0]?.option_text;
     if (!originalWord) return;
 
@@ -153,18 +156,16 @@ const SentenceCompletion = ({
       BLANK_PLACEHOLDER,
       originalWord,
     );
-    setValue(`${questionPath}.question_text`, restoredText);
-    setValue(`${questionPath}.correct_answer`, [
+    setValue(paths.questionText, restoredText);
+    setValue(paths.correctAnswer, [
       {
         option_key: "",
         option_text: "",
       },
     ]);
-  }, [setValue, getValues, questionPath]);
+  }, [setValue, getValues, paths.correctAnswer, paths.questionText]);
 
-  const currentImages = watch(
-    `${questionsPath}.${qIndex}.question_data.images`,
-  );
+  const currentImages = watch(paths.images);
 
   return (
     <div className="space-y-6">
