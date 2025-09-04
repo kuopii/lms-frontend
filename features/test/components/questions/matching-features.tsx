@@ -54,15 +54,15 @@ const ItemField = React.memo(
 
     return (
       <div className="space-y-6 rounded-3xl bg-[#333333] px-3 py-8 md:px-4 lg:px-5">
-        <div className="flex items-center justify-between gap-7">
-          <span className="text-medium text-primary text-xl">
+        <div className="flex items-start justify-between gap-7">
+          <span className="text-medium text-primary text-xl mt-3">
             {item.question_number}
           </span>
           <FormField
             control={control}
             name={`${itemsPath}.${index}.question_text`}
             render={({ field }) => (
-              <FormItem className="w-full">
+              <FormItem className="w-full gap-3">
                 <FormControl>
                   <Textarea
                     {...field}

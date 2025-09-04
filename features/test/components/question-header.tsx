@@ -119,17 +119,17 @@ const QuestionHeader: React.FC<QuestionHeaderProps> = ({
   const { nestIndex, questionGroupIndex } = extractIndexes(questionPath);
 
   return (
-    <div className={cn("flex items-center justify-between gap-7", className)}>
+    <div className={cn("flex items-start justify-between gap-7", className)}>
       {withNumber && (
-        <span className="text-medium text-primary text-xl">{globalNumber}</span>
+        <span className="text-medium text-primary text-xl mt-3">{globalNumber}</span>
       )}
-      <div className="flex w-full flex-1 flex-col items-center justify-between gap-4 md:flex-row">
+      <div className="flex w-full flex-1 flex-col items-start justify-between gap-4 md:flex-row">
         {variant === "input" && (
           <FormField
             control={control}
             name={`${questionPath}.question_text` || ""}
             render={({ field }) => (
-              <FormItem className="w-full">
+              <FormItem className="w-full gap-3">
                 <FormControl>
                   <Textarea
                     {...field}
