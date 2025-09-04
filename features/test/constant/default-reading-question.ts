@@ -189,13 +189,24 @@ export const defaultReadingQuestion: Record<
   //   ],
   //   breakdown: "",
   // },
-  // paragraph_completion: {
-  //   type: "paragraph_completion",
-  //   paragraph: "",
-  //   options: ["Type the suggested answers here..."],
-  //   answerKey: [""],
-  //   breakdown: "",
-  // },
+  paragraph_completion: {
+    question_type: "paragraph_completion",
+    question_number: 0,
+    question_text: "",
+    points_value: 0,
+    options: [
+      {
+        option_key: "A",
+        option_text: "Option 1",
+      },
+    ],
+    items: [],
+    breakdown: {
+      explanation: "",
+      has_highlight: false,
+      highlights: [],
+    },
+  },
   note_completion: {
     question_type: "note_completion",
     question_number: 0,

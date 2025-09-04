@@ -14,7 +14,7 @@ export const QuestionType = z.enum([
   // "matching_sentence_ending",
   // "matching_information",
   // "diagram_label_completion",
-  // "paragraph_completion",
+  "paragraph_completion",
   "note_completion",
 ]);
 
@@ -201,13 +201,29 @@ const sentenceCompletion = z.object({
   breakdown: breakdownSchema.optional(),
 });
 
-// const paragraphCompletionSchema = z.object({
-//   type: z.literal("paragraph_completion"),
-//   paragraph: z.string().min(1, "Paragraf tidak boleh kosong"),
-//   options: z.array(z.string().min(1, "Opsi tidak boleh kosong")).min(2),
-//   answerKey: z.array(z.string().min(1, "Jawaban wajib diisi")).min(1),
-//   breakdown: z.string().optional(),
-// });
+const paragraphCompletionSchema = z.object({
+  question_type: z.literal("paragraph_completion"),
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_text: z.string().min(1, "Question text is required"),
+  question_data: questionDataSchema.optional(),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  options: z.array(optionSchema).min(2, "At least 2 options are required"),
+  items: z
+    .array(
+      z.object({
+        question_number: z.number({
+          required_error: "Question number is required",
+          invalid_type_error: "Question number must be a number",
+        }),
+        correct_answer: optionSchema,
+      }),
+    )
+    .min(1, "Minimum 1 item to match"),
+  breakdown: breakdownSchema.optional(),
+});
 
 const noteCompletionSchema = z.object({
   question_type: z.literal("note_completion"),
@@ -236,7 +252,7 @@ export const questionSchema = z.discriminatedUnion("question_type", [
   // matchingSentenceEndingSchema,
   // matchingInformationSchema,
   // diagramLabelCompletionSchema,
-  // paragraphCompletionSchema,
+  paragraphCompletionSchema,
   noteCompletionSchema,
 ]);
 

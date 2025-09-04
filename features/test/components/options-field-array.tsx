@@ -23,6 +23,7 @@ const OptionFieldArray = ({
   inputVariant = "ghost",
   questionPath,
   correctAnswerPath,
+  onDeleteOption,
 }: {
   variant?: "editable" | "readonly";
   withNumber?: boolean;
@@ -30,6 +31,7 @@ const OptionFieldArray = ({
   inputVariant?: "ghost" | "underline" | "default";
   questionPath: string;
   correctAnswerPath?: string;
+  onDeleteOption?: (index: number, option: Option) => void;
 }) => {
   const { control, watch, getValues, setValue } = useFormContext();
 
@@ -120,9 +122,12 @@ const OptionFieldArray = ({
       );
     }
 
+    console.log("target", targetKey);
+
     removeOption(index);
     // Gunakan setTimeout untuk memastikan DOM sudah diupdate
     setTimeout(() => updateOptionKeys(), 0);
+    if (onDeleteOption) onDeleteOption(index, watchOptionsData[index]);
   };
 
   return (
