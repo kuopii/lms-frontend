@@ -81,8 +81,11 @@ export type Option = {
 };
 
 export type Item = {
+  id: string;
   question_number: number;
   correct_answer: Option;
+  question_text?: string;
+  breakdown?: Breakdown;
 };
 
 export type Breakdown = {
