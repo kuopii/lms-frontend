@@ -54,7 +54,7 @@ const SINGLE_CHOICE_TYPE = "choose_correct_answer";
 const SENTENCE_COMPLETION = "sentence_completion";
 const MATCHING_HEADING_TYPE = "matching_heading";
 const MATCHING_FEATURES_TYPE = "matching_features";
-// const MATCHING_SENTENCE_ENDING_TYPE = "matching_sentence_ending";
+const MATCHING_SENTENCE_ENDING_TYPE = "matching_sentence_ending";
 // const MATCHING_INFORMATION_TYPE = "matching_information";
 // const DIAGRAM_LABEL_COMPLETION_TYPE = "diagram_label_completion";
 const PARAGRAPH_COMPLETION_TYPE = "paragraph_completion";
@@ -382,14 +382,17 @@ export const QuestionsSection = ({
                               globalNumber={globalNumber}
                             />
                           );
-                        // case MATCHING_SENTENCE_ENDING_TYPE:
-                        //   return (
-                        //     <MatchingSentenceEnding
-                        //       qIndex={qIndex}
-                        //       key={`${question.id}-${questionType}`}
-                        //       questionsPath={questionsPath}
-                        //     />
-                        //   );
+                        case MATCHING_SENTENCE_ENDING_TYPE:
+                          return (
+                            <MatchingFeatures
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                            />
+                          );
                         // case MATCHING_INFORMATION_TYPE:
                         //   return (
                         //     <MatchingInformation

@@ -19,7 +19,7 @@ import { Option } from "@/types/test";
 const OptionFieldArray = ({
   variant = "editable",
   withNumber = true,
-  placeholder = "",
+  placeholder = { input: "", add: "" },
   inputVariant = "ghost",
   questionPath,
   correctAnswerPath,
@@ -27,7 +27,7 @@ const OptionFieldArray = ({
 }: {
   variant?: "editable" | "readonly";
   withNumber?: boolean;
-  placeholder?: string;
+  placeholder?: { input?: string; add?: string };
   inputVariant?: "ghost" | "underline" | "default";
   questionPath: string;
   correctAnswerPath?: string;
@@ -156,7 +156,9 @@ const OptionFieldArray = ({
                         inputRefs.current[optIndex] = el;
                       }}
                       readOnly={variant === "readonly"}
-                      placeholder={placeholder || `Option ${optIndex + 1}`}
+                      placeholder={
+                        `${placeholder.input || "Option"}` + ` ${optIndex + 1}`
+                      }
                       variant={inputVariant}
                       className={cn(
                         "w-full shadow-none",
@@ -172,7 +174,8 @@ const OptionFieldArray = ({
                           const value = e.target.value.trim();
                           if (!value) {
                             const fallback =
-                              placeholder || `Option ${optIndex + 1}`;
+                              `${placeholder.input || "Option"}` +
+                              ` ${optIndex + 1}`;
                             field.onChange(fallback);
                           }
                         }
@@ -208,7 +211,7 @@ const OptionFieldArray = ({
           <Input
             onClick={handleAddOption}
             variant={inputVariant}
-            placeholder={placeholder || "Add option"}
+            placeholder={placeholder.add || "Add option"}
             className={cn("shadow-none")}
             readOnly
           />

@@ -141,26 +141,26 @@ export const defaultReadingQuestion: Record<
     question_number: 0,
     question_type: "matching_features",
     points_value: 0,
-
     options: [
       {
         option_key: "A",
-        option_text: "Option 1",
+        option_text: "Feature Option 1",
       },
     ],
     items: [],
   },
-  // matching_sentence_ending: {
-  //   type: "matching_sentence_ending",
-  //   options: ["Type the sentence endings here"],
-  //   items: [
-  //     {
-  //       text: "",
-  //       answerKey: "",
-  //       breakdown: "",
-  //     },
-  //   ],
-  // },
+  matching_sentence_ending: {
+    question_number: 0,
+    question_type: "matching_sentence_ending",
+    points_value: 0,
+    options: [
+      {
+        option_key: "A",
+        option_text: "Sentence endings 1",
+      },
+    ],
+    items: [],
+  },
   // matching_information: {
   //   type: "matching_information",
   //   paragraph: ["Type or paste the text here..."],
