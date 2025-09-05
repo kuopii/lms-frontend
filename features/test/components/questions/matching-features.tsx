@@ -35,6 +35,7 @@ type ItemFieldProps = {
   index: number;
   itemsPath: string;
   options: Option[];
+  questionType: string;
   onDuplicateItem: (index: number) => void;
   onRemoveItem: (index: number) => void;
   canRemove: boolean;
@@ -46,6 +47,7 @@ const ItemField = React.memo(
     index,
     itemsPath,
     options,
+    questionType,
     onDuplicateItem,
     onRemoveItem,
     canRemove,
@@ -55,7 +57,7 @@ const ItemField = React.memo(
     return (
       <div className="space-y-6 rounded-3xl bg-[#333333] px-3 py-8 md:px-4 lg:px-5">
         <div className="flex items-start justify-between gap-7">
-          <span className="text-medium text-primary text-xl mt-3">
+          <span className="text-medium text-primary mt-3 text-xl">
             {item.question_number}
           </span>
           <FormField
@@ -66,7 +68,11 @@ const ItemField = React.memo(
                 <FormControl>
                   <Textarea
                     {...field}
-                    placeholder="Type your statement here..."
+                    placeholder={
+                      questionType === "matching_features"
+                        ? "Type your statement here..."
+                        : "Type the sentence beginnings here..."
+                    }
                     className="min-h-11 resize-none"
                   />
                 </FormControl>
@@ -131,6 +137,7 @@ export const MatchingFeatures = ({
       images: `${questionPath}.question_data.images`,
       items: `${questionPath}.items`,
       questionNumber: `${questionPath}.question_number`,
+      questionType: `${questionPath}.question_type`,
     }),
     [questionPath],
   );
@@ -139,6 +146,7 @@ export const MatchingFeatures = ({
   const watchItems = watch(paths.items) as Item[];
   const watchOptions = watch(`${questionPath}.options`) as Option[];
   const watchQuestionNumber = watch(paths.questionNumber) as number;
+  const watchQuestionType = watch(paths.questionType) as string;
 
   const {
     fields: itemsField,
@@ -229,7 +237,13 @@ export const MatchingFeatures = ({
         <QuestionHeader
           qIndex={qIndex}
           variant="text"
-          textHeader="Add Feature Options to Match the Statements"
+          textHeader={
+            watchQuestionType === "matching_features"
+              ? "Add Feature Options to Match the Statements"
+              : watchQuestionType === "matching_sentence_ending"
+                ? "Add Sentence Endings to Match the Beginings"
+                : ""
+          }
           questionPath={questionPath}
           globalNumber={globalNumber}
           withNumber={false}
@@ -243,7 +257,20 @@ export const MatchingFeatures = ({
           />
         </div>
 
-        <OptionFieldArray variant="editable" questionPath={questionPath} />
+        <OptionFieldArray
+          variant="editable"
+          questionPath={questionPath}
+          placeholder={{
+            input:
+              watchQuestionType === "matching_features"
+                ? "Feature options"
+                : "Sentence endings",
+            add:
+              watchQuestionType === "matching_features"
+                ? "Add feature options"
+                : "Add sentence endings",
+          }}
+        />
 
         <Separator />
 
@@ -310,6 +337,7 @@ export const MatchingFeatures = ({
                 index={index}
                 itemsPath={paths.items}
                 options={watchOptions || []}
+                questionType={watchQuestionType}
                 onDuplicateItem={handleDuplicateItem}
                 onRemoveItem={handleRemoveItem}
                 canRemove={canRemoveItem}

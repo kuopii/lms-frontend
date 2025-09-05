@@ -10,7 +10,7 @@ export const QuestionType = z.enum([
   "sentence_completion",
   "matching_heading",
   "matching_features",
-  // "matching_sentence_ending",
+  "matching_sentence_ending",
   // "matching_information",
   // "diagram_label_completion",
   "paragraph_completion",
@@ -141,21 +141,29 @@ const matchingFeaturesSchema = z.object({
     .min(1, "Minimum 1 item to match"),
 });
 
-// const matchingSentenceEndingSchema = z.object({
-//   type: z.literal("matching_sentence_ending"),
-//   options: z
-//     .array(z.string().min(1, "Akhiran kalimat tidak boleh kosong"))
-//     .min(1, "Minimal 1 akhiran kalimat harus disediakan"),
-//   items: z
-//     .array(
-//       z.object({
-//         text: z.string().min(1, "Teks awal kalimat wajib diisi"),
-//         answerKey: z.string().min(1, "Jawaban wajib diisi"),
-//         breakdown: z.string().optional(),
-//       }),
-//     )
-//     .min(1, "Minimal 1 kalimat untuk dicocokkan"),
-// });
+const matchingSentenceEndingSchema = z.object({
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_type: z.literal("matching_sentence_ending"),
+  question_data: questionDataSchema.optional(),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  options: z.array(optionSchema).min(2, "At least 2 options are required"),
+  items: z
+    .array(
+      z.object({
+        question_number: z.number({
+          required_error: "Question number is required",
+          invalid_type_error: "Question number must be a number",
+        }),
+        question_text: z.string().min(1, "Question text is required"),
+        correct_answer: optionSchema,
+        breakdown: breakdownSchema.optional(),
+      }),
+    )
+    .min(1, "Minimum 1 item to match"),
+});
 
 // const matchingInformationSchema = z.object({
 //   type: z.literal("matching_information"),
@@ -245,7 +253,7 @@ export const questionSchema = z.discriminatedUnion("question_type", [
   yesNoNotGiven,
   sentenceCompletion,
   matchingFeaturesSchema,
-  // matchingSentenceEndingSchema,
+  matchingSentenceEndingSchema,
   // matchingInformationSchema,
   // diagramLabelCompletionSchema,
   paragraphCompletionSchema,
