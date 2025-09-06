@@ -12,7 +12,7 @@ export const QuestionType = z.enum([
   "matching_features",
   "matching_sentence_ending",
   // "matching_information",
-  // "diagram_label_completion",
+  "diagram_label_completion",
   "paragraph_completion",
   "note_completion",
 ]);
@@ -179,20 +179,28 @@ const matchingSentenceEndingSchema = z.object({
 //     .min(1, "Minimal 1 kalimat untuk dicocokkan"),
 // });
 
-// const diagramLabelCompletionSchema = z.object({
-//   type: z.literal("diagram_label_completion"),
-//   image: z.string().min(1, "Gambar wajib diisi"), // base64
-//   question: z.string().min(1, "Soal wajib diisi"),
-//   items: z
-//     .array(
-//       z.object({
-//         label: z.string().min(1, "Label wajib diisi"),
-//         answerKey: z.string().min(1, "Jawaban wajib diisi"),
-//       }),
-//     )
-//     .min(1, "Minimal 1 item harus disediakan"),
-//   breakdown: z.string().optional(),
-// });
+const diagramLabelCompletionSchema = z.object({
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_type: z.literal("diagram_label_completion"),
+  question_text: z.string().min(1, "Question text is required"),
+  question_data: questionDataSchema.optional(),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  items: z
+    .array(
+      z.object({
+        question_number: z.number({
+          required_error: "Question number is required",
+          invalid_type_error: "Question number must be a number",
+        }),
+        correct_answer: optionSchema,
+      }),
+    )
+    .min(1, "Minimal 1 item harus disediakan"),
+  breakdown: breakdownSchema.optional(),
+});
 
 const sentenceCompletion = z.object({
   question_number: z.number({
@@ -255,7 +263,7 @@ export const questionSchema = z.discriminatedUnion("question_type", [
   matchingFeaturesSchema,
   matchingSentenceEndingSchema,
   // matchingInformationSchema,
-  // diagramLabelCompletionSchema,
+  diagramLabelCompletionSchema,
   paragraphCompletionSchema,
   noteCompletionSchema,
 ]);
