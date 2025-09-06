@@ -38,6 +38,7 @@ import SentenceCompletion from "../../components/questions/sentence-completion";
 import MatchingHeading from "@/features/test/components/questions/matching-heading";
 import { MatchingFeatures } from "@/features/test/components/questions/matching-features";
 import { ParagraphCompletion } from "@/features/test/components/questions/paragraph-completion";
+import { DiagramLabelCompletion } from "@/features/test/components/questions/diagram-label-completion";
 import { PassageReading } from "../../form/create-reading-form";
 
 type QuestionsSectionProps = {
@@ -56,7 +57,7 @@ const MATCHING_HEADING_TYPE = "matching_heading";
 const MATCHING_FEATURES_TYPE = "matching_features";
 const MATCHING_SENTENCE_ENDING_TYPE = "matching_sentence_ending";
 // const MATCHING_INFORMATION_TYPE = "matching_information";
-// const DIAGRAM_LABEL_COMPLETION_TYPE = "diagram_label_completion";
+const DIAGRAM_LABEL_COMPLETION_TYPE = "diagram_label_completion";
 const PARAGRAPH_COMPLETION_TYPE = "paragraph_completion";
 const NOTE_COMPLETION_TYPE = "note_completion";
 
@@ -401,15 +402,17 @@ export const QuestionsSection = ({
                         //       questionsPath={questionsPath}
                         //     />
                         //   );
-                        // case DIAGRAM_LABEL_COMPLETION_TYPE:
-                        //   return (
-                        //     <DiagramLabelCompletion
-                        //       key={`${question.id}-${questionType}`}
-                        //       qIndex={qIndex}
-                        //       questionsPath={questionsPath}
-                        //     />
-                        //   );
-                        //
+                        case DIAGRAM_LABEL_COMPLETION_TYPE:
+                          return (
+                            <DiagramLabelCompletion
+                              key={`${question.id}-${questionType}`}
+                              qIndex={qIndex}
+                              questionsPath={questionsPath}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                            />
+                          );
                         case PARAGRAPH_COMPLETION_TYPE:
                           return (
                             <ParagraphCompletion

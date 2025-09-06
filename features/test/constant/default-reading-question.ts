@@ -172,18 +172,18 @@ export const defaultReadingQuestion: Record<
   //     },
   //   ],
   // },
-  // diagram_label_completion: {
-  //   type: "diagram_label_completion",
-  //   image: "",
-  //   question: "",
-  //   items: [
-  //     {
-  //       answerKey: "",
-  //       label: "A",
-  //     },
-  //   ],
-  //   breakdown: "",
-  // },
+  diagram_label_completion: {
+    question_number: 0,
+    question_type: "diagram_label_completion",
+    question_text: "",
+    points_value: 0,
+    items: [],
+    breakdown: {
+      explanation: "",
+      has_highlight: false,
+      highlights: [],
+    },
+  },
   paragraph_completion: {
     question_type: "paragraph_completion",
     question_number: 0,
