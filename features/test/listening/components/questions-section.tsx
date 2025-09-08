@@ -26,9 +26,9 @@ import { MdDragIndicator } from "react-icons/md";
 import SentenceCompletion from "../../components/questions/sentence-completion";
 import { defaultListeningQuestion } from "../../constant/default-listening-question";
 import { PassageListening } from "../../form/create-listening-form";
-import FormCompletion from "./questions/form-completion";
-import MapLabeling from "./questions/map-labeling";
-import SummaryCompletion from "./questions/summary-completion";
+import FormCompletion from "../../components/questions/form-completion";
+import MapLabeling from "../../components/questions/map-labeling";
+import SummaryCompletion from "../../components/questions/summary-completion";
 
 type QuestionsSectionProps = {
   nestIndex: number;
