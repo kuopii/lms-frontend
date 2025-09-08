@@ -211,6 +211,7 @@ const sentenceCompletion = z.object({
   question_text: z.string().min(1, "Question text is required"),
   correct_answer: z.array(optionSchema).min(1).max(2),
   points_value: z.number().min(1, "Points value must be at least 1"),
+  question_data: questionDataSchema.optional(),
   breakdown: breakdownSchema.optional(),
 });
 

@@ -5,35 +5,28 @@ import { Controller, useFormContext } from "react-hook-form";
 import { FaUpload } from "react-icons/fa6";
 
 interface ImageDropzoneProps {
-  fieldPrefix: string; // contoh: 'sections.0.questions.1'
-}
-
-// test comp error nested form
-function getNestedError(obj: any, path: string) {
-  return path.split(".").reduce((acc, part) => acc?.[part], obj);
+  fieldPrefix: string;
 }
 
 export const ImageDropzone = ({ fieldPrefix }: ImageDropzoneProps) => {
   const {
     control,
-    formState: { errors },
+    // formState: { errors },
   } = useFormContext();
 
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-
-  const fieldName = `${fieldPrefix}.image` as const;
+  const [previewUrl, setPreviewUrl] = useState<string>();
+  console.log("previewUrl ??", previewUrl);
 
   return (
     <Controller
-      name={fieldName}
+      name={fieldPrefix}
       control={control}
       render={({ field }) => {
         const onDrop = (acceptedFiles: File[]) => {
-          const file = acceptedFiles[0];
-          if (file) {
+          if (acceptedFiles && acceptedFiles.length > 0) {
+            const file = acceptedFiles[0];
             field.onChange(file);
-            const url = URL.createObjectURL(file);
-            setPreviewUrl(url);
+            setPreviewUrl(URL.createObjectURL(file));
           }
         };
 
@@ -47,7 +40,8 @@ export const ImageDropzone = ({ fieldPrefix }: ImageDropzoneProps) => {
         });
 
         return (
-          <div className="w-full">
+          <div className="flex w-full flex-col gap-[14px]">
+            <p className="text-[22px] font-medium">Attach Supporting Maps.</p>
             <div
               {...getRootProps()}
               className={`cursor-pointer rounded-[30px] border border-dashed p-6 text-center transition ${
@@ -58,7 +52,7 @@ export const ImageDropzone = ({ fieldPrefix }: ImageDropzoneProps) => {
               {field.value ? (
                 <>
                   {previewUrl && (
-                    <div className="relative flex h-[300px] max-w-[350px] items-center justify-center">
+                    <div className="relative flex h-[300px] w-full items-center justify-center">
                       <LazyImage
                         src={previewUrl}
                         alt="map"
@@ -84,14 +78,10 @@ export const ImageDropzone = ({ fieldPrefix }: ImageDropzoneProps) => {
               )}
             </div>
             {!field.value && (
-              <p className="mt-[15px] text-[12px] font-medium text-[#AAAAAA]">
+              <p className="text-[12px] font-medium text-[#AAAAAA]">
                 Accepted file types: JPEG/JPG, PNG
               </p>
             )}
-
-            {/* <p className="mt-1 text-sm text-red-500">
-              <ErrorForm error={getNestedError(errors, fieldName)} />
-            </p> */}
           </div>
         );
       }}

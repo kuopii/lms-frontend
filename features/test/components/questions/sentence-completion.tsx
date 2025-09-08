@@ -10,16 +10,16 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { Option } from "@/types/test";
 import { RotateCcw } from "lucide-react";
 import { useCallback, useMemo, useRef } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaTrash } from "react-icons/fa6";
 import { GrSelect } from "react-icons/gr";
 import { PiCopyFill } from "react-icons/pi";
+import PointsField from "../points-field";
 import QuestionBreakdown from "../question-breakdown";
 import QuestionHeader from "../question-header";
-import { Option } from "@/types/test";
-import PointsField from "../points-field";
 import { ImagePreview } from "../question-image";
 
 interface SentenceCompletionProps {

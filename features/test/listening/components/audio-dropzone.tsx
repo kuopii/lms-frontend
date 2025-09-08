@@ -12,7 +12,6 @@ interface AudioDropzoneParams {
 export const AudioDropzone = ({ index }: AudioDropzoneParams) => {
   const {
     control,
-    formState: { errors },
   } = useFormContext<CreateListeningTestSchema>();
 
   // console.log("error audio :", error);

@@ -26,6 +26,9 @@ import { MdDragIndicator } from "react-icons/md";
 import SentenceCompletion from "../../components/questions/sentence-completion";
 import { defaultListeningQuestion } from "../../constant/default-listening-question";
 import { PassageListening } from "../../form/create-listening-form";
+import FormCompletion from "../../components/questions/form-completion";
+import MapLabeling from "../../components/questions/map-labeling";
+import SummaryCompletion from "../../components/questions/summary-completion";
 
 type QuestionsSectionProps = {
   nestIndex: number;
@@ -38,6 +41,9 @@ const SINGLE_CHOICE_TYPE = "choose_correct_answer";
 const MULTIPLE_CHOICE_TYPE = "choose_multiple_answer";
 const NOTE_COMPLETION_TYPE = "note_completion";
 const SENTENCE_COMPLETION = "sentence_completion";
+const FORM_COMPLETION = "form_completion";
+const SUMMARY_COMPLETION = "summary_completion";
+const MAP_LABELING = "map_labeling";
 
 export const QuestionsSection = ({
   nestIndex,
@@ -329,6 +335,42 @@ export const QuestionsSection = ({
                               onDuplicateQuestion={handleDuplicateQuestion}
                               onRemoveQuestion={handleRemoveQuestion}
                               globalNumber={globalNumber}
+                            />
+                          );
+                        case FORM_COMPLETION:
+                          return (
+                            <FormCompletion
+                              key={`${question.id}-${questionType}`}
+                              questionsPath={questionsPath}
+                              qIndex={qIndex}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                              canRemove={questionFields.length > 1}
+                            />
+                          );
+                        case SUMMARY_COMPLETION:
+                          return (
+                            <SummaryCompletion
+                              key={`${question.id}-${questionType}`}
+                              questionsPath={questionsPath}
+                              qIndex={qIndex}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                              canRemove={questionFields.length > 1}
+                            />
+                          );
+                        case MAP_LABELING:
+                          return (
+                            <MapLabeling
+                              key={`${question.id}-${questionType}`}
+                              questionsPath={questionsPath}
+                              qIndex={qIndex}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                              canRemove={questionFields.length > 1}
                             />
                           );
                         default:

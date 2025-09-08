@@ -1,8 +1,8 @@
-import z from "zod";
 import {
   QuestionType,
   questionSchema,
 } from "@/features/test/form/create-listening-form";
+import z from "zod";
 
 type QuestionTypeValue = z.infer<typeof QuestionType>;
 
@@ -42,7 +42,12 @@ export const defaultListeningQuestion: Record<
         option_text: "Option 1",
       },
     ],
-    correct_answer: [],
+    correct_answer: [
+      {
+        option_key: "1",
+        option_text: "",
+      },
+    ],
     points_value: 0,
     breakdown: {
       explanation: "",
@@ -67,7 +72,59 @@ export const defaultListeningQuestion: Record<
     question_number: 0,
     question_type: "sentence_completion",
     question_text: "",
-    correct_answer: [{ option_key: "", option_text: "" }],
+    correct_answer: [
+      {
+        option_key: "",
+        option_text: "",
+      },
+    ],
+    points_value: 0,
+    breakdown: {
+      explanation: "",
+    },
+  },
+
+  form_completion: {
+    question_number: 0,
+    question_type: "form_completion",
+    question_text: "",
+    correct_answer: [
+      {
+        option_key: "",
+        option_text: "",
+      },
+    ],
+    points_value: 0,
+    breakdown: {
+      explanation: "",
+    },
+  },
+  summary_completion: {
+    question_type: "summary_completion",
+    question_number: 0,
+    question_text: "",
+    correct_answer: [
+      {
+        option_key: "1",
+        option_text: "",
+      },
+    ],
+    points_value: 0,
+    breakdown: {
+      explanation: "",
+    },
+  },
+  map_labeling: {
+    question_number: 0,
+    question_type: "map_labeling",
+    question_text: "",
+    question_data: { images: [] },
+    correct_answer: [
+      {
+        option_key: "",
+        option_text: "",
+      },
+    ],
     points_value: 0,
     breakdown: {
       explanation: "",
