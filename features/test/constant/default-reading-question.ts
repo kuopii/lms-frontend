@@ -131,11 +131,6 @@ export const defaultReadingQuestion: Record<
     ],
     points_value: 0,
     items: [],
-    breakdown: {
-      explanation: "",
-      has_highlight: false,
-      highlights: [],
-    },
   },
   matching_features: {
     question_number: 0,
@@ -161,17 +156,18 @@ export const defaultReadingQuestion: Record<
     ],
     items: [],
   },
-  // matching_information: {
-  //   type: "matching_information",
-  //   paragraph: ["Type or paste the text here..."],
-  //   items: [
-  //     {
-  //       question: "",
-  //       answerKey: "",
-  //       breakdown: "",
-  //     },
-  //   ],
-  // },
+  matching_information: {
+    question_number: 0,
+    question_type: "matching_information",
+    options: [
+      {
+        option_key: "A",
+        option_text: "Option 1",
+      },
+    ],
+    points_value: 0,
+    items: [],
+  },
   diagram_label_completion: {
     question_number: 0,
     question_type: "diagram_label_completion",

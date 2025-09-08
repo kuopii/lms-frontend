@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import QuestionHeader from "../question-header";
 import { ImagePreview } from "../question-image";
 import { useFieldArray, useFormContext } from "react-hook-form";
@@ -14,6 +14,13 @@ import AnswerKeyField from "../answer-key-field";
 import { Option, Item } from "@/types/test";
 import QuestionBreakdown from "../question-breakdown";
 import { Plus } from "lucide-react";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormMessage,
+} from "@/components/ui/form";
+import { Textarea } from "@/components/ui/textarea";
 
 type MatchingHeadingProps = {
   qIndex: number;
@@ -33,7 +40,16 @@ const MatchingHeading = ({
   const { watch, control, setValue } = useFormContext();
   const questionPath = `${questionsPath}.${qIndex}`;
 
-  const itemsPath = `${questionsPath}.${qIndex}.items`;
+  const paths = useMemo(
+    () => ({
+      images: `${questionPath}.question_data.images`,
+      options: `${questionPath}.options`,
+      questionNumber: `${questionPath}.question_number`,
+      items: `${questionPath}.items`,
+      questionType: `${questionPath}.question_type`,
+    }),
+    [questionPath],
+  );
 
   const { fields: questionFields } = useFieldArray({
     control,
@@ -46,21 +62,45 @@ const MatchingHeading = ({
     append: appendItem,
   } = useFieldArray({
     control,
-    name: itemsPath,
+    name: paths.items,
   });
 
-  const questionDataImages = watch(
-    `${questionsPath}.${qIndex}.question_data.images`,
-  );
+  const questionDataImages = watch(paths.images);
+  const questionOptions = watch(paths.options) as Option[];
+  const mainQuestionNumber = watch(paths.questionNumber) as number;
+  const watchItems = watch(paths.items) as Item[];
+  const watchQuestionType = watch(paths.questionType) as string;
 
-  const questionOptions = watch(`${questionPath}.options`) as Option[];
-  const mainQuestionNumber = watch(`${questionPath}.question_number`) as number;
+  useEffect(() => {
+    if (watchItems && watchItems.length > 0) {
+      const updatedItems = watchItems.map((item, index) => ({
+        ...item,
+        question_number: parseFloat(`${globalNumber}.${index + 1}`),
+      }));
+
+      // Only update if there's actually a change
+      const hasChanged = watchItems.some(
+        (item, index) =>
+          item.question_number !== parseFloat(`${globalNumber}.${index + 1}`),
+      );
+
+      if (hasChanged) {
+        setValue(paths.items, updatedItems);
+      }
+    }
+  }, [globalNumber, watchItems, setValue, paths.items]);
 
   const handleFirstInsertItem = () => {
     // Untuk item pertama, gunakan format question_number.1
     const newItem = {
       question_number: parseFloat(`${mainQuestionNumber}.1`),
+      question_text: "",
       correct_answer: { option_key: "", option_text: "" },
+      breakdown: {
+        explanation: "",
+        has_highlight: false,
+        highlights: [],
+      },
     };
 
     appendItem(newItem);
@@ -76,6 +116,12 @@ const MatchingHeading = ({
     const newItem = {
       question_number: newQuestionNumber,
       correct_answer: { option_key: "", option_text: "" },
+      question_text: "",
+      breakdown: {
+        explanation: "",
+        has_highlight: false,
+        highlights: [],
+      },
     };
 
     appendItem(newItem);
@@ -86,12 +132,12 @@ const MatchingHeading = ({
 
     // Update question_number untuk items yang tersisa agar tetap berurutan
     setTimeout(() => {
-      const currentItems = watch(itemsPath);
+      const currentItems = watch(paths.items);
       currentItems?.forEach((item: Item, idx: number) => {
         const newQuestionNumber = parseFloat(
           `${mainQuestionNumber}.${idx + 1}`,
         );
-        setValue(`${itemsPath}.${idx}.question_number`, newQuestionNumber);
+        setValue(`${paths.items}.${idx}.question_number`, newQuestionNumber);
       });
     }, 0);
   };
@@ -102,7 +148,7 @@ const MatchingHeading = ({
         <QuestionHeader
           qIndex={qIndex}
           variant="tips"
-          textHeader="For Matching Heading questions, each paragraph in the passage must be labeled with a letter (A, B, C, …) at the beginning before listing the headings."
+          textHeader={`For ${watchQuestionType === "matching_heading" ? "Matching Heading" : "Matching Information"} questions, each paragraph in the passage must be labeled with a letter (A, B, C, …) at the beginning before listing the ${watchQuestionType === "matching_heading" ? "heading" : "information"}.`}
           withNumber={false}
           globalNumber={globalNumber}
           questionPath={questionPath}
@@ -172,20 +218,37 @@ const MatchingHeading = ({
       </div>
 
       {itemsField.length > 0 && (
-        <div className="space-y-6 rounded-3xl bg-[#333333] px-3 py-8 md:px-4 lg:px-5">
+        <div className="space-y-10 rounded-3xl bg-[#333333] px-3 py-8 md:px-4 lg:px-5">
           {itemsField.map((item, index) => (
-            <div key={item.id} className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <span className="text-medium text-primary border-r-primary min-w-10 border-r text-xl">
-                    {mainQuestionNumber}.{index + 1}
-                  </span>
-                  <AnswerKeyField
-                    name={`${itemsPath}.${index}.correct_answer`}
-                    variant={"single"}
-                    options={questionOptions}
-                  />
-                </div>
+            <div key={item.id} className="space-y-6">
+              <div className="flex items-center gap-4">
+                <span className="text-medium text-primary border-r-primary min-w-10 border-r text-xl">
+                  {mainQuestionNumber}.{index + 1}
+                </span>
+                <FormField
+                  control={control}
+                  name={`${paths.items}.${index}.question_text` || ""}
+                  render={({ field }) => (
+                    <FormItem className="w-full gap-3">
+                      <FormControl>
+                        <Textarea
+                          {...field}
+                          placeholder="Type your question here..."
+                          className="min-h-11 resize-none"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+              <Separator />
+              <div className="flex items-center justify-between gap-2">
+                <AnswerKeyField
+                  name={`${paths.items}.${index}.correct_answer`}
+                  variant={"single"}
+                  options={questionOptions}
+                />
                 <Button
                   type="button"
                   size="iconSm"
@@ -196,6 +259,9 @@ const MatchingHeading = ({
                   <FaTrash className="h-3 w-3" />
                 </Button>
               </div>
+              <QuestionBreakdown
+                breakdownPath={`${paths.items}.${index}.breakdown`}
+              />
             </div>
           ))}
           <div className="flex items-center justify-end">
@@ -211,8 +277,6 @@ const MatchingHeading = ({
           </div>
         </div>
       )}
-
-      <QuestionBreakdown breakdownPath={`${questionPath}.breakdown`} />
     </div>
   );
 };
