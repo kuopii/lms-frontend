@@ -7,6 +7,9 @@ export const QuestionType = z.enum([
   "choose_multiple_answer",
   "note_completion",
   "sentence_completion",
+  "form_completion",
+  "summary_completion",
+  "map_labeling",
 ]);
 
 const optionSchema = z.object({
@@ -16,12 +19,6 @@ const optionSchema = z.object({
 
 export const breakdownSchema = z.object({
   explanation: z.string().optional(),
-  has_highlight: z.boolean().default(false),
-  highlights: z
-    .array(
-      z.object({ start_char_index: z.number(), end_char_index: z.number() }),
-    )
-    .optional(),
 });
 
 export const questionDataSchema = z.object({
@@ -67,51 +64,35 @@ const sentenceCompletion = z.object({
   question_text: z.string().min(1, "Question text is required"),
   correct_answer: z.array(optionSchema).min(1).max(2),
   points_value: z.number().min(1, "Points value must be at least 1"),
+  question_data: questionDataSchema.optional(),
   breakdown: breakdownSchema.optional(),
 });
 
-// const shortAnswerQuestion = z.object({
-//   id: z.string().uuid(),
-//   type: z.literal("Short_Answer_Question"),
-//   prompt: z.string().min(1),
-//   options: z.array(z.string()).min(1),
-//   answer: z.array(z.string()).min(1),
-//   explanation: z.string().min(1),
-// });
+const mapLabelingSchema = z.object({
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_type: z.literal("map_labeling"),
+  question_text: z.string().min(1, "Question text is required"),
+  correct_answer: z.array(optionSchema).min(1).max(2),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  question_data: questionDataSchema.optional(),
+  breakdown: breakdownSchema.optional(),
+});
 
-// const mapLabeling = z.object({
-//   id: z.string().uuid(),
-//   type: z.literal("Map_Labeling"),
-//   prompt: z.string().min(1),
-//   options: z
-//     .array(
-//       z.object({
-//         label: z.string(),
-//         answer: z.string(),
-//       }),
-//     )
-//     .min(1, "required"),
-//   answer: z.array(z.string()).min(1),
-//   explanation: z.string().min(1),
-//   image: z.any().optional(),
-// });
-
-// const formCompletion = z.object({
-//   id: z.string().uuid(),
-//   type: z.literal("Form_Completion"),
-//   prompt: z.string().min(1),
-//   options: z
-//     .array(
-//       z.object({
-//         label: z.string(),
-//         answer: z.string(),
-//       }),
-//     )
-//     .min(1, "required"),
-//   answer: z.array(z.string()).min(1),
-//   explanation: z.string().min(1),
-//   image: z.any().optional(),
-// });
+const formCompletionSchema = z.object({
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_type: z.literal("form_completion"),
+  question_text: z.string().min(1, "Question text is required"),
+  question_data: questionDataSchema.optional(),
+  correct_answer: z.array(optionSchema).min(1).max(2),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  breakdown: breakdownSchema.optional(),
+});
 
 const noteCompletionSchema = z.object({
   question_type: z.literal("note_completion"),
@@ -128,35 +109,20 @@ const noteCompletionSchema = z.object({
   breakdown: breakdownSchema.optional(),
 });
 
-// const summaryCompletion = z.object({
-//   id: z.string().uuid(),
-//   type: z.literal("Summary_Completion"),
-//   prompt: z.string().min(1),
-//   options: z
-//     .array(
-//       z.object({
-//         label: z.string(),
-//         answer: z.array(
-//           z.object({
-//             optIndex: z.number().int().nonnegative(),
-//             wordIndex: z.number().int().nonnegative(),
-//             word: z.string().min(1),
-//           }),
-//         ),
-//       }),
-//     )
-//     .min(1, "required"),
-//   answer: z
-//     .array(
-//       z.object({
-//         optIndex: z.number(),
-//         wordIndex: z.number(),
-//         word: z.string(),
-//       }),
-//     )
-//     .min(1, "Please mark at least one blank"),
-//   explanation: z.string().min(1),
-// });
+const summaryCompletionSchema = z.object({
+  question_type: z.literal("summary_completion"),
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_text: z.string().min(1, "Question text is required"),
+  question_data: questionDataSchema.optional(),
+  correct_answer: z
+    .array(optionSchema)
+    .min(2, "At least 2 correct answers are required"),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  breakdown: breakdownSchema.optional(),
+});
 
 const transcriptValueSchema = z.discriminatedUnion("type", [
   z.object({
@@ -191,17 +157,30 @@ export const questionSchema = z.discriminatedUnion("question_type", [
   chooseCorrectAnswerSchema,
   chooseMultipleAnswerSchema,
   sentenceCompletion,
-  // shortAnswerQuestion,
-  // mapLabeling,
-  // formCompletion,
+  mapLabelingSchema,
+  formCompletionSchema,
   noteCompletionSchema,
-  // summaryCompletion,
+  summaryCompletionSchema,
 ]);
 
 const questionGroupSchema = z.object({
   instruction: z.string().min(1, "Instruksi wajib diisi"),
   questions: z.array(questionSchema).min(1, "Minimal 1 soal"),
   transcript: transcriptValueSchema.optional(),
+  image: z
+    .object({
+      title: z.string().optional(),
+      file: z.instanceof(File).nullable().optional(),
+    })
+    .optional()
+    .refine(
+      (val) => {
+        if (!val) return true;
+        if (!val.file) return true;
+        return !!val.title && val.title.trim().length > 0;
+      },
+      { message: "image title is required", path: ["title"] },
+    ),
 });
 
 const passageSchema = z.object({

@@ -26,7 +26,7 @@ const CreateListeningTestPage = () => {
       difficulty: "beginner",
       timer_mode: "notimer",
       type_test: "single",
-      type: "reading",
+      type: "listening",
       timer_settings: {
         hours: 0,
         minutes: 0,
@@ -51,6 +51,10 @@ const CreateListeningTestPage = () => {
                 title: "",
               },
               questions: [defaultListeningQuestion["choose_correct_answer"]],
+              image: {
+                title: "",
+                file: null,
+              },
             },
           ],
         },

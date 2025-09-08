@@ -30,11 +30,8 @@ export const defaultListeningQuestion: Record<
     points_value: 0,
     breakdown: {
       explanation: "",
-      has_highlight: false,
-      highlights: [],
     },
   },
-
   choose_multiple_answer: {
     question_number: 0,
     question_type: "choose_multiple_answer",
@@ -45,15 +42,17 @@ export const defaultListeningQuestion: Record<
         option_text: "Option 1",
       },
     ],
-    correct_answer: [],
+    correct_answer: [
+      {
+        option_key: "1",
+        option_text: "",
+      },
+    ],
     points_value: 0,
     breakdown: {
       explanation: "",
-      has_highlight: false,
-      highlights: [],
     },
   },
-
   note_completion: {
     question_type: "note_completion",
     question_number: 0,
@@ -67,27 +66,65 @@ export const defaultListeningQuestion: Record<
     points_value: 0,
     breakdown: {
       explanation: "",
-      has_highlight: false,
-      highlights: [],
     },
   },
   sentence_completion: {
     question_number: 0,
     question_type: "sentence_completion",
     question_text: "",
-    correct_answer: [{ option_key: "", option_text: "" }],
+    correct_answer: [
+      {
+        option_key: "",
+        option_text: "",
+      },
+    ],
     points_value: 0,
     breakdown: {
       explanation: "",
-      has_highlight: false,
-      highlights: [],
     },
   },
-  sentence_completion: {
+
+  form_completion: {
     question_number: 0,
-    question_type: "sentence_completion",
+    question_type: "form_completion",
     question_text: "",
-    correct_answer: [{ option_key: "", option_text: "" }],
+    correct_answer: [
+      {
+        option_key: "",
+        option_text: "",
+      },
+    ],
+    points_value: 0,
+    breakdown: {
+      explanation: "",
+    },
+  },
+  summary_completion: {
+    question_type: "summary_completion",
+    question_number: 0,
+    question_text: "",
+    correct_answer: [
+      {
+        option_key: "1",
+        option_text: "",
+      },
+    ],
+    points_value: 0,
+    breakdown: {
+      explanation: "",
+    },
+  },
+  map_labeling: {
+    question_number: 0,
+    question_type: "map_labeling",
+    question_text: "",
+    question_data: { images: [] },
+    correct_answer: [
+      {
+        option_key: "",
+        option_text: "",
+      },
+    ],
     points_value: 0,
     breakdown: {
       explanation: "",
