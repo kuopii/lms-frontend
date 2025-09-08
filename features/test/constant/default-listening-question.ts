@@ -30,11 +30,8 @@ export const defaultListeningQuestion: Record<
     points_value: 0,
     breakdown: {
       explanation: "",
-      has_highlight: false,
-      highlights: [],
     },
   },
-
   choose_multiple_answer: {
     question_number: 0,
     question_type: "choose_multiple_answer",
@@ -54,11 +51,8 @@ export const defaultListeningQuestion: Record<
     points_value: 0,
     breakdown: {
       explanation: "",
-      has_highlight: false,
-      highlights: [],
     },
   },
-
   note_completion: {
     question_type: "note_completion",
     question_number: 0,
@@ -72,20 +66,6 @@ export const defaultListeningQuestion: Record<
     points_value: 0,
     breakdown: {
       explanation: "",
-      has_highlight: false,
-      highlights: [],
-    },
-  },
-  sentence_completion: {
-    question_number: 0,
-    question_type: "sentence_completion",
-    question_text: "",
-    correct_answer: [{ option_key: "", option_text: "" }],
-    points_value: 0,
-    breakdown: {
-      explanation: "",
-      has_highlight: false,
-      highlights: [],
     },
   },
   sentence_completion: {
@@ -103,7 +83,6 @@ export const defaultListeningQuestion: Record<
       explanation: "",
     },
   },
-
   form_completion: {
     question_number: 0,
     question_type: "form_completion",
