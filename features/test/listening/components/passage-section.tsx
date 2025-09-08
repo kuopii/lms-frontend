@@ -33,7 +33,7 @@ type PassageSectionProps = {
 type QuestionGroup = {
   instruction: string;
   transcript: { type: string; text: string; title: string };
-  image: { question_data: any };
+  image: { title: string; file: File | null };
   questions: Question[];
 };
 

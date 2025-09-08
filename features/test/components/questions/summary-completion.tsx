@@ -5,7 +5,6 @@ import { useFieldArray, useFormContext } from "react-hook-form";
 import { FaTrash } from "react-icons/fa6";
 import { GrSelect } from "react-icons/gr";
 import { PiCopyFill } from "react-icons/pi";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,11 +59,6 @@ const SummaryCompletion = ({
   const questionPath = `${questionsPath}.${qIndex}`;
   const correctAnswerPath = `${questionPath}.correct_answer`;
 
-  // Field arrays
-  const { fields: questionFields } = useFieldArray({
-    control,
-    name: questionsPath,
-  });
   const { fields: correctAnswerFields } = useFieldArray({
     control,
     name: correctAnswerPath,

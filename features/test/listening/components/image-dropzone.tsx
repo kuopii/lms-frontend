@@ -11,7 +11,7 @@ interface ImageDropzoneProps {
 export const ImageDropzone = ({ fieldPrefix }: ImageDropzoneProps) => {
   const {
     control,
-    formState: { errors },
+    // formState: { errors },
   } = useFormContext();
 
   const [previewUrl, setPreviewUrl] = useState<string>();

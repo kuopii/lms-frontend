@@ -43,7 +43,7 @@ const SpeakerInputs = <
     if (inputFields.length === 0) {
       appendInput({ text: "" });
     }
-  }, []);
+  }, [appendInput, inputFields.length]);
 
   const handleRemoveBuble = (inputIdx: number) => {
     if (inputFields.length > 1) {

@@ -18,10 +18,8 @@ interface TranscriptFormParams {
 }
 
 const TranscriptForm = ({
-  removePassage,
   index,
   qgIndex,
-  isLast,
 }: TranscriptFormParams) => {
   const { control, watch, setValue } =
     useFormContext<CreateListeningTestSchema>();

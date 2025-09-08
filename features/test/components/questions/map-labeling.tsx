@@ -11,7 +11,6 @@ import { Separator } from "@/components/ui/separator";
 import PointsField from "@/features/test/components/points-field";
 import QuestionBreakdown from "@/features/test/components/question-breakdown";
 import QuestionHeader from "@/features/test/components/question-header";
-import { extractIndexes } from "@/helpers/extract-indexes";
 import { useFormContext } from "react-hook-form";
 import { FaTrash } from "react-icons/fa6";
 import { PiCopyFill } from "react-icons/pi";
@@ -35,7 +34,6 @@ const MapLabeling = ({
 }: MapLabelingProps) => {
   const { control, watch } = useFormContext();
   const questionPath = `${questionsPath}.${qIndex}`;
-  const { nestIndex, questionGroupIndex } = extractIndexes(questionsPath);
 
   const watchedAnswerKey = watch(`${questionPath}.correct_answer.0.option_key`);
 
