@@ -9,8 +9,8 @@ import {
   FaSquare,
   FaTiktok,
 } from "react-icons/fa";
-import CardCTAFooter from "./CardCTAFooter";
-import NavItems, { navLinks } from "./NavItems";
+import { Button } from "../ui/button";
+import { navLinks } from "@/data/navigations";
 
 export const socialIconMap = {
   tiktok: {
@@ -33,7 +33,57 @@ export const socialIconMap = {
   }
 >;
 
-const FooterComp = () => {
+type NavItemsProps = {
+  title: string;
+  sectionKey: keyof typeof navLinks; // agar bisa mapping url
+  items: Record<string, string>;
+};
+
+const CardCTAFooter = () => {
+  const t = useTranslations("footer.card");
+  return (
+    <div className="border-background/40 absolute -top-96 flex w-full flex-col justify-between gap-[30px] rounded-[15px] border bg-black/40 px-[25px] py-[25px] text-white backdrop-blur-xl md:-top-70 md:h-[430px] md:w-[650px] lg:-top-52 lg:h-[400px] xl:h-[300px] xl:w-[1062px]">
+      <p className='className="text-[12px] font-medium"'>{t("tryitnow")}</p>
+      <h2 className="text-[36px] font-bold">{t("title")}</h2>
+      <h3 className="text-[22px] font-medium">{t("description")}</h3>
+      <div className="flex flex-wrap gap-[34px] text-[16px]">
+        <Button className="h-[57px] w-fit cursor-pointer rounded-[15px]">
+          {t("ctastudent")}
+        </Button>
+        <Button className="border-secondary h-[57px] w-fit cursor-pointer rounded-[15px] border-2 bg-transparent">
+          {t("ctateacher")}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+const NavItems = ({ title, sectionKey, items }: NavItemsProps) => {
+  return (
+    <div className="flex flex-col gap-[20px]">
+      <h4 className="text-secondary text-[28px] font-semibold">{title}</h4>
+      <div className="flex flex-col gap-[10px]">
+        {Object.entries(items).map(([key, label]) => {
+          const href =
+            navLinks?.[sectionKey]?.[
+              key as keyof (typeof navLinks)[typeof sectionKey]
+            ];
+          return href ? (
+            <div key={key} className="flex flex-col">
+              <Link href={href}>{label}</Link>
+            </div>
+          ) : (
+            <p key={key} className="text-muted-foreground text-sm">
+              {label}
+            </p>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+const Footer = () => {
   const t = useTranslations("footer");
 
   const { footer } = en;
@@ -115,4 +165,4 @@ const FooterComp = () => {
   );
 };
 
-export default FooterComp;
+export default Footer;
