@@ -1,19 +1,14 @@
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { useController, useFormContext } from "react-hook-form";
+import { useController } from "react-hook-form";
 import { FaUpload } from "react-icons/fa6";
-import { CreateListeningTestSchema } from "../../form/create-listening-form";
 
 interface AudioDropzoneParams {
-  // qgIndex: number;
   index: number;
 }
 
 export const AudioDropzone = ({ index }: AudioDropzoneParams) => {
-  const { control } = useFormContext<CreateListeningTestSchema>();
   const { field } = useController({ name: `passages.${index}.audio_file` });
-
-  // console.log("error audio :", error);
 
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
 

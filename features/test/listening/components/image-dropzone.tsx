@@ -1,7 +1,7 @@
 import LazyImage from "@/components/imageReusable/base/LazyImage";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
-import { useController, useFormContext } from "react-hook-form";
+import { useController } from "react-hook-form";
 import { FaUpload } from "react-icons/fa6";
 
 interface ImageDropzoneProps {
@@ -9,7 +9,6 @@ interface ImageDropzoneProps {
 }
 
 export const ImageDropzone = ({ fieldPrefix }: ImageDropzoneProps) => {
-  const { control } = useFormContext();
   const { field } = useController({ name: fieldPrefix });
 
   const [previewUrl, setPreviewUrl] = useState<string>();
