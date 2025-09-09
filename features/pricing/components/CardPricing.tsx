@@ -1,5 +1,5 @@
-import LazyImage from "@/components/imageReusable/base/LazyImage";
 import { Badge } from "@/components/ui/badge";
+import Image from "next/image";
 import { FaCircleArrowRight } from "react-icons/fa6";
 import { MdDone } from "react-icons/md";
 
@@ -39,12 +39,13 @@ const CardPricing = ({
 
         <div className="flex">
           <div className="relative h-[40px] w-[40px]">
-            <LazyImage
+            <Image
               fill
               src={"/pricing/dollar.png"}
               alt="dollar"
               sizes="40px"
               className="object-contain"
+              loading="lazy"
             />
           </div>
           <p className="text-[55px] font-extrabold">{price}</p>

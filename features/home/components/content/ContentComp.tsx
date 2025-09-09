@@ -1,11 +1,11 @@
 import { CarouselComp } from "@/components/carousel/CarouselComp";
-import LazyImage from "@/components/imageReusable/base/LazyImage";
 import { Card, CardContent } from "@/components/ui/card";
 import { CarouselItem } from "@/components/ui/carousel";
 import { useTranslations } from "next-intl";
 import CardEmbedYT from "../card/CardEmbedYT";
 import CardMainFeatures from "../card/CardMainFeatures";
 import CardSkills from "../card/CardSkills";
+import Image from "next/image";
 
 type CardItem = {
   title: string;
@@ -184,12 +184,13 @@ const ContentComp = () => {
                     <CardContent className="card-custom flex h-[323px] w-[330px] flex-col items-center justify-center gap-4">
                       <div className="flex flex-col items-center justify-center text-center">
                         <div className="relative mb-2 h-[70px] w-[70px]">
-                          <LazyImage
+                          <Image
                             alt="profile"
                             src={e.src ?? "/home/ProfileTesti.png"}
                             className="rounded-full border object-cover"
                             fill
                             sizes="70px"
+                            loading="lazy"
                           />
                         </div>
                         <p className="text-[22px] font-medium">{e.name}</p>
@@ -204,12 +205,13 @@ const ContentComp = () => {
 
                       <div className="flex items-center justify-center">
                         <div className="relative h-[30px] w-[30px]">
-                          <LazyImage
+                          <Image
                             alt="kutip"
                             src="/home/kutip.png"
                             fill
                             className="object-contain"
                             sizes="30px"
+                            loading="lazy"
                           />
                         </div>
                       </div>
