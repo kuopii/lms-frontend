@@ -180,7 +180,6 @@ body {
     border-radius: 30px;
     border: 1px solid rgba(255, 255, 255, 0.4);
   }
-
   .typoHeadlines {
     @apply text-4xl font-bold;
   }
@@ -189,5 +188,11 @@ body {
   }
   .select-trigger-custom span {
     color: white !important;
+  }
+  .px-container {
+    @apply px-4 md:px-8 lg:px-12;
+  }
+  .flex-center {
+    @apply flex items-center justify-center;
   }
 }

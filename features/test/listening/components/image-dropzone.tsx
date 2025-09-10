@@ -1,4 +1,4 @@
-import LazyImage from "@/components/imageReusable/base/LazyImage";
+import Image from "next/image";
 import { useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { useController } from "react-hook-form";
@@ -43,12 +43,13 @@ export const ImageDropzone = ({ fieldPrefix }: ImageDropzoneProps) => {
           <>
             {previewUrl && (
               <div className="relative flex h-[300px] w-full items-center justify-center">
-                <LazyImage
+                <Image
                   src={previewUrl}
                   alt="map"
                   sizes="30px"
                   fill
                   className="object-contain"
+                  loading="lazy"
                 />
               </div>
             )}

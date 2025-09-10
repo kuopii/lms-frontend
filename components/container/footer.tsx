@@ -9,8 +9,8 @@ import {
   FaSquare,
   FaTiktok,
 } from "react-icons/fa";
-import CardCTAFooter from "./CardCTAFooter";
-import NavItems, { navLinks } from "./NavItems";
+import { Button } from "../ui/button";
+import { navLinks } from "@/data/navigations";
 
 export const socialIconMap = {
   tiktok: {
@@ -33,17 +33,69 @@ export const socialIconMap = {
   }
 >;
 
-const FooterComp = () => {
+type NavItemsProps = {
+  title: string;
+  sectionKey: keyof typeof navLinks; // agar bisa mapping url
+  items: Record<string, string>;
+};
+
+const CardCTAFooter = () => {
+  const t = useTranslations("footer.card");
+  return (
+    <div className="border-background/40 absolute -top-40 flex w-full flex-col justify-between gap-7 rounded-2xl border bg-black/40 px-6 py-6 text-white backdrop-blur-xl md:-top-36 md:w-6/7 lg:max-w-screen-lg">
+      <p className='font-medium" text-sm'>{t("tryitnow")}</p>
+      <h2 className="text-2xl font-bold">{t("title")}</h2>
+      <h3 className="text-sm font-medium md:text-base">{t("description")}</h3>
+      <div className="flex flex-wrap gap-4">
+        <Button size={"xsm"}>{t("ctastudent")}</Button>
+        <Button
+          size={"xsm"}
+          variant={"outline"}
+          className="border-primary hover:bg-primary hover:text-white"
+        >
+          {t("ctateacher")}
+        </Button>
+      </div>
+    </div>
+  );
+};
+
+const NavItems = ({ title, sectionKey, items }: NavItemsProps) => {
+  return (
+    <div className="flex flex-col gap-5">
+      <h4 className="text-secondary text-2xl font-semibold">{title}</h4>
+      <div className="flex flex-col gap-2.5">
+        {Object.entries(items).map(([key, label]) => {
+          const href =
+            navLinks?.[sectionKey]?.[
+              key as keyof (typeof navLinks)[typeof sectionKey]
+            ];
+          return href ? (
+            <div key={key} className="flex flex-col">
+              <Link href={href}>{label}</Link>
+            </div>
+          ) : (
+            <p key={key} className="text-muted-foreground">
+              {label}
+            </p>
+          );
+        })}
+      </div>
+    </div>
+  );
+};
+
+const Footer = () => {
   const t = useTranslations("footer");
 
   const { footer } = en;
   const navigations = footer.navigation;
 
   return (
-    <footer className="relative flex h-full w-full items-center justify-center bg-[#333333] xl:h-[508px]">
+    <footer className="relative flex h-full w-full items-center justify-center bg-[#333333]">
       <CardCTAFooter />
 
-      <div className="flex h-full w-full flex-col items-end justify-center px-[20px] pt-[200px] pb-[30px] text-white xl:px-[119px]">
+      <div className="px-container container flex h-full w-full max-w-screen-xl flex-col items-end justify-center pt-48 pb-7 text-white md:pt-40">
         <div className="flex h-full w-full flex-col justify-between gap-10 lg:h-[208px] lg:flex-row">
           {/* information */}
           <div className="h-full md:w-[408px]">
@@ -55,7 +107,7 @@ const FooterComp = () => {
                 </h2>
               </div>
 
-              <div className="text-[16px]">
+              <div>
                 <h3>{t("description")}</h3>
               </div>
 
@@ -93,7 +145,7 @@ const FooterComp = () => {
           </div>
         </div>
         {/* garis */}
-        <div className="my-[30px] w-full border border-[#dedede]"></div>
+        <div className="my-7 w-full border border-[#dedede]"></div>
 
         {/* copyright */}
         <div className="flex w-full items-center justify-center text-[12px] font-medium">
@@ -115,4 +167,4 @@ const FooterComp = () => {
   );
 };
 
-export default FooterComp;
+export default Footer;

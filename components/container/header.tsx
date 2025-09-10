@@ -4,8 +4,9 @@ import { cn } from "@/lib/utils";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { Locale, routing, usePathname, useRouter } from "@/i18n/routing";
+import { useRouter as NextRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -47,6 +48,7 @@ const NavigationItems = ({
   const pathname = usePathname();
   const locale = useLocale();
   const router = useRouter();
+  const nextRouter = NextRouter();
   const t = useTranslations("nav");
   const session: { user?: { name: string; role: Role; image: string } } = {
     // user: {
@@ -58,16 +60,19 @@ const NavigationItems = ({
 
   const isDashbordPath = pathname.startsWith("/dashboard");
 
-  const handleChangeLocale = (nextLocale: string) => {
-    router.replace(pathname, { locale: nextLocale as Locale });
-  };
+  const handleChangeLocale = useCallback(
+    (nextLocale: string) => {
+      router.replace(pathname, { locale: nextLocale as Locale });
+    },
+    [router, pathname],
+  );
 
   const getFlagSrc = (locale: string) => {
     switch (locale) {
       case "en":
-        return "/home/us.png";
+        return "/icons/flag-us.svg";
       case "vi":
-        return "/home/vietnam.svg";
+        return "/icons/flag-vietnam.svg";
       default:
         return "/home/globe.png";
     }
@@ -141,7 +146,7 @@ const NavigationItems = ({
         </Avatar>
       ) : (
         <Button
-          onClick={() => router.push("/auth/sign-in")}
+          onClick={() => nextRouter.push("/auth/sign-in")}
           className={cn(
             "h-10 rounded-full [&_svg:not([class*='size-'])]:size-5",
             buttonClassName,
