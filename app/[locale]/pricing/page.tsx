@@ -1,10 +1,6 @@
-import PricingComp from "@/features/pricing/components/PricingComp";
+import { PricePage } from "@/components/pages/price";
 
-const page = () => {
-  return (
-    <div className="flex min-h-screen w-full items-center justify-center bg-black text-white md:py-[150px]">
-      <PricingComp />
-    </div>
-  );
+const Price = () => {
+  return <PricePage />;
 };
-export default page;
+export default Price;
