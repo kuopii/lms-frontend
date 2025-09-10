@@ -1,5 +1,7 @@
-const features = () => {
-  return <div>Features</div>;
+import { FeaturesPage } from "@/components/pages/features";
+
+const Features = () => {
+  return <FeaturesPage />;
 };
 
-export default features;
+export default Features;
