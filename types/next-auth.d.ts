@@ -8,14 +8,14 @@ declare module "next-auth" {
     user: {
       id: string;
       email: string;
-      name?: string;
+      name?: string | null;
     };
   }
 
   interface User {
     id: string;
     email: string;
-    name?: string;
+    name?: string | null;
     accessToken?: string;
   }
 }

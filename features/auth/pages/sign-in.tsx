@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useForm } from "react-hook-form";
+import { signIn } from "next-auth/react";
 import { cn } from "@/lib/utils";
 import { LoginSchema, loginSchema } from "@/validators/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -49,8 +50,18 @@ export const SignInPage = () => {
     },
   });
 
-  const handleSubmit = (data: LoginSchema) => {
-    console.log("LOGIN DATA", data);
+  const handleSubmit = async (data: LoginSchema) => {
+    const res = await signIn("credentials", {
+      email: data.email,
+      password: data.password,
+      redirect: false,
+    });
+
+    if (res?.error) {
+      console.error("Login gagal:", res.error);
+    } else {
+      console.log("Login sukses!");
+    }
   };
 
   return (
