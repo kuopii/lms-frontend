@@ -10,3 +10,12 @@ export const authSchema = z.object({
     invalid_type_error: "Role tidak valid",
   }),
 });
+
+export const loginSchema = authSchema.pick({
+  email: true,
+  password: true,
+});
+export const registerSchema = authSchema;
+
+export type LoginSchema = z.infer<typeof loginSchema>;
+export type RegisterSchema = z.infer<typeof registerSchema>;
