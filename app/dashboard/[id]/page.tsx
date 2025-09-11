@@ -26,7 +26,7 @@ export const ReportComp = ({
   // diganti dengan state global
   const userData: UserData = {
     name: "user",
-    role: Role.TEACHER,
+    role: Role.STUDENT,
   };
   const userRole = userData.role;
 
