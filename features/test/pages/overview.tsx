@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useFetchTest } from "@/features/test/api/use-fetch-test";
 import { Role } from "@/types/auth";
-import { ArrowLeft, Dot, Loader2 } from "lucide-react";
-import { useParams, useRouter } from "next/navigation";
+import { Dot, Loader2 } from "lucide-react";
+import { useParams } from "next/navigation";
 import { useState } from "react";
 import { BsFileEarmarkCheckFill } from "react-icons/bs";
 import { IoBook, IoPlayCircle } from "react-icons/io5";
@@ -19,7 +19,6 @@ export const OverviewPage = () => {
       role: Role.TEACHER,
     },
   });
-  const router = useRouter();
   const params = useParams();
   const id = params.id as string;
 
@@ -41,11 +40,6 @@ export const OverviewPage = () => {
 
   return (
     <div>
-      <div>
-        <Button variant={"ghost"} size={"iconSm"} onClick={router.back}>
-          <ArrowLeft />
-        </Button>
-      </div>
       <Badge
         size={"lg"}
         variant={"primary"}
@@ -56,7 +50,7 @@ export const OverviewPage = () => {
       <h2 className="mb-6 text-xl font-semibold">{testData?.name}</h2>
       <p className="mb-6">{testData?.description}</p>
       <div className="mb-7 flex items-center gap-4">
-        <span className="text-xl font-medium capitalize">
+        <span className="text-lg font-medium capitalize">
           {testData?.level}
         </span>
         <Dot />
@@ -66,9 +60,11 @@ export const OverviewPage = () => {
         testData?.reapeatation &&
         testData.reapeatation.current_reapeatation >= 1 && (
           <div className="mb-7 flex items-center gap-4">
-            <span className="text-xl font-medium capitalize">
+            <span className="text-lg font-medium capitalize">
               Last Score:{" "}
-              {testData?.last_score === 0 ? "-" : testData?.last_score}
+              <span className="text-primary font-bold">
+                {testData?.last_score === 0 ? "-" : testData?.last_score}
+              </span>
             </span>
             <Dot />
             <span className="text-destructive text-sm">
