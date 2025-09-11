@@ -1,6 +1,6 @@
 "use client";
 
-import SelectModuleType from "@/components/container/select-module-type";
+import { SelectModuleType } from "@/components/container/select-module-type";
 import { BarCharts } from "@/components/ui/bar-charts";
 import { Input } from "@/components/ui/input";
 import { LineCharts } from "@/components/ui/line-charts";
@@ -179,13 +179,13 @@ const TabContentAnalytics = () => {
         </div>
         <Separator />
         <section className="rounded-4xl bg-[#333333] p-4 lg:p-6">
-          <div className="mb-5 flex items-center justify-between gap-4 flex-col md:flex-row">
+          <div className="mb-5 flex flex-col items-center justify-between gap-4 md:flex-row">
             <h4 className="text-[clamp(1rem,2vw,1.3rem)] font-medium text-white">
               Average Reading Score / Test
             </h4>
             <div className="w-full lg:w-fit lg:min-w-xs">
               <Input
-                className="h-11 w-full "
+                className="h-11 w-full"
                 value={searchTestName}
                 placeholder="Search test name..."
                 onChange={(e) => setSearchTestName(e.target.value)}
