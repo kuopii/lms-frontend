@@ -1,6 +1,6 @@
 "use client";
 
-import SelectModuleType from "@/components/container/select-module-type";
+import { SelectModuleType } from "@/components/container/select-module-type";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

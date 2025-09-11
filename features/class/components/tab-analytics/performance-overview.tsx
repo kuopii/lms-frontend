@@ -1,6 +1,6 @@
 "use client";
 
-import SelectModuleType from "@/components/container/select-module-type";
+import { SelectModuleType } from "@/components/container/select-module-type";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ModuleType } from "@/types/class";
