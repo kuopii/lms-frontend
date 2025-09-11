@@ -1,4 +1,4 @@
-import VocabularyPage from "@/features/dashboard/vocabulary/pages/vocabulary-page";
+import { VocabularyPage } from "@/features/vocabulary/pages/vocabulary-page";
 
 const Vocabulary = () => {
   return <VocabularyPage />;

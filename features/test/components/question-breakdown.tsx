@@ -17,7 +17,7 @@ import Editor from "react-simple-code-editor";
 import { getVariantFromPath } from "./question-header";
 import { useVocabularyModalStore } from "@/store/vocab-store";
 import { CreateVocabularyType } from "@/validators/vocabulary";
-import { useCreateVocabulary } from "@/features/dashboard/vocabulary/api/use-create-vocabulary";
+import { useCreateVocabulary } from "@/features/vocabulary/api/use-create-vocabulary";
 import { toast } from "sonner";
 
 // Types

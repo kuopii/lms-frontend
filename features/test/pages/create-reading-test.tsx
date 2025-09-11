@@ -12,7 +12,7 @@ import { useCallback, useEffect } from "react";
 import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { defaultReadingQuestion } from "../constant/default-reading-question";
 import { PassageSection } from "../reading/components/passage-section";
-import VocabularyModal from "@/features/dashboard/vocabulary/components/vocabulary-modal";
+import VocabularyModal from "@/features/vocabulary/components/vocabulary-modal";
 import { toast } from "sonner";
 import { flattenErrors, prettyPath } from "@/helpers/flattern-error";
 

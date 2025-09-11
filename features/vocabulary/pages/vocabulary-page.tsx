@@ -6,7 +6,7 @@ import { useDebounce } from "@/hooks/use-debounce";
 import { useUpdateSearchParams } from "@/hooks/use-search-params";
 import { Role } from "@/types/auth";
 import { Plus, Search, X } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -71,7 +71,7 @@ const vocabData: VocabularyData[] = [
   },
 ];
 
-const VocabularyPage = () => {
+export const VocabularyPage = () => {
   const [session] = useState({
     user: {
       id: "33hf9jdk38di",
@@ -106,17 +106,23 @@ const VocabularyPage = () => {
     onError: (e) => console.error(e),
   });
 
-  const handleCreateVocabulary = (data: CreateVocabularyType) => {
-    console.log("Creating new vocabulary:", data);
-    createVocabulary(data);
-  };
+  const handleCreateVocabulary = useCallback(
+    (data: CreateVocabularyType) => {
+      console.log("Creating new vocabulary:", data);
+      createVocabulary(data);
+    },
+    [createVocabulary],
+  );
 
-  const handleSelectClassChange = (value: string) => {
-    setSelectedClass(value);
-    updateParams({ class: value });
-  };
+  const handleSelectClassChange = useCallback(
+    (value: string) => {
+      setSelectedClass(value);
+      updateParams({ class: value });
+    },
+    [updateParams],
+  );
 
-  const handleCreateClick = () => {
+  const handleCreateClick = useCallback(() => {
     openCreateModal(
       {
         category_id: "",
@@ -128,7 +134,7 @@ const VocabularyPage = () => {
       },
       handleCreateVocabulary,
     );
-  };
+  }, [handleCreateVocabulary, openCreateModal]);
 
   return (
     <div className="space-y-11">
@@ -199,5 +205,3 @@ const VocabularyPage = () => {
     </div>
   );
 };
-
-export default VocabularyPage;
