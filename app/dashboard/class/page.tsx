@@ -1,4 +1,4 @@
-import { ClassPage } from "@/features/class/page/class";
+import { ClassPage } from "@/features/class/pages/class";
 import React from "react";
 
 const Class = () => {
