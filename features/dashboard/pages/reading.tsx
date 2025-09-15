@@ -281,7 +281,7 @@ export const ReadingDashboardPage = () => {
               </Button>
             </div>
 
-            <div className="flex flex-col gap-[10px]">
+            <div className="flex flex-col gap-2.5">
               <p className="text-sm text-[#dedede]">
                 Based on {accurationType} accuracy
               </p>
