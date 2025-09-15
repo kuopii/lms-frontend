@@ -16,8 +16,7 @@ import { format, setMonth, setYear } from "date-fns";
 import { ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { BsClipboard2CheckFill, BsStarFill } from "react-icons/bs";
-import { FaArrowDown } from "react-icons/fa";
-import { FaArrowUp } from "react-icons/fa6";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa6";
 import { MdOutlineAccessTimeFilled } from "react-icons/md";
 import { CardStats } from "../components/card-stats";
 
@@ -75,7 +74,7 @@ const testData = [
   },
 ];
 
-const ReadingDataLineChartMulti = [
+const listeningDataLineChartMulti = [
   {
     week: "Week 1",
     multipleChoice: 40,
@@ -141,43 +140,43 @@ const sectionKeys = [
 const accurations = [
   {
     id: "01",
-    test_name: "Matching Heading",
+    test_name: "Choose the Correct Answer",
     accuracy: 10,
     accuration_type: AccurationType.lowest,
   },
   {
     id: "02",
-    test_name: "Paragraph Completion",
+    test_name: "Choose Multiple Answer",
     accuracy: 18,
     accuration_type: AccurationType.lowest,
   },
   {
     id: "03",
-    test_name: "True/False/Not Given",
+    test_name: "Map Labeling",
     accuracy: 20,
     accuration_type: AccurationType.lowest,
   },
   {
     id: "04",
-    test_name: "Sentence Completion",
+    test_name: "Table Completion",
     accuracy: 80,
     accuration_type: AccurationType.highest,
   },
   {
     id: "05",
-    test_name: "Choose Multiple Answer",
+    test_name: "Sentence Completion",
     accuracy: 78,
     accuration_type: AccurationType.highest,
   },
   {
     id: "06",
-    test_name: "Choose the Correct Answer",
+    test_name: "Short Answer Question",
     accuracy: 75,
     accuration_type: AccurationType.highest,
   },
 ];
 
-export const ReadingDashboardPage = () => {
+export const ListeningDashboardPage = () => {
   const [accurationType, setAccurationType] = useState<AccurationType>(
     AccurationType.lowest,
   );
@@ -208,7 +207,7 @@ export const ReadingDashboardPage = () => {
   return (
     <div className="space-y-11">
       <h1 className="text-2xl font-semibold text-white">
-        Reading Progress Dashboard
+        Listening Progress Dashboard
       </h1>
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:grid-cols-4">
         {statsData.map((e, idx) => (
@@ -228,7 +227,7 @@ export const ReadingDashboardPage = () => {
           <div className="card-custom p-4 lg:p-6">
             <div className="mb-5 flex flex-col items-center justify-between gap-4 md:flex-row">
               <h4 className="text-[clamp(1rem,2vw,1.3rem)] font-medium text-white">
-                Reading Performance
+                Listening Performance
               </h4>
               <Select value={selectedMonth} onValueChange={setSelectedMonth}>
                 <SelectTrigger className="select-trigger-custom w-[180px] text-white ring-1 ring-white/20 backdrop-blur-sm">
@@ -318,7 +317,7 @@ export const ReadingDashboardPage = () => {
       <section className="card-custom p-4 lg:p-6">
         <div className="mb-5 flex items-center justify-between">
           <h4 className="text-[clamp(1rem,2vw,1.3rem)] font-medium text-white">
-            Reading Progress by Section
+            Listening Progress by Section
           </h4>
           <Select value={selectedMonth} onValueChange={setSelectedMonth}>
             <SelectTrigger className="select-trigger-custom w-[180px] text-white ring-1 ring-white/20 backdrop-blur-sm">
@@ -334,7 +333,7 @@ export const ReadingDashboardPage = () => {
           </Select>
         </div>
         <LineCharts
-          data={ReadingDataLineChartMulti}
+          data={listeningDataLineChartMulti}
           xKey="week"
           dataKeys={sectionKeys}
           yLabel="Average Score"
