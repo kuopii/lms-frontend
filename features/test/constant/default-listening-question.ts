@@ -130,4 +130,27 @@ export const defaultListeningQuestion: Record<
       explanation: "",
     },
   },
+  table_completion: {
+    question_number: 0,
+    question_type: "table_completion",
+    question_text: "",
+    question_data: {
+      images: [],
+      table: {
+        columns: [],
+        rows: [],
+      },
+      blanks: [],
+    },
+    correct_answer: [
+      {
+        option_key: "",
+        option_text: "",
+      },
+    ],
+    points_value: 0,
+    breakdown: {
+      explanation: "",
+    },
+  },
 };
