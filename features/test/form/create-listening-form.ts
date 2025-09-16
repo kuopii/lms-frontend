@@ -10,6 +10,7 @@ export const QuestionType = z.enum([
   "form_completion",
   "summary_completion",
   "map_labeling",
+  "table_completion",
 ]);
 
 const optionSchema = z.object({
@@ -21,10 +22,25 @@ export const breakdownSchema = z.object({
   explanation: z.string().optional(),
 });
 
+const blankSchema = z.object({
+  id: z.string(),
+  rowId: z.string(),
+  colId: z.string(),
+  originalText: z.string(),
+  points: z.coerce.number().min(1),
+});
+
 export const questionDataSchema = z.object({
   images: z
     .array(z.instanceof(File, { message: "Each image must be a valid file" }))
     .optional(),
+  table: z
+    .object({
+      columns: z.array(z.object({ id: z.string(), label: z.string() })),
+      rows: z.array(z.record(z.string(), z.string())),
+    })
+    .optional(),
+  blanks: z.array(blankSchema).optional(),
 });
 
 const chooseCorrectAnswerSchema = z.object({
@@ -124,6 +140,27 @@ const summaryCompletionSchema = z.object({
   breakdown: breakdownSchema.optional(),
 });
 
+const tableCompletionSchema = z.object({
+  question_type: z.literal("table_completion"),
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_text: z.string().optional(),
+  question_data: questionDataSchema.refine(
+    (data) => data?.table && data?.blanks && data.blanks.length > 0,
+    {
+      message:
+        "Table Completion must include both table and blanks in question_data",
+    },
+  ),
+  correct_answer: z
+    .array(optionSchema)
+    .min(1, "At least 2 correct answers are required"),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  breakdown: breakdownSchema.optional(),
+});
+
 const transcriptValueSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("descriptive"),
@@ -161,6 +198,7 @@ export const questionSchema = z.discriminatedUnion("question_type", [
   formCompletionSchema,
   noteCompletionSchema,
   summaryCompletionSchema,
+  tableCompletionSchema,
 ]);
 
 const questionGroupSchema = z.object({
@@ -228,3 +266,7 @@ export type CreateListeningTestSchema = z.infer<
 >;
 
 export type PassageListening = z.infer<typeof passageSchema>;
+export type QuestionDataSchema = z.infer<typeof questionDataSchema>;
+export type InferQuestion<
+  T extends z.infer<typeof questionSchema>["question_type"],
+> = Extract<z.infer<typeof questionSchema>, { question_type: T }>;
