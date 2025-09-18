@@ -157,7 +157,7 @@ export const DetailClassPage = () => {
 
                 <DialogContent className="w-full max-w-xl rounded-3xl">
                   <DialogHeader>
-                    <DialogTitle className="text-xl">Filters</DialogTitle>
+                    <DialogTitle>Filters</DialogTitle>
                   </DialogHeader>
                   <div className="space-y-6">
                     {/* MODULE */}
@@ -245,8 +245,8 @@ export const DetailClassPage = () => {
 
                     <Button
                       onClick={handleApplyFilter}
-                      size={"sm"}
-                      className="w-full rounded-3xl"
+                      size={"xsm"}
+                      className="w-full"
                     >
                       Apply Filter
                     </Button>

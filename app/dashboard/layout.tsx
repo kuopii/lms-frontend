@@ -1,6 +1,5 @@
 "use client";
 
-// import NavbarClientWrapper from "@/components/navbar/NavbarClientWrapper";
 import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
@@ -32,6 +31,7 @@ import {
 import { NextIntlClientProvider } from "next-intl";
 import enMessage from "../../messages/en.json";
 import Header from "@/components/container/header";
+import { Role } from "@/types/auth";
 
 const navigation = [
   {
@@ -43,6 +43,7 @@ const navigation = [
     name: "Dashboard",
     icon: <RiDashboardHorizontalFill size={32} />,
     children: [
+      { name: "Summary", href: "/dashboard/summary" },
       { name: "Reading", href: "/dashboard/reading" },
       { name: "Listening", href: "/dashboard/listening" },
       { name: "Speaking", href: "/dashboard/speaking" },
@@ -73,6 +74,12 @@ const SideBarMenu = ({
   onItemClick?: () => void;
   onLogout?: () => void;
 }) => {
+  const [session] = useState({
+    user: {
+      id: "33hf9jdk38di",
+      role: Role.STUDENT,
+    },
+  });
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
@@ -120,27 +127,36 @@ const SideBarMenu = ({
             </CollapsibleTrigger>
             <CollapsibleContent>
               <div className="mb-3 ml-3 flex flex-col gap-2 py-1">
-                {nav.children.map((child, idx) => {
-                  const activeChild = pathname === child.href;
-                  return (
-                    <Link
-                      key={idx}
-                      href={child.href}
-                      onClick={onItemClick}
-                      className={cn(
-                        "group flex items-center gap-2 py-1.5 text-base font-medium transition-colors",
-                        activeChild
-                          ? "text-primary"
-                          : "text-muted-foreground hover:text-primary",
-                      )}
-                    >
-                      <IoMdArrowDropright
-                        className={activeChild ? "text-primary" : ""}
-                      />
-                      {child.name}
-                    </Link>
-                  );
-                })}
+                {nav.children
+                  ?.filter((child) => {
+                    if (session.user.role === Role.TEACHER) {
+                      // kalau teacher, cuma tampilkan Summary
+                      return child.name === "Summary";
+                    }
+                    // kalau user, tampilkan semua
+                    return true;
+                  })
+                  .map((child, idx) => {
+                    const activeChild = pathname === child.href;
+                    return (
+                      <Link
+                        key={idx}
+                        href={child.href}
+                        onClick={onItemClick}
+                        className={cn(
+                          "group flex items-center gap-2 py-1.5 text-base font-medium transition-colors",
+                          activeChild
+                            ? "text-primary"
+                            : "text-muted-foreground hover:text-primary",
+                        )}
+                      >
+                        <IoMdArrowDropright
+                          className={activeChild ? "text-primary" : ""}
+                        />
+                        {child.name}
+                      </Link>
+                    );
+                  })}
               </div>
             </CollapsibleContent>
           </Collapsible>
@@ -230,7 +246,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           </aside>
 
           {/* Main content */}
-          <main className="mx-auto mt-28 flex w-full flex-col pb-16 md:pl-4 lg:pl-8">
+          <main className="mx-auto mt-28 flex w-full flex-col pb-16 md:pl-4 lg:pl-8 overflow-x-hidden">
             {children}
           </main>
         </div>

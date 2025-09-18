@@ -1,5 +1,3 @@
-"use client";
-
 import { SpeakingDashboardPage } from "@/features/dashboard/pages/speaking";
 
 const SpeakingDashboard = () => {

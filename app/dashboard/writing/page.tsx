@@ -1,5 +1,3 @@
-"use client";
-
 import { WritingDashboardPage } from "@/features/dashboard/pages/writing";
 
 const WritingDashboard = () => {
