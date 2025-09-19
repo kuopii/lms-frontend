@@ -14,6 +14,7 @@ import {
   createListeningTestSchema,
 } from "../form/create-listening-form";
 import { PassageSection } from "../listening/components/passage-section";
+import CleanedPayload from "../listening/utils/cleaned-payload";
 
 const CreateListeningTestPage = () => {
   const { setTitle, setTrigger } = useFormStore();
@@ -88,8 +89,9 @@ const CreateListeningTestPage = () => {
 
   const onSubmit = useCallback(
     (values: CreateListeningTestSchema) => {
+      const cleaned = CleanedPayload(values);
       alert("Form submitted");
-      console.log("Form values:", values);
+      console.log("Form values:", cleaned);
       form.reset();
     },
     [form],

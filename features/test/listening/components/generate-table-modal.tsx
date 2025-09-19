@@ -10,25 +10,23 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { useFormContext, useWatch } from "react-hook-form";
+import { useFormContext } from "react-hook-form";
 import { MdTableChart } from "react-icons/md";
-import { QuestionDataSchema } from "../../form/create-listening-form";
+import {
+  QuestionDataSchema,
+  Row,
+  Table,
+} from "../../form/create-listening-form";
 
 interface GenerateTableModalProps {
   questionPath: string;
 }
 
 export function GenerateTableModal({ questionPath }: GenerateTableModalProps) {
-  const { setValue, control, getValues } = useFormContext();
+  const { setValue, getValues } = useFormContext();
   const [rows, setRows] = useState(2);
   const [cols, setCols] = useState(2);
   const [open, setOpen] = useState(false);
-
-  type Table = QuestionDataSchema["table"];
-  const table = useWatch({
-    control,
-    name: `${questionPath}.question_data.table`,
-  }) as Table;
 
   const handleGenerate = () => {
     const prev = getValues(`${questionPath}.question_data.table`) as
@@ -52,7 +50,7 @@ export function GenerateTableModal({ questionPath }: GenerateTableModalProps) {
         id: rowId,
       };
 
-      const newRows: any = { id: rowId };
+      const newRows: Row = { id: rowId };
 
       finalColumns.forEach((col) => {
         newRows[col.id] = prevRow[col.id] ?? "content";
