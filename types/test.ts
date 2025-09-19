@@ -65,6 +65,17 @@ export type Question = {
   breakdown: Breakdown;
   question_data?: {
     images?: File[];
+    table: {
+      columns: { id: string; label: string }[];
+      rows: Record<string, string>[];
+    };
+    blanks: {
+      id: string;
+      rowId: string;
+      colId: string;
+      originalText: string;
+      points: number;
+    }[];
   };
   items?: Item[];
 };

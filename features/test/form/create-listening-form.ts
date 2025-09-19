@@ -148,7 +148,7 @@ const tableCompletionSchema = z.object({
   }),
   question_text: z.string().optional(),
   question_data: questionDataSchema.refine(
-    (data) => data?.table && data?.blanks && data.blanks.length > 0,
+    (data) => !!data.table && !!data.blanks && data.blanks.length > 0,
     {
       message:
         "Table Completion must include both table and blanks in question_data",
@@ -264,9 +264,11 @@ export const createListeningTestSchema = withPointsValidation(
 export type CreateListeningTestSchema = z.infer<
   typeof createListeningTestSchema
 >;
-
 export type PassageListening = z.infer<typeof passageSchema>;
 export type QuestionDataSchema = z.infer<typeof questionDataSchema>;
 export type InferQuestion<
   T extends z.infer<typeof questionSchema>["question_type"],
 > = Extract<z.infer<typeof questionSchema>, { question_type: T }>;
+export type Table = QuestionDataSchema["table"];
+export type Row = NonNullable<Table>["rows"][number];
+export type Blanks = NonNullable<QuestionDataSchema["blanks"]>[number];

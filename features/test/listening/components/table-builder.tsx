@@ -14,7 +14,12 @@ import { GrSelect } from "react-icons/gr";
 import { PiCopyFill } from "react-icons/pi";
 import { AnswerKeyDialog } from "../../components/answer-key-dialog";
 import PointsField from "../../components/points-field";
-import { QuestionDataSchema } from "../../form/create-listening-form";
+import {
+  Blanks,
+  QuestionDataSchema,
+  Row,
+  Table,
+} from "../../form/create-listening-form";
 
 interface TableBuilderProps {
   questionsPath: string;
@@ -23,12 +28,6 @@ interface TableBuilderProps {
   onRemoveQuestion?: (index: number) => void;
   canRemove: boolean;
 }
-
-// type TableCompletion = InferQuestion<"table_completion">;
-// type CorrectAnswer = TableCompletion["correct_answer"];
-type Table = QuestionDataSchema["table"];
-type Row = NonNullable<Table>["rows"][number];
-type Blanks = NonNullable<QuestionDataSchema["blanks"]>[number];
 
 const TableBuilder = ({
   questionsPath,
@@ -68,7 +67,6 @@ const TableBuilder = ({
     const rowsCopy = (newRows ?? currentTable?.rows ?? []).map((e) => ({
       ...e,
     }));
-    console.log("rowsCopy ?", rowsCopy);
 
     updateBlank.forEach((blank, idx) => {
       const placeholder = `__${idx + 1}__`;

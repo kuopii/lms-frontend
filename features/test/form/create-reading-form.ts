@@ -15,12 +15,28 @@ export const QuestionType = z.enum([
   "diagram_label_completion",
   "paragraph_completion",
   "note_completion",
+  "table_completion",
 ]);
+
+const blankSchema = z.object({
+  id: z.string(),
+  rowId: z.string(),
+  colId: z.string(),
+  originalText: z.string(),
+  points: z.coerce.number().min(1),
+});
 
 export const questionDataSchema = z.object({
   images: z
     .array(z.instanceof(File, { message: "Each image must be a valid file" }))
     .optional(),
+  table: z
+    .object({
+      columns: z.array(z.object({ id: z.string(), label: z.string() })),
+      rows: z.array(z.record(z.string(), z.string())),
+    })
+    .optional(),
+  blanks: z.array(blankSchema).optional(),
 });
 
 const optionSchema = z.object({
@@ -265,6 +281,27 @@ const noteCompletionSchema = z.object({
   breakdown: breakdownSchema.optional(),
 });
 
+const tableCompletionSchema = z.object({
+  question_type: z.literal("table_completion"),
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_text: z.string().optional(),
+  question_data: questionDataSchema.refine(
+    (data) => data?.table && data?.blanks && data.blanks.length > 0,
+    {
+      message:
+        "Table Completion must include both table and blanks in question_data",
+    },
+  ),
+  correct_answer: z
+    .array(optionSchema)
+    .min(1, "At least 2 correct answers are required"),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  breakdown: breakdownSchema.optional(),
+});
+
 export const questionSchema = z.discriminatedUnion("question_type", [
   chooseCorrectAnswerSchema,
   chooseMultipleAnswerSchema,
@@ -278,6 +315,7 @@ export const questionSchema = z.discriminatedUnion("question_type", [
   diagramLabelCompletionSchema,
   paragraphCompletionSchema,
   noteCompletionSchema,
+  tableCompletionSchema,
 ]);
 
 const questionGroupSchema = z.object({

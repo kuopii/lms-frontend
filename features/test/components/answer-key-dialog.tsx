@@ -26,10 +26,8 @@ export function AnswerKeyDialog({
   title = "Answer Key",
   triggerLabel = "Answer Key",
   children,
-  onSave,
   open,
   setOpen,
-  canSave,
 }: AnswerKeyDialogProps) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
