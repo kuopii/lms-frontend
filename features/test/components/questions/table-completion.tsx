@@ -1,7 +1,7 @@
-import { GenerateTableModal } from "../../listening/components/generate-table-modal";
-import TableBuilder from "../../listening/components/table-builder";
+import { GenerateTableModal } from "../generate-table-modal";
 import QuestionBreakdown from "../question-breakdown";
 import QuestionHeader from "../question-header";
+import TableBuilder from "../table-builder";
 
 interface TableCompletionProps {
   qIndex: number;

@@ -12,14 +12,15 @@ import { useFormContext, useWatch } from "react-hook-form";
 import { FaTrash } from "react-icons/fa6";
 import { GrSelect } from "react-icons/gr";
 import { PiCopyFill } from "react-icons/pi";
-import { AnswerKeyDialog } from "../../components/answer-key-dialog";
-import PointsField from "../../components/points-field";
+
 import {
   Blanks,
   QuestionDataSchema,
   Row,
   Table,
-} from "../../form/create-listening-form";
+} from "../form/create-listening-form";
+import { AnswerKeyDialog } from "./answer-key-dialog";
+import PointsField from "./points-field";
 
 interface TableBuilderProps {
   questionsPath: string;
@@ -84,7 +85,6 @@ const TableBuilder = ({
       `${questionPath}.question_data.table`,
       {
         ...currentTable,
-        // rows: newRows,
         rows: rowsCopy,
         columns: currentTable?.columns ?? [],
       },
