@@ -65,11 +65,11 @@ export type Question = {
   breakdown: Breakdown;
   question_data?: {
     images?: File[];
-    table: {
+    table?: {
       columns: { id: string; label: string }[];
       rows: Record<string, string>[];
     };
-    blanks: {
+    blanks?: {
       id: string;
       rowId: string;
       colId: string;

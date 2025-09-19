@@ -12,11 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { MdTableChart } from "react-icons/md";
-import {
-  QuestionDataSchema,
-  Row,
-  Table,
-} from "../../form/create-listening-form";
+import { QuestionDataSchema, Row, Table } from "../form/create-listening-form";
 
 interface GenerateTableModalProps {
   questionPath: string;
