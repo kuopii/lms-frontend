@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import { LineCharts } from "@/components/ui/line-charts";
 import {
   Select,
@@ -9,17 +8,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { cn } from "@/lib/utils";
 import { AccurationType } from "@/types/dashboard";
 import { format, setMonth, setYear } from "date-fns";
-import { ExternalLink } from "lucide-react";
+import { ArrowDown, ArrowUp } from "lucide-react";
 import { useState } from "react";
 import { BsClipboard2CheckFill, BsStarFill } from "react-icons/bs";
-import { FaArrowDown } from "react-icons/fa";
-import { FaArrowUp } from "react-icons/fa6";
 import { MdOutlineAccessTimeFilled } from "react-icons/md";
 import { CardStats } from "../components/card-stats";
+import {
+  CardPerformance,
+  CardPerformanceList,
+} from "../components/card-performance";
 
 const statsData = [
   {
@@ -205,6 +204,21 @@ export const ReadingDashboardPage = () => {
     (accuration) => accuration.accuration_type === accurationType,
   );
 
+  const config =
+    accurationType === AccurationType.highest
+      ? {
+          title: "Your Best Question Type",
+          subtitle: "Based on highest accuracy",
+          icon: <ArrowUp className="text-primary" />,
+          textColor: "text-primary",
+        }
+      : {
+          title: "Your Weakest Question Type",
+          subtitle: "Based on lowest accuracy",
+          icon: <ArrowDown className="text-destructive" />,
+          textColor: "text-destructive",
+        };
+
   return (
     <div className="space-y-11">
       <h1 className="text-2xl font-semibold text-white">
@@ -255,63 +269,23 @@ export const ReadingDashboardPage = () => {
         </div>
 
         {/* Performance question */}
-        <div className="card-custom w-full p-5 lg:w-[500px]">
-          <div className="mb-6 flex flex-col gap-2">
-            <div className="flex gap-4">
-              <h3 className="text-xl font-medium text-white">
-                Your{" "}
-                <span className="capitalize">
-                  {accurationType === AccurationType.highest
-                    ? "Best"
-                    : accurationType}
-                </span>{" "}
-                Question Type
-              </h3>
-              <Button
-                variant={"outline"}
-                size={"iconSm"}
-                className="border-white/40"
-                onClick={handleChangeAccurationType}
-              >
-                {accurationType === AccurationType.highest ? (
-                  <FaArrowUp className="text-primary size-4" />
-                ) : (
-                  <FaArrowDown className="text-destructive size-4" />
-                )}
-              </Button>
-            </div>
-
-            <div className="flex flex-col gap-2.5">
-              <p className="text-sm text-[#dedede]">
-                Based on {accurationType} accuracy
-              </p>
-              <Separator className="text-white" />
-            </div>
-          </div>
-
-          <div className="text-white">
-            <ul className="list-disc space-y-4 pl-5">
-              {filteredAccurations.map((accuration) => (
-                <li key={accuration.id} className="text-sm">
-                  <div className="flex items-center gap-2">
-                    <span>{accuration.test_name}</span>
-                    <ExternalLink className="size-4" />
-                  </div>
-                  <p
-                    className={cn(
-                      accurationType === AccurationType.highest
-                        ? "text-primary"
-                        : "text-destructive",
-                    )}
-                  >
-                    {accuration.accuracy}% correct
-                  </p>
-                  <Separator className="mt-4 text-white/40" />
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+        <CardPerformance
+          icon={config.icon}
+          headTitle={config.title}
+          paragraph={config.subtitle}
+          className="lg:w-[500px]"
+          onClick={handleChangeAccurationType}
+        >
+          {filteredAccurations.map((item, idx) => (
+            <CardPerformanceList
+              key={idx}
+              title={item.test_name}
+              accurateness={item.accuracy}
+              className={config.textColor}
+              withSeparator={idx !== filteredAccurations.length - 1}
+            />
+          ))}
+        </CardPerformance>
       </section>
 
       {/* Multiple Line chart */}

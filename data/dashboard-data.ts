@@ -1,4 +1,4 @@
-import { DashboardItem, Status } from "@/types/dashboard";
+import { DashboardItem, Status, LeaderBoardItem } from "@/types/dashboard";
 
 export const student_dashboard: DashboardItem[] = [
   {
@@ -93,5 +93,38 @@ export const teacher_dashboard: DashboardItem[] = [
     created_at: "2025-09-20",
     status: "On Going" as Status,
     attemps: "5/10",
+  },
+];
+
+export const leaderboard_data: LeaderBoardItem[] = [
+  {
+    student_name: "Alice",
+    submission_date: new Date("2025-09-10"),
+    status: "Ontime" as Status,
+    score: 95,
+  },
+  {
+    student_name: "Bob",
+    submission_date: new Date("2025-09-11"),
+    status: "Late" as Status,
+    score: 70,
+  },
+  {
+    student_name: "Charlie",
+    submission_date: null,
+    status: "Unsubmitted" as Status,
+    score: 0,
+  },
+  {
+    student_name: "Diana",
+    submission_date: new Date("2025-09-09"),
+    status: "Ontime" as Status,
+    score: 88,
+  },
+  {
+    student_name: "Evan",
+    submission_date: new Date("2025-09-12"),
+    status: "Late" as Status,
+    score: 65,
   },
 ];

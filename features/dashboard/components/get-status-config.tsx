@@ -1,4 +1,12 @@
-import { CheckCircle, Clock, XCircle, Eye, Calendar } from "lucide-react";
+import {
+  CheckCircle,
+  Clock,
+  XCircle,
+  Eye,
+  Calendar,
+  TriangleAlert,
+  Check,
+} from "lucide-react";
 import type { Status } from "@/types/dashboard";
 
 export function getStatusConfig(status: Status) {
@@ -38,6 +46,24 @@ export function getStatusConfig(status: Status) {
         label: "Schedule",
         icon: <Calendar className="h-4 w-4" />,
         className: "bg-orange-500/20 text-orange-500",
+      };
+    case "Late":
+      return {
+        label: "Late",
+        icon: <TriangleAlert className="h-4 w-4" />,
+        className: "bg-yellow-500/20 text-yellow-500",
+      };
+    case "Ontime":
+      return {
+        label: "On Time",
+        icon: <Check className="h-4 w-4" />,
+        className: "bg-green-500/20 text-green-500",
+      };
+    case "Unsubmitted":
+      return {
+        label: "Unsubmitted",
+        icon: <Clock className="h-4 w-4" />,
+        className: "bg-destructive/20 text-destructive",
       };
     default:
       return {

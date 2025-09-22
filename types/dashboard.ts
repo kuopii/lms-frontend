@@ -12,13 +12,23 @@ export type DashboardItem = {
   attemps?: string;
 };
 
+export type LeaderBoardItem = {
+  student_name: string;
+  score: number;
+  status: Status;
+  submission_date: Date | null;
+};
+
 export type Status =
   | "Done"
   | "To Do"
   | "Review"
   | "Closed"
   | "On Going"
-  | "Schedule";
+  | "Schedule"
+  | "Ontime"
+  | "Late"
+  | "Unsubmitted";
 
 export enum AccurationType {
   lowest = "lowest",

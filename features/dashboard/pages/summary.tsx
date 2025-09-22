@@ -117,7 +117,7 @@ export const SummaryDashboardPage = () => {
   const [session] = useState({
     user: {
       id: "33hf9jdk38di",
-      role: Role.STUDENT,
+      role: Role.TEACHER,
     },
   });
 

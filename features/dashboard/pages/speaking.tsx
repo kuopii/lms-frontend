@@ -14,7 +14,7 @@ import { MdOutlineAccessTimeFilled } from "react-icons/md";
 import { CardStats } from "../components/card-stats";
 import { LineCharts } from "@/components/ui/line-charts";
 import { Separator } from "@/components/ui/separator";
-import { ExternalLink } from "lucide-react";
+import { CardPerformance } from "../components/card-performance";
 
 const statsData = [
   {
@@ -139,59 +139,40 @@ export const SpeakingDashboardPage = () => {
         </div>
 
         {/* Revision insights */}
-        <div className="card-custom w-full p-5 lg:w-[500px]">
-          <div className="mb-6 flex flex-col gap-2">
-            <div className="flex gap-4">
-              <h3 className="text-xl font-medium text-white">
-                Speaking Revision Insights
-              </h3>
-            </div>
+        <CardPerformance
+          headTitle={"Speaking Revision Insights"}
+          paragraph={"Based on your lowest accuracy"}
+          className="lg:w-[500px]"
+        >
+          {revisionInsights.map((revision) => (
+            <li key={revision.id} className="text-sm">
+              <h4>{revision.name}</h4>
 
-            <div className="flex flex-col gap-2.5">
-              <p className="text-sm text-[#dedede]">Based on lowest accuracy</p>
-              <Separator className="text-white" />
-            </div>
-          </div>
-
-          <div className="text-white">
-            <ul className="list-disc space-y-4 pl-5">
-              {revisionInsights.map((revision) => (
-                <li key={revision.id} className="text-sm">
-                  <h4>{revision.name}</h4>
-
-                  <div className="flex justify-between">
-                    <div className="flex flex-col">
-                      <span>Total Revisions</span>
-                      <span>Avg Revisions</span>
-                    </div>
-                    <div>
-                      <Separator orientation="vertical" />
-                    </div>
-                    <div className="flex flex-col">
-                      <span className="text-destructive">
-                        {revision.total_revision}
-                      </span>
-                      <span className="text-destructive">
-                        {revision.avg_revision}
-                      </span>
-                    </div>
-                  </div>
-                  <Separator className="mt-4" />
-                </li>
-              ))}
-
-              <li className="text-sm">
-                <span>Most Revised Task</span>
-                <div className="flex items-center gap-2">
-                  <p className="text-destructive">
-                    Test 4 - Describing a Picture
-                  </p>
-                  <ExternalLink className="size-4" />
+              <div className="flex justify-between">
+                <div className="flex flex-col">
+                  <span>Total Revisions</span>
+                  <span>Avg Revisions</span>
                 </div>
-              </li>
-            </ul>
-          </div>
-        </div>
+                <div>
+                  <Separator orientation="vertical" />
+                </div>
+                <div className="flex flex-col">
+                  <span className="text-destructive">
+                    {revision.total_revision}
+                  </span>
+                  <span className="text-destructive">
+                    {revision.avg_revision}
+                  </span>
+                </div>
+              </div>
+              <Separator className="mt-4" />
+            </li>
+          ))}
+          <li className="text-sm">
+            <span>Most Revised Task</span>
+            <p className="text-destructive">Test 4 - Describing a Picture</p>
+          </li>
+        </CardPerformance>
       </section>
     </div>
   );

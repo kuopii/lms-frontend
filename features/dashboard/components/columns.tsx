@@ -1,14 +1,15 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { DashboardItem } from "../../../types/dashboard";
+import { DashboardItem, LeaderBoardItem } from "../../../types/dashboard";
 import { Status } from "@/types/dashboard";
 import { getStatusConfig } from "./get-status-config";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Play, SquarePen, Trash } from "lucide-react";
+import { Play, SquarePen, Trash, View } from "lucide-react";
+import { format } from "date-fns";
 
 export const studentColumns: ColumnDef<DashboardItem>[] = [
   { accessorKey: "test_name", header: "Test Name" },
@@ -83,6 +84,11 @@ export const teacherColumns: ColumnDef<DashboardItem>[] = [
 
       return (
         <div className="flex items-center gap-3">
+          <Link href={`/dashboard/${id}`}>
+            <Button size="icon" variant="default" className="size-8">
+              <View />
+            </Button>
+          </Link>
           <Link href={`/test/${type}/update/${id}`}>
             <Button size="icon" variant="outline" className="size-8">
               <SquarePen />
@@ -100,4 +106,38 @@ export const teacherColumns: ColumnDef<DashboardItem>[] = [
       );
     },
   },
+];
+
+export const leaderboardColumns: ColumnDef<LeaderBoardItem>[] = [
+  {
+    id: "no",
+    header: "No",
+    cell: ({ row }) => row.index + 1,
+  },
+  { accessorKey: "student_name", header: "Student Name" },
+  {
+    accessorKey: "submission_date",
+    header: "Submission Date",
+    cell: ({ getValue }) => {
+      const date = getValue<Date | null>();
+      if (!date) return "-";
+      return format(new Date(date), "dd MMM yyyy");
+    },
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => {
+      const status = row.getValue("status") as Status;
+      const { label, icon, className } = getStatusConfig(status);
+
+      return (
+        <Badge className={cn("flex items-center gap-1 px-2 py-1", className)}>
+          {icon}
+          <span>{label}</span>
+        </Badge>
+      );
+    },
+  },
+  { accessorKey: "score", header: "Score" },
 ];
