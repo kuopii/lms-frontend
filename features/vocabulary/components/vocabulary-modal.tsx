@@ -7,7 +7,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { FormProvider, useForm, Control, FieldPath } from "react-hook-form";
+import { FormProvider, useForm, Control } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import FormFieldCustom from "@/components/formField/FormFieldCustom";
@@ -27,31 +27,29 @@ const categoryData = [
 ];
 
 // Base fields yang sama di kedua form
-type BaseVocabularyFields = {
-  word: string;
-  spelling: string;
-  category_id: string;
-  translation: string;
-  wordExplanation: string;
-};
+// type BaseVocabularyFields = {
+//   word: string;
+//   spelling: string;
+//   category_id: string;
+//   translation: string;
+//   wordExplanation: string;
+// };
 
-// Shared form fields component dengan proper typing menggunakan generic constraint
-const VocabularyFormFields = <T extends BaseVocabularyFields>({
-  control,
-}: {
-  control: Control<T>;
-}) => (
+// Separate components untuk masing-masing form type
+const CreateVocabularyFormFields: React.FC<{
+  control: Control<CreateVocabularyType>;
+}> = ({ control }) => (
   <>
     <FormFieldCustom
       control={control}
-      name={"word" as FieldPath<T>}
+      name="word"
       label="Word"
       placeholder="Type the word here..."
     />
 
     <FormFieldCustom
       control={control}
-      name={"category_id" as FieldPath<T>}
+      name="category_id"
       label="Category"
       type="select"
       optionSelect={categoryData.map((e) => ({
@@ -63,21 +61,67 @@ const VocabularyFormFields = <T extends BaseVocabularyFields>({
 
     <FormFieldCustom
       control={control}
-      name={"translation" as FieldPath<T>}
+      name="translation"
       label="Translation"
       placeholder="Type the translation here..."
     />
 
     <FormFieldCustom
       control={control}
-      name={"spelling" as FieldPath<T>}
+      name="spelling"
       label="Spelling"
       placeholder="Type the spelling here..."
     />
 
     <FormFieldCustom
       control={control}
-      name={"wordExplanation" as FieldPath<T>}
+      name="wordExplanation"
+      label="Word Explanation"
+      placeholder="Type the explanation here..."
+    />
+  </>
+);
+
+const EditVocabularyFormFields: React.FC<{
+  control: Control<EditVocabularyType>;
+}> = ({ control }) => (
+  <>
+    <FormFieldCustom
+      control={control}
+      name="word"
+      label="Word"
+      placeholder="Type the word here..."
+    />
+
+    <FormFieldCustom
+      control={control}
+      name="category_id"
+      label="Category"
+      type="select"
+      optionSelect={categoryData.map((e) => ({
+        value: e.id,
+        label: e.name,
+      }))}
+      placeholder="Select Category"
+    />
+
+    <FormFieldCustom
+      control={control}
+      name="translation"
+      label="Translation"
+      placeholder="Type the translation here..."
+    />
+
+    <FormFieldCustom
+      control={control}
+      name="spelling"
+      label="Spelling"
+      placeholder="Type the spelling here..."
+    />
+
+    <FormFieldCustom
+      control={control}
+      name="wordExplanation"
       label="Word Explanation"
       placeholder="Type the explanation here..."
     />
@@ -171,9 +215,7 @@ const VocabularyModal = () => {
               onSubmit={createForm.handleSubmit(handleCreateFormSubmit)}
               className="super-thin-scrollbar my-16 h-full space-y-4 overflow-y-auto px-4"
             >
-              <VocabularyFormFields
-                control={createForm.control as VocabularyFormControl}
-              />
+              <CreateVocabularyFormFields control={createForm.control} />
 
               <div className="absolute bottom-4 left-0 flex w-full items-center justify-center gap-3 border-t px-4 pt-4">
                 <Button
@@ -206,9 +248,7 @@ const VocabularyModal = () => {
             onSubmit={editForm.handleSubmit(handleEditFormSubmit)}
             className="super-thin-scrollbar my-16 h-full space-y-4 overflow-y-auto px-4"
           >
-            <VocabularyFormFields
-              control={editForm.control as VocabularyFormControl}
-            />
+            <EditVocabularyFormFields control={editForm.control} />
 
             <div className="absolute bottom-4 left-0 flex w-full items-center justify-center gap-3 border-t px-4 pt-4">
               <Button

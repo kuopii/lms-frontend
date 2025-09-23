@@ -1,0 +1,130 @@
+import { DashboardItem, Status, LeaderBoardItem } from "@/types/dashboard";
+
+export const student_dashboard: DashboardItem[] = [
+  {
+    id: "1",
+    test_name: "Reading Basics",
+    module: "Reading",
+    deadline: "2025-09-30",
+    status: "Done" as Status,
+    grade: "A",
+    type: "Assigned Test",
+  },
+  {
+    id: "2",
+    test_name: "Grammar Check",
+    module: "Writing",
+    deadline: "2025-10-05",
+    status: "To Do" as Status,
+    grade: "-",
+    type: "Assigned Test",
+  },
+  {
+    id: "3",
+    test_name: "Listening Comprehension",
+    module: "Listening",
+    deadline: "2025-10-10",
+    status: "Review" as Status,
+    grade: "-",
+    type: "Practice Test",
+  },
+  {
+    id: "4",
+    test_name: "Speaking Fluency",
+    module: "Speaking",
+    deadline: "2025-10-15",
+    status: "Done" as Status,
+    grade: "B+",
+    type: "Assigned Test",
+  },
+  {
+    id: "5",
+    test_name: "Vocabulary Challenge",
+    module: "Reading",
+    deadline: "2025-10-20",
+    status: "Review" as Status,
+    grade: "-",
+    type: "Practice Test",
+  },
+];
+
+export const teacher_dashboard: DashboardItem[] = [
+  {
+    id: "1",
+    test_name: "Reading Basics",
+    class: "Class A",
+    type_test: "listening",
+    created_at: "2025-09-01",
+    status: "On Going" as Status,
+    attemps: "12/20",
+  },
+  {
+    id: "2",
+    test_name: "Grammar Check",
+    class: "Class B",
+    type_test: "reading",
+    created_at: "2025-09-05",
+    status: "Closed" as Status,
+    attemps: "18/18",
+  },
+  {
+    id: "3",
+    test_name: "Listening Comprehension",
+    class: "Class C",
+    type_test: "speaking",
+    created_at: "2025-09-10",
+    status: "On Going" as Status,
+    attemps: "8/15",
+  },
+  {
+    id: "4",
+    test_name: "Speaking Fluency",
+    class: "Class A",
+    type_test: "listening",
+    created_at: "2025-09-15",
+    status: "Schedule" as Status,
+    attemps: "0/22",
+  },
+  {
+    id: "5",
+    test_name: "Vocabulary Challenge",
+    class: "Class D",
+    type_test: "reading",
+    created_at: "2025-09-20",
+    status: "On Going" as Status,
+    attemps: "5/10",
+  },
+];
+
+export const leaderboard_data: LeaderBoardItem[] = [
+  {
+    student_name: "Alice",
+    submission_date: new Date("2025-09-10"),
+    status: "Ontime" as Status,
+    score: 95,
+  },
+  {
+    student_name: "Bob",
+    submission_date: new Date("2025-09-11"),
+    status: "Late" as Status,
+    score: 70,
+  },
+  {
+    student_name: "Charlie",
+    submission_date: null,
+    status: "Unsubmitted" as Status,
+    score: 0,
+  },
+  {
+    student_name: "Diana",
+    submission_date: new Date("2025-09-09"),
+    status: "Ontime" as Status,
+    score: 88,
+  },
+  {
+    student_name: "Evan",
+    submission_date: new Date("2025-09-12"),
+    status: "Late" as Status,
+    score: 65,
+  },
+];

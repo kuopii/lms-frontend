@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogClose,
 } from "@/components/ui/dialog";
-import React, { useState } from "react";
+import React, { JSX, useState } from "react";
 
 export const useConfirm = (
   title: string,
@@ -48,7 +48,9 @@ export const useConfirm = (
         <DialogContent className="border-[0.5px] border-[#a1a1a1]">
           <DialogHeader>
             <DialogTitle className="text-xl text-white">{title}</DialogTitle>
-            <DialogDescription className="text-base text-foreground">{message}</DialogDescription>
+            <DialogDescription className="text-foreground text-base">
+              {message}
+            </DialogDescription>
           </DialogHeader>
           <DialogFooter className="pt-2">
             <Button size={"xs"} onClick={handleCancel} variant={"outline"}>
