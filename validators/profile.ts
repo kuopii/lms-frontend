@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { authSchema } from "./auth";
+import { authSchema, passwordSchema } from "./auth";
 
 export const updateUserSchema = authSchema
   .pick({
@@ -7,7 +7,7 @@ export const updateUserSchema = authSchema
     email: true,
   })
   .extend({
-    image: z
+    avatar: z
       .any()
       .refine((file) => !file || file instanceof File, {
         message: "Invalid file type",
@@ -20,23 +20,17 @@ export const updateUserSchema = authSchema
 
 export const changePasswordSchema = z
   .object({
-    password: z
-      .string({
-        required_error: "Current password is required",
-      })
-      .min(6, { message: "Current password must be at least 6 characters" }),
-    newPassword: z
-      .string({
-        required_error: "New password is required",
-      })
-      .min(6, { message: "New password must be at least 6 characters" }),
-    confirmPassword: z.string({
+    current_password: z.string({
+      required_error: "Current password is required",
+    }),
+    new_password: passwordSchema,
+    new_password_confirmation: z.string({
       required_error: "Confirm password is required",
     }),
   })
-  .refine((data) => data.newPassword === data.confirmPassword, {
+  .refine((data) => data.new_password === data.new_password_confirmation, {
     message: "Passwords do not match",
-    path: ["confirmPassword"],
+    path: ["new_password_confirmation"],
   });
 
 // TYPES VALIDATION

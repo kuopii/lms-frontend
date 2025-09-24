@@ -12,14 +12,19 @@ export const useChangePassword = ({
   return useMutation({
     mutationFn: async ({
       data,
-      userId,
+      accessToken,
     }: {
       data: ChangePasswordSchema;
-      userId: string;
+      accessToken?: string;
     }) => {
       const { data: response } = await axiosInstance.patch(
-        `/users/auth/change-password/${userId}`,
+        "/password/change-password",
         data,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
       );
       return response;
     },

@@ -2,9 +2,8 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Role } from "@/types/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoMdImage } from "react-icons/io";
 import { toast } from "sonner";
@@ -19,35 +18,49 @@ import {
   changePasswordSchema,
   updateUserSchema,
 } from "@/validators/profile";
+import { useSession } from "next-auth/react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Loader } from "@/components/container/loader";
+import { GeneralError } from "@/components/pages/general-error";
+import { AxiosError } from "axios";
 
-export const ProfilePage = () => {
+const ProfilePage = () => {
   const [showPasswordForm, setShowPasswordForm] = useState(false);
-  const [session] = useState({
-    user: {
-      id: "33hf9jdk38di",
-      role: Role.STUDENT,
-    },
-  });
+  const { data: session } = useSession();
 
-  const { data: user, refetch } = useFetchUserById({
+  const {
+    data: user,
+    isPending,
+    isError,
+    refetch,
+  } = useFetchUserById({
     onError: (e) => {
-      toast.error(e.message || "Something went wrong");
-      console.error(e);
+      if (e instanceof AxiosError) {
+        const message = e.response?.data?.message;
+        toast.error(message || "Something went wrong");
+      } else {
+        toast.error("Something went wrong");
+      }
     },
-    userId: session?.user?.id,
+    accessToken: session?.accessToken,
+    userId: session?.user.id,
   });
 
   const profileForm = useForm<UpdateUserSchema>({
     resolver: zodResolver(updateUserSchema),
-    defaultValues: { name: "", email: "", image: null },
+    defaultValues: {
+      name: "",
+      email: "",
+      avatar: null,
+    },
   });
 
   const passwordForm = useForm<ChangePasswordSchema>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues: {
-      password: "",
-      newPassword: "",
-      confirmPassword: "",
+      current_password: "",
+      new_password: "",
+      new_password_confirmation: "",
     },
   });
 
@@ -57,18 +70,27 @@ export const ProfilePage = () => {
       refetch();
     },
     onError: (e) => {
-      toast.error(e.message || "Something went wrong");
-      console.error(e);
+      if (e instanceof AxiosError) {
+        const message = e.response?.data?.message;
+        toast.error(message || "Something went wrong");
+      } else {
+        toast.error("Something went wrong");
+      }
     },
   });
 
   const { mutate: updatePassword } = useChangePassword({
     onSuccess: () => {
       toast.success("Change password successfully");
+      passwordForm.reset();
     },
     onError: (e) => {
-      toast.error(e.message || "Something went wrong");
-      console.error(e);
+      if (e instanceof AxiosError) {
+        const message = e.response?.data?.message;
+        toast.error(message || "Something went wrong");
+      } else {
+        toast.error("Something went wrong");
+      }
     },
   });
 
@@ -78,38 +100,59 @@ export const ProfilePage = () => {
 
       formData.append("name", data.name);
       formData.append("email", data.email);
+      formData.append("role", session?.user?.role || "");
 
-      if (data.image) {
-        formData.append("image", data.image);
+      if (data.avatar) {
+        formData.append("avatar", data.avatar);
       }
 
-      for (const [key, value] of formData.entries()) {
-        console.log(`${key}:`, value);
-      }
-
-      updateUser({ data: formData, userId: user?.id || "" });
+      updateUser({ data: formData, accessToken: session?.accessToken });
     },
-    [updateUser, user?.id],
+    [updateUser, session?.accessToken, session?.user?.role],
   );
 
   const handleChangePassword = useCallback(
     (data: ChangePasswordSchema) => {
-      console.log("CHANGE PASSWORD", data);
-      updatePassword({ data, userId: user?.id || "" });
+      updatePassword({ data, accessToken: session?.accessToken });
     },
-    [updatePassword, user?.id],
+    [updatePassword, session?.accessToken],
   );
+
+  useEffect(() => {
+    if (user) {
+      profileForm.reset({
+        name: user.name || "",
+        email: user.email || "",
+        avatar: null,
+      });
+    }
+  }, [user, profileForm]);
+
+  if (isPending) {
+    return <Loader className="min-h-[80vh]" />;
+  }
+
+  if (isError || !user) {
+    return (
+      <GeneralError
+        className="h-[75vh]"
+        withBackButton={false}
+        textButton="Retry"
+        onClick={refetch}
+      />
+    );
+  }
 
   return (
     <div className="w-full">
-      <h1 className="mb-11 text-[28px] font-semibold text-white">My Profile</h1>
+      <h1 className="mb-11 text-2xl font-semibold text-white">My Profile</h1>
 
       <div className="flex flex-col gap-8">
         <div className="flex flex-col items-start justify-between gap-5 rounded-4xl bg-[#333333] p-5 md:flex-row md:items-center">
           <div className="flex items-center gap-6">
             <Avatar className="h-20 w-20">
-              {user?.photo_profile ? (
-                <AvatarImage src={user.photo_profile} alt={user.name} />
+              {user?.avatar ? (
+                <AvatarImage src={user.avatar} alt={user.name} />
               ) : null}
 
               <AvatarFallback className="text-muted-foreground flex items-center justify-center">
@@ -118,10 +161,10 @@ export const ProfilePage = () => {
             </Avatar>
             <div className="flex flex-col items-start justify-start gap-1.5">
               <span className="text-xl font-medium text-white">
-                {user?.name || "John Doe"}
+                {user?.name || <Skeleton className="h-2 w-40" />}
               </span>
               <span className="capitalize">
-                {user?.role || session.user.role}
+                {user?.role || session?.user.role}
               </span>
             </div>
           </div>
@@ -135,7 +178,7 @@ export const ProfilePage = () => {
         </div>
 
         {/* Plan */}
-        {session.user.role === Role.TEACHER && (
+        {/* {session?.user.role === Role.TEACHER && (
           <div className="flex items-center justify-between rounded-4xl bg-[#333333] p-5">
             <div className="flex flex-col items-start justify-start gap-5">
               <h4 className="text-xl font-medium text-white">Your Plan</h4>
@@ -147,7 +190,7 @@ export const ProfilePage = () => {
               Change Plan
             </Button>
           </div>
-        )}
+        )} */}
 
         {/* Form */}
         <div className="flex flex-col gap-6 rounded-4xl bg-[#333333] p-5">
@@ -158,9 +201,11 @@ export const ProfilePage = () => {
             <PasswordForm form={passwordForm} onSubmit={handleChangePassword} />
           ) : (
             <ProfileForm form={profileForm} onSubmit={handleUpdateUser} />
-          )}{" "}
+          )}
         </div>
       </div>
     </div>
   );
 };
+
+export default ProfilePage;

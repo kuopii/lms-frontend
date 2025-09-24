@@ -11,16 +11,20 @@ export const useUpdateUser = ({
   return useMutation({
     mutationFn: async ({
       data,
-      userId,
+      accessToken,
     }: {
       data: FormData;
-      userId: string;
+      accessToken?: string;
     }) => {
-      const { data: response } = await axiosInstance.patch(
-        `/users/${userId}`,
+      const { data: response } = await axiosInstance.post(
+        "/profile/update",
         data,
         {
+          params: {
+            _method: "PATCH",
+          },
           headers: {
+            Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",
           },
         },
