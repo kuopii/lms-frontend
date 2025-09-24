@@ -42,7 +42,7 @@ const socialProviders = [
   },
 ];
 
-export const SignInPage = () => {
+const SignInPage = () => {
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -185,3 +185,5 @@ export const SignInPage = () => {
     </div>
   );
 };
+
+export default SignInPage;
