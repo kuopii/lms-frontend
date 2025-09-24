@@ -1,6 +1,1 @@
-import { PricePage } from "@/components/pages/price";
-
-const Price = () => {
-  return <PricePage />;
-};
-export default Price;
+export { default } from "@/components/pages/price";

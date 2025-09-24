@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { cn } from "@/lib/utils";
@@ -318,7 +316,7 @@ const CardSkill = ({ index, title }: CardSkillProps) => {
   );
 };
 
-export function HomePage() {
+export default function HomePage() {
   const t = useTranslations("home.content");
   const s = useTranslations("home.content");
 

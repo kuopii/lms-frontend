@@ -1,26 +1,12 @@
 "use client";
 
-import { useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { Header } from "@/components/container/header";
 import { Button } from "@/components/ui/button";
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { IoLogOut } from "react-icons/io5";
-import { IoMdArrowDropright } from "react-icons/io";
-import {
-  RiMenu4Fill,
-  RiDashboardHorizontalFill,
-  RiCompassFill,
-} from "react-icons/ri";
-import { FaCircleUser } from "react-icons/fa6";
-import { HiUserGroup } from "react-icons/hi2";
-import { PiBookOpenFill } from "react-icons/pi";
-import { useConfirm } from "@/hooks/use-confirm";
 import {
   Sheet,
   SheetContent,
@@ -28,44 +14,21 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { NextIntlClientProvider } from "next-intl";
-import enMessage from "../../messages/en.json";
-import Header from "@/components/container/header";
+import { DASHBOARD_NAVIGATION } from "@/data/navigations";
+import { usePostLogout } from "@/features/auth/api/use-post-logout";
+import { useConfirm } from "@/hooks/use-confirm";
+import { cn } from "@/lib/utils";
 import { Role } from "@/types/auth";
-
-const navigation = [
-  {
-    name: "My Profile",
-    href: "/dashboard/profile",
-    icon: <FaCircleUser size={32} />,
-  },
-  {
-    name: "Dashboard",
-    icon: <RiDashboardHorizontalFill size={32} />,
-    children: [
-      { name: "Summary", href: "/dashboard/summary" },
-      { name: "Reading", href: "/dashboard/reading" },
-      { name: "Listening", href: "/dashboard/listening" },
-      { name: "Speaking", href: "/dashboard/speaking" },
-      { name: "Writing", href: "/dashboard/writing" },
-    ],
-  },
-  {
-    name: "Class",
-    href: "/dashboard/class",
-    icon: <HiUserGroup size={32} />,
-  },
-  {
-    name: "Vocabulary",
-    href: "/dashboard/vocabulary",
-    icon: <PiBookOpenFill size={32} />,
-  },
-  {
-    name: "Discover Test",
-    href: "/dashboard/test",
-    icon: <RiCompassFill size={32} />,
-  },
-];
+import { signOut, useSession } from "next-auth/react";
+import { NextIntlClientProvider } from "next-intl";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useState } from "react";
+import { IoMdArrowDropright } from "react-icons/io";
+import { IoLogOut } from "react-icons/io5";
+import { RiMenu4Fill } from "react-icons/ri";
+import { toast } from "sonner";
+import enMessage from "../../messages/en.json";
 
 const SideBarMenu = ({
   onItemClick,
@@ -74,18 +37,13 @@ const SideBarMenu = ({
   onItemClick?: () => void;
   onLogout?: () => void;
 }) => {
-  const [session] = useState({
-    user: {
-      id: "33hf9jdk38di",
-      role: Role.STUDENT,
-    },
-  });
+  const { data: session } = useSession();
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
 
   return (
     <div className="flex flex-col gap-2 overflow-hidden">
-      {navigation.map((nav, index) => {
+      {DASHBOARD_NAVIGATION.map((nav, index) => {
         const isActive =
           pathname === nav.href ||
           nav.children?.some((child) => child.href === pathname);
@@ -129,11 +87,9 @@ const SideBarMenu = ({
               <div className="mb-3 ml-3 flex flex-col gap-2 py-1">
                 {nav.children
                   ?.filter((child) => {
-                    if (session.user.role === Role.TEACHER) {
-                      // kalau teacher, cuma tampilkan Summary
+                    if (session?.user.role === Role.TEACHER) {
                       return child.name === "Summary";
                     }
-                    // kalau user, tampilkan semua
                     return true;
                   })
                   .map((child, idx) => {
@@ -191,18 +147,33 @@ const SideBarMenu = ({
 };
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
-  const router = useRouter();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { data: session } = useSession();
 
   const [ConfirmDialog, Confirm] = useConfirm(
     "Logout",
     "Are you sure you want to logout?",
   );
 
+  const { mutate: logout } = usePostLogout({
+    accessToken: session?.accessToken,
+    onError(e) {
+      toast.error(e.message || "Something went wrong");
+    },
+    onSuccess: () => {
+      toast.success("Logout success!");
+      signOut({
+        redirect: true,
+        callbackUrl: "/",
+      });
+    },
+  });
+
   const handleLogout = async () => {
     setIsMenuOpen(false);
     const ok = await Confirm();
-    if (ok) router.push("/");
+    if (!ok) return;
+    logout();
   };
 
   return (
@@ -246,7 +217,7 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
           </aside>
 
           {/* Main content */}
-          <main className="mx-auto mt-28 flex w-full flex-col pb-16 md:pl-4 lg:pl-8 overflow-x-hidden">
+          <main className="mx-auto mt-28 flex w-full flex-col overflow-x-hidden pb-16 md:pl-4 lg:pl-8">
             {children}
           </main>
         </div>

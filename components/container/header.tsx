@@ -1,12 +1,21 @@
 "use client";
 
+import { LANDING_PAGE_NAVIGATION } from "@/data/navigations";
+import { getInitialsFromName } from "@/helpers/get-initials-from-name";
+import { Locale, routing, usePathname, useRouter } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
+import logo from "@/public/images/logo-no-bg.png";
+import clsx from "clsx";
+import { AlignJustify } from "lucide-react";
+import { useSession } from "next-auth/react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useCallback, useState } from "react";
-import { Locale, routing, usePathname, useRouter } from "@/i18n/routing";
 import { useRouter as NextRouter } from "next/navigation";
+import React, { useCallback, useState } from "react";
+import { CgProfile } from "react-icons/cg";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
 import {
   Select,
   SelectContent,
@@ -14,8 +23,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { CgProfile } from "react-icons/cg";
-import clsx from "clsx";
 import {
   Sheet,
   SheetContent,
@@ -23,18 +30,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "../ui/sheet";
-import { Button } from "../ui/button";
-import { AlignJustify } from "lucide-react";
-import logo from "@/public/images/logo-no-bg.png";
-import { Role } from "@/types/auth";
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { getInitialsFromName } from "@/helpers/get-initials-from-name";
-
-const navigation = [
-  { title: "home", href: "/" },
-  { title: "features", href: "/features" },
-  { title: "pricing", href: "/pricing" },
-];
 
 const NavigationItems = ({
   className,
@@ -50,13 +45,7 @@ const NavigationItems = ({
   const router = useRouter();
   const nextRouter = NextRouter();
   const t = useTranslations("nav");
-  const session: { user?: { name: string; role: Role; image: string } } = {
-    // user: {
-    //   name: "John Doe",
-    //   role: Role.STUDENT,
-    //   image: "/path/to/image.jpg",
-    // },
-  };
+  const { data: session } = useSession();
 
   const isDashbordPath = pathname.startsWith("/dashboard");
 
@@ -82,7 +71,7 @@ const NavigationItems = ({
     <>
       {isDashbordPath ? null : (
         <div className={cn("flex items-center gap-[50px]", className)}>
-          {navigation.map(({ title, href }) => {
+          {LANDING_PAGE_NAVIGATION.map(({ title, href }) => {
             const fullHref = `/${locale}${href}`;
             const currentPath = `/${locale}${pathname === "/" ? "" : pathname}`;
             const targetPath = fullHref.replace(/\/$/, "");
@@ -137,14 +126,15 @@ const NavigationItems = ({
           </div>
         </div>
       )}
-      {session.user ? (
+      {isDashbordPath && session?.user && (
         <Avatar className="h-11 w-11">
-          <AvatarImage src={session.user.image} />
+          <AvatarImage src={session?.user.avatar || ""} />
           <AvatarFallback className="text-muted-foreground">
-            {getInitialsFromName(session.user.name)}
+            {getInitialsFromName(session?.user.name)}
           </AvatarFallback>
         </Avatar>
-      ) : (
+      )}
+      {!isDashbordPath && (
         <Button
           onClick={() => nextRouter.push("/auth/sign-in")}
           className={cn(
@@ -161,7 +151,7 @@ const NavigationItems = ({
   );
 };
 
-const Header = ({
+export const Header = ({
   className,
   wrapperClassName,
   iconLeft,
@@ -223,5 +213,3 @@ const Header = ({
     </header>
   );
 };
-
-export default Header;

@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Badge } from "@/components/ui/badge";
 import { FaCircleArrowRight, FaDollarSign } from "react-icons/fa6";
@@ -75,7 +73,7 @@ const CardPricing = ({
   );
 };
 
-export const PricePage = () => {
+const PricePage = () => {
   const t = useTranslations("pricing");
 
   const cardPricingItems = t.raw("card") as {
@@ -116,3 +114,5 @@ export const PricePage = () => {
     </div>
   );
 };
+
+export default PricePage;

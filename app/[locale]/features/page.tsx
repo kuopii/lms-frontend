@@ -1,7 +1,1 @@
-import { FeaturesPage } from "@/components/pages/features";
-
-const Features = () => {
-  return <FeaturesPage />;
-};
-
-export default Features;
+export { default } from "@/components/pages/features";
