@@ -5,22 +5,29 @@ import { useQuery } from "@tanstack/react-query";
 export const useFetchUserById = ({
   onError,
   userId,
+  accessToken,
 }: {
   onError: (e: Error) => void;
-  userId: string;
+  userId?: string;
+  accessToken?: string;
 }) => {
   return useQuery({
     queryFn: async () => {
       try {
-        const { data } = await axiosInstance.get(`/users/${userId}`);
+        const { data } = await axiosInstance.get(`/profile/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
         return data as User;
       } catch (error) {
         onError(error as Error);
-        console.error(error);
         throw error;
       }
     },
     enabled: !!userId,
-    queryKey: ["profile"],
+    queryKey: ["profile", userId],
+    staleTime: 1000 * 60 * 5, // data fresh 5 menit
+    gcTime: 1000 * 60 * 10, // cache hilang setelah 10 menit tidak dipakai
   });
 };

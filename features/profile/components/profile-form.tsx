@@ -55,7 +55,7 @@ export const ProfileForm = memo(
         />
         <FormField
           control={form.control}
-          name="image"
+          name="avatar"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-base font-medium">
@@ -94,7 +94,7 @@ export const ProfileForm = memo(
                       className="hidden"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
-                        form.setValue("image", file || null);
+                        form.setValue("avatar", file || null);
                       }}
                     />
                   </label>

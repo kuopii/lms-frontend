@@ -25,9 +25,9 @@ export const PasswordForm = memo(
     onSubmit: (data: ChangePasswordSchema) => void;
   }) => {
     const [show, setShow] = useState({
-      password: false,
-      newPassword: false,
-      confirmPassword: false,
+      current_password: false,
+      new_password: false,
+      new_password_confirmation: false,
     });
 
     const toggleVisibility = useCallback((field: keyof typeof show) => {
@@ -76,17 +76,17 @@ export const PasswordForm = memo(
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
           {renderPasswordField(
-            "password",
+            "current_password",
             "Old Password",
             "Enter old password",
           )}
           {renderPasswordField(
-            "newPassword",
+            "new_password",
             "New Password",
             "Enter new password",
           )}
           {renderPasswordField(
-            "confirmPassword",
+            "new_password_confirmation",
             "Confirm New Password",
             "Confirm new password",
           )}
