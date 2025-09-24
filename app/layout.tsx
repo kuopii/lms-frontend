@@ -5,6 +5,8 @@ import { TanstackProvider } from "@/providers/tanstack-provider";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Geologica } from "next/font/google";
 import "./globals.css";
+import SessionProvider from "@/providers/session-provider";
+import { AuthIndicator } from "@/components/auth-indicator";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -37,10 +39,13 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${geologica.variable} antialiased`}
       >
         <TanstackProvider>
-          {children}
-          <ScreenSizeTracker />
-          <PageIndicator />
-          <Toaster />
+          <SessionProvider>
+            {children}
+            <AuthIndicator />
+            <ScreenSizeTracker />
+            <PageIndicator />
+            <Toaster />
+          </SessionProvider>
         </TanstackProvider>
       </body>
     </html>

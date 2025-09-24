@@ -1,13 +1,6 @@
 "use client";
 
-import React from "react";
-import { useState } from "react";
-import Link from "next/link";
-import { useForm } from "react-hook-form";
-import { cn } from "@/lib/utils";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { HiEye, HiEyeOff } from "react-icons/hi";
-import { Role } from "@/types/auth";
+import { Button } from "@/components/ui/button";
 import {
   Form,
   FormControl,
@@ -17,7 +10,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
@@ -25,9 +17,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
+import { Role } from "@/types/auth";
 import { registerSchema, RegisterSchema } from "@/validators/auth";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Loader2 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { HiEye, HiEyeOff } from "react-icons/hi";
+import { toast } from "sonner";
+import { usePostRegister } from "../api/use-post-register";
 
-export const SignUpPage = () => {
+const SignUpPage = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<RegisterSchema>({
@@ -40,9 +44,18 @@ export const SignUpPage = () => {
     },
   });
 
-  const handleSubmit = (data: RegisterSchema) => {
-    console.log("REGISTER DATA:", data);
-  };
+  const { mutate: registerUser, isPending } = usePostRegister({
+    onSuccess: () => {
+      form.reset();
+      toast.success("User created successfully");
+      router.push("/auth/sign-in");
+    },
+    onError(e) {
+      toast.error(e.message || "Something went wrong");
+    },
+  });
+
+  const handleSubmit = (data: RegisterSchema) => registerUser(data);
 
   return (
     <div className="flex w-full max-w-lg flex-col items-center justify-center">
@@ -147,9 +160,10 @@ export const SignUpPage = () => {
 
           <Button
             type="submit"
-            className="w-full rounded-4xl bg-[#7A9D58] hover:bg-[#6d8a4f]"
+            disabled={isPending}
+            className="w-full rounded-4xl [&_svg:not([class*='size-'])]:size-5"
           >
-            Sign up
+            {isPending ? <Loader2 className="animate-spin" /> : "Sign Up"}
           </Button>
         </form>
       </Form>
@@ -163,3 +177,5 @@ export const SignUpPage = () => {
     </div>
   );
 };
+
+export default SignUpPage;

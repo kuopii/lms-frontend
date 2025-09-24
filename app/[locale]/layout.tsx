@@ -1,4 +1,4 @@
-import Header from "@/components/container/header";
+import { Header } from "@/components/container/header";
 import { routing } from "@/i18n/routing";
 import type { Metadata } from "next";
 import { hasLocale, NextIntlClientProvider } from "next-intl";

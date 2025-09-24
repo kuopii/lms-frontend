@@ -20,6 +20,9 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
 
 const socialProviders = [
   {
@@ -40,7 +43,9 @@ const socialProviders = [
 ];
 
 export const SignInPage = () => {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const form = useForm<LoginSchema>({
     resolver: zodResolver(loginSchema),
@@ -51,16 +56,28 @@ export const SignInPage = () => {
   });
 
   const handleSubmit = async (data: LoginSchema) => {
-    const res = await signIn("credentials", {
-      email: data.email,
-      password: data.password,
-      redirect: false,
-    });
+    setIsLoading(true);
 
-    if (res?.error) {
-      console.error("Login gagal:", res.error);
-    } else {
-      console.log("Login sukses!");
+    try {
+      const res = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
+
+      if (res?.error) {
+        toast.error(res.error);
+        form.setValue("password", "");
+      } else if (res?.ok) {
+        form.reset();
+        toast.success("Login success!");
+        router.push("/dashboard/profile");
+      }
+    } catch {
+      toast.error("Something went wrong. Please try again later.");
+      form.setValue("password", "");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -133,8 +150,12 @@ export const SignInPage = () => {
             Forgot password?
           </Link>
 
-          <Button type="submit" className="w-full rounded-4xl">
-            Login
+          <Button
+            disabled={isLoading}
+            type="submit"
+            className="w-full rounded-4xl [&_svg:not([class*='size-'])]:size-5"
+          >
+            {isLoading ? <Loader2 className="animate-spin" /> : "Login"}
           </Button>
         </form>
       </Form>
