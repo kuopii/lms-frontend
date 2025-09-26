@@ -29,6 +29,7 @@ import { useForm } from "react-hook-form";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { toast } from "sonner";
 import { usePostRegister } from "../api/use-post-register";
+import { AxiosError } from "axios";
 
 const SignUpPage = () => {
   const router = useRouter();
@@ -50,8 +51,13 @@ const SignUpPage = () => {
       toast.success("User created successfully");
       router.push("/auth/sign-in");
     },
-    onError(e) {
-      toast.error(e.message || "Something went wrong");
+    onError: (e) => {
+      if (e instanceof AxiosError) {
+        const message = e.response?.data?.message;
+        toast.error(message || "Something went wrong");
+      } else {
+        toast.error("Something went wrong");
+      }
     },
   });
 

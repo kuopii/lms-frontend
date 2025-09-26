@@ -64,7 +64,7 @@ const ProfilePage = () => {
     },
   });
 
-  const { mutate: updateUser } = useUpdateUser({
+  const { mutate: updateUser, isPending: isUpdateUserPending } = useUpdateUser({
     onSuccess: () => {
       toast.success("User updated successfully");
       refetch();
@@ -79,20 +79,21 @@ const ProfilePage = () => {
     },
   });
 
-  const { mutate: updatePassword } = useChangePassword({
-    onSuccess: () => {
-      toast.success("Change password successfully");
-      passwordForm.reset();
-    },
-    onError: (e) => {
-      if (e instanceof AxiosError) {
-        const message = e.response?.data?.message;
-        toast.error(message || "Something went wrong");
-      } else {
-        toast.error("Something went wrong");
-      }
-    },
-  });
+  const { mutate: updatePassword, isPending: isUpdatePasswordPending } =
+    useChangePassword({
+      onSuccess: () => {
+        toast.success("Change password successfully");
+        passwordForm.reset();
+      },
+      onError: (e) => {
+        if (e instanceof AxiosError) {
+          const message = e.response?.data?.message;
+          toast.error(message || "Something went wrong");
+        } else {
+          toast.error("Something went wrong");
+        }
+      },
+    });
 
   const handleUpdateUser = useCallback(
     (data: UpdateUserSchema) => {
@@ -198,9 +199,17 @@ const ProfilePage = () => {
             {showPasswordForm ? "Change Password" : "Personal Information"}
           </h4>
           {showPasswordForm ? (
-            <PasswordForm form={passwordForm} onSubmit={handleChangePassword} />
+            <PasswordForm
+              form={passwordForm}
+              isLoading={isUpdatePasswordPending}
+              onSubmit={handleChangePassword}
+            />
           ) : (
-            <ProfileForm form={profileForm} onSubmit={handleUpdateUser} />
+            <ProfileForm
+              isLoading={isUpdateUserPending}
+              form={profileForm}
+              onSubmit={handleUpdateUser}
+            />
           )}
         </div>
       </div>
