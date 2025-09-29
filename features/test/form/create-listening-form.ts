@@ -22,25 +22,11 @@ export const breakdownSchema = z.object({
   explanation: z.string().optional(),
 });
 
-const blankSchema = z.object({
-  id: z.string(),
-  rowId: z.string(),
-  colId: z.string(),
-  originalText: z.string(),
-  points: z.coerce.number().min(1),
-});
-
 export const questionDataSchema = z.object({
   images: z
     .array(z.instanceof(File, { message: "Each image must be a valid file" }))
     .optional(),
-  table: z
-    .object({
-      columns: z.array(z.object({ id: z.string(), label: z.string() })),
-      rows: z.array(z.record(z.string(), z.string())),
-    })
-    .optional(),
-  blanks: z.array(blankSchema).optional(),
+  table: z.array(z.array(z.string())).optional(),
 });
 
 const chooseCorrectAnswerSchema = z.object({
@@ -91,9 +77,19 @@ const mapLabelingSchema = z.object({
   }),
   question_type: z.literal("map_labeling"),
   question_text: z.string().min(1, "Question text is required"),
-  correct_answer: z.array(optionSchema).min(1).max(2),
   points_value: z.number().min(1, "Points value must be at least 1"),
   question_data: questionDataSchema.optional(),
+  items: z
+    .array(
+      z.object({
+        question_number: z.number({
+          required_error: "Question number is required",
+          invalid_type_error: "Question number must be a number",
+        }),
+        correct_answer: optionSchema,
+      }),
+    )
+    .min(1, "Minimum 1 item to match"),
   breakdown: breakdownSchema.optional(),
 });
 
@@ -146,14 +142,7 @@ const tableCompletionSchema = z.object({
     required_error: "Question number is required",
     invalid_type_error: "Question number must be a number",
   }),
-  question_text: z.string().optional(),
-  question_data: questionDataSchema.refine(
-    (data) => !!data.table && !!data.blanks && data.blanks.length > 0,
-    {
-      message:
-        "Table Completion must include both table and blanks in question_data",
-    },
-  ),
+  question_data: questionDataSchema.optional(),
   correct_answer: z
     .array(optionSchema)
     .min(1, "At least 2 correct answers are required"),
@@ -270,5 +259,3 @@ export type InferQuestion<
   T extends z.infer<typeof questionSchema>["question_type"],
 > = Extract<z.infer<typeof questionSchema>, { question_type: T }>;
 export type Table = QuestionDataSchema["table"];
-export type Row = NonNullable<Table>["rows"][number];
-export type Blanks = NonNullable<QuestionDataSchema["blanks"]>[number];

@@ -218,14 +218,9 @@ export const defaultReadingQuestion: Record<
   table_completion: {
     question_number: 0,
     question_type: "table_completion",
-    question_text: "",
     question_data: {
       images: [],
-      table: {
-        columns: [],
-        rows: [],
-      },
-      blanks: [],
+      table: [],
     },
     correct_answer: [
       {

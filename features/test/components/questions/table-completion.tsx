@@ -1,4 +1,3 @@
-import { GenerateTableModal } from "../generate-table-modal";
 import QuestionBreakdown from "../question-breakdown";
 import QuestionHeader from "../question-header";
 import TableBuilder from "../table-builder";
@@ -32,8 +31,6 @@ const TableCompletion = ({
           globalNumber={globalNumber}
           withNumber={false}
         />
-
-        <GenerateTableModal questionPath={questionPath} />
 
         <TableBuilder
           qIndex={qIndex}

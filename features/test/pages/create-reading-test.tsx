@@ -15,7 +15,6 @@ import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { defaultReadingQuestion } from "../constant/default-reading-question";
 import { PassageSection } from "../reading/components/passage-section";
-import CleanedPayload from "../reading/utils/cleaned-payload";
 
 const CreateReadingTestPage = () => {
   const { setTrigger, setTitle } = useFormStore();
@@ -71,9 +70,8 @@ const CreateReadingTestPage = () => {
   }, [setTitle]);
 
   const onSubmit = useCallback((values: CreateReadingTestSchema) => {
-    const cleaned = CleanedPayload(values);
     alert("Form submitted");
-    console.log("Form values:", cleaned);
+    console.log("Form values:", values);
   }, []);
 
   const onError = useCallback(

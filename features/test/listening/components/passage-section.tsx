@@ -7,9 +7,8 @@ import {
   FormItem,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Question, QuestionType } from "@/types/test";
+import { QuestionType } from "@/types/test";
 import dynamic from "next/dynamic";
 import React, { useCallback } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
@@ -17,7 +16,6 @@ import { FaTrash } from "react-icons/fa";
 import { defaultListeningQuestion } from "../../constant/default-listening-question";
 import TranscriptForm from "../transcript/transcript-form";
 import { AudioDropzone } from "./audio-dropzone";
-import { ImageDropzone } from "./image-dropzone";
 
 const QuestionsSection = dynamic(() => import("./questions-section"), {
   ssr: false,
@@ -30,20 +28,13 @@ type PassageSectionProps = {
   onAddPassage: () => void;
 };
 
-type QuestionGroup = {
-  instruction: string;
-  transcript: { type: string; text: string; title: string };
-  image: { title: string; file: File | null };
-  questions: Question[];
-};
-
 export const PassageSection = ({
   index,
   onRemove,
   isLast,
   onAddPassage,
 }: PassageSectionProps) => {
-  const { control, watch } = useFormContext();
+  const { control } = useFormContext();
 
   const {
     fields: questionGroupFields,
@@ -59,10 +50,6 @@ export const PassageSection = ({
       appendQuestionGroup({
         instruction: "",
         transcript: { type: "descriptive", text: "", title: "" },
-        image: {
-          title: "",
-          file: null,
-        },
         questions: [
           defaultListeningQuestion[defaultQuestion || "choose_correct_answer"],
         ],
@@ -79,10 +66,6 @@ export const PassageSection = ({
     },
     [questionGroupFields.length, removeQuestionGroup],
   );
-
-  const questionGroups = watch(
-    `passages.${index}.questionGroups`,
-  ) as QuestionGroup[];
 
   return (
     <section className="space-y-25">
@@ -121,8 +104,6 @@ export const PassageSection = ({
       </div>
 
       {questionGroupFields.map((qg, qgIndex) => {
-        const currentGroup = questionGroups[qgIndex];
-
         return (
           <React.Fragment key={qg.id}>
             <section className="rounded-3xl">
@@ -175,33 +156,6 @@ export const PassageSection = ({
                 )}
               />
             </div>
-
-            {/* Image for map labeling */}
-            {currentGroup.questions.some(
-              (e) => e.question_type === "map_labeling",
-            ) && (
-              <div className="mb-14 flex w-full flex-col items-center justify-center gap-6 rounded-3xl bg-[#1A1A1A] px-4 py-6">
-                <FormField
-                  name={`passages.${index}.questionGroups.${qgIndex}.image.title`}
-                  control={control}
-                  render={({ field }) => (
-                    <FormItem className="w-full">
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="Type the map title here..."
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <ImageDropzone
-                  fieldPrefix={`passages.${index}.questionGroups.${qgIndex}.image.file`}
-                />
-              </div>
-            )}
 
             {/* questions */}
             <QuestionsSection

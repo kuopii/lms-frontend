@@ -12,76 +12,73 @@ import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { useFormContext } from "react-hook-form";
 import { MdTableChart } from "react-icons/md";
-import { QuestionDataSchema, Row, Table } from "../form/create-listening-form";
+import { Table } from "../form/create-listening-form";
 
 interface GenerateTableModalProps {
   questionPath: string;
+  reindexTable: () => void;
 }
 
-export function GenerateTableModal({ questionPath }: GenerateTableModalProps) {
+const generateTable = (
+  oldTable: Table,
+  rows: number,
+  cols: number,
+): string[][] => {
+  return Array.from({ length: rows }, (_, rowIndex) => {
+    return Array.from({ length: cols }, (_, colIndex) => {
+      if (rowIndex === 0) {
+        return (
+          oldTable?.[rowIndex]?.[colIndex] ?? `Columns Name${colIndex + 1}`
+        );
+      }
+      return oldTable?.[rowIndex]?.[colIndex] ?? "content";
+    });
+  });
+};
+
+const filterCorrectAnswer = (
+  correctAnswer: {
+    option_key: string;
+    option_text: string;
+  }[],
+  rows: number,
+  cols: number,
+) => {
+  return correctAnswer.filter((ans) => {
+    const [row, col] = ans.option_key.split("-").map(Number);
+    return row < rows && col < cols;
+  });
+};
+
+export function GenerateTableModal({
+  questionPath,
+  reindexTable,
+}: GenerateTableModalProps) {
   const { setValue, getValues } = useFormContext();
   const [rows, setRows] = useState(2);
   const [cols, setCols] = useState(2);
   const [open, setOpen] = useState(false);
 
   const handleGenerate = () => {
-    const prev = getValues(`${questionPath}.question_data.table`) as
-      | Table
-      | undefined;
+    const oldTable = getValues(`${questionPath}.question_data.table`) ?? [];
+    const oldAnswer = getValues(`${questionPath}.correct_answer`) ?? [];
 
-    // generate columns
-    const finalColumns = Array.from({ length: cols }, (_, i) => {
-      const colId = `cols${i + 1}`;
-      const prevCol = prev?.columns.find((col) => col.id === colId);
+    const newTable = generateTable(oldTable, rows, cols);
+    const newAnswer = filterCorrectAnswer(oldAnswer, rows, cols);
 
-      return {
-        id: colId,
-        label: prevCol?.label ?? `Column Name ${i + 1}`,
-      };
+    console.log("new Answer?", newAnswer);
+
+    setValue(`${questionPath}.question_data.table`, newTable, {
+      shouldDirty: true,
+      shouldValidate: true,
     });
 
-    const finalRows = Array.from({ length: rows }, (_, i) => {
-      const rowId = `row${i + 1}`;
-      const prevRow = prev?.rows.find((row) => row.id === rowId) ?? {
-        id: rowId,
-      };
-
-      const newRows: Row = { id: rowId };
-
-      finalColumns.forEach((col) => {
-        newRows[col.id] = prevRow[col.id] ?? "content";
-      });
-
-      return newRows;
+    setValue(`${questionPath}.correct_answer`, newAnswer, {
+      shouldDirty: true,
+      shouldValidate: true,
     });
 
-    const blanks = getValues(
-      `${questionPath}.question_data.blanks`,
-    ) as QuestionDataSchema["blanks"];
-
-    const validColumnsId = finalColumns.map((col) => col.id);
-    const finalBlanks =
-      blanks?.filter((b) => validColumnsId?.includes(b.colId)) ?? [];
-
-    setValue(`${questionPath}.question_data.table`, {
-      columns: finalColumns,
-      rows: finalRows,
-    });
-    setValue(`${questionPath}.question_data.blanks`, finalBlanks);
-
-    setValue(
-      `${questionPath}.correct_answer`,
-      finalBlanks.map((e) => ({
-        option_key: e.id,
-        option_text: e.originalText,
-      })),
-    );
-
-    const totalPoints = finalBlanks.reduce(
-      (sum, e) => sum + Number(e.points),
-      0,
-    );
-    setValue(`${questionPath}.points_value`, totalPoints);
+    reindexTable();
 
     setOpen(false);
   };

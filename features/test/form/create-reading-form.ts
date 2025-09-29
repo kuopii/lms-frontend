@@ -18,25 +18,11 @@ export const QuestionType = z.enum([
   "table_completion",
 ]);
 
-const blankSchema = z.object({
-  id: z.string(),
-  rowId: z.string(),
-  colId: z.string(),
-  originalText: z.string(),
-  points: z.coerce.number().min(1),
-});
-
 export const questionDataSchema = z.object({
   images: z
     .array(z.instanceof(File, { message: "Each image must be a valid file" }))
     .optional(),
-  table: z
-    .object({
-      columns: z.array(z.object({ id: z.string(), label: z.string() })),
-      rows: z.array(z.record(z.string(), z.string())),
-    })
-    .optional(),
-  blanks: z.array(blankSchema).optional(),
+  table: z.array(z.array(z.string())).optional(),
 });
 
 const optionSchema = z.object({
@@ -288,13 +274,7 @@ const tableCompletionSchema = z.object({
     invalid_type_error: "Question number must be a number",
   }),
   question_text: z.string().optional(),
-  question_data: questionDataSchema.refine(
-    (data) => data?.table && data?.blanks && data.blanks.length > 0,
-    {
-      message:
-        "Table Completion must include both table and blanks in question_data",
-    },
-  ),
+  question_data: questionDataSchema.optional(),
   correct_answer: z
     .array(optionSchema)
     .min(1, "At least 2 correct answers are required"),

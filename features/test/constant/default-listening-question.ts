@@ -119,12 +119,7 @@ export const defaultListeningQuestion: Record<
     question_type: "map_labeling",
     question_text: "",
     question_data: { images: [] },
-    correct_answer: [
-      {
-        option_key: "",
-        option_text: "",
-      },
-    ],
+    items: [],
     points_value: 0,
     breakdown: {
       explanation: "",
@@ -133,14 +128,9 @@ export const defaultListeningQuestion: Record<
   table_completion: {
     question_number: 0,
     question_type: "table_completion",
-    question_text: "",
     question_data: {
       images: [],
-      table: {
-        columns: [],
-        rows: [],
-      },
-      blanks: [],
+      table: [],
     },
     correct_answer: [
       {

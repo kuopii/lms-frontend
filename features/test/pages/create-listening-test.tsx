@@ -14,7 +14,6 @@ import {
   createListeningTestSchema,
 } from "../form/create-listening-form";
 import { PassageSection } from "../listening/components/passage-section";
-import CleanedPayload from "../listening/utils/cleaned-payload";
 
 const CreateListeningTestPage = () => {
   const { setTitle, setTrigger } = useFormStore();
@@ -52,10 +51,6 @@ const CreateListeningTestPage = () => {
                 title: "",
               },
               questions: [defaultListeningQuestion["choose_correct_answer"]],
-              image: {
-                title: "",
-                file: null,
-              },
             },
           ],
         },
@@ -81,6 +76,11 @@ const CreateListeningTestPage = () => {
       questionGroups: [
         {
           instruction: "",
+          transcript: {
+            type: "descriptive",
+            text: "",
+            title: "",
+          },
           questions: [defaultListeningQuestion["choose_correct_answer"]],
         },
       ],
@@ -89,9 +89,8 @@ const CreateListeningTestPage = () => {
 
   const onSubmit = useCallback(
     (values: CreateListeningTestSchema) => {
-      const cleaned = CleanedPayload(values);
       alert("Form submitted");
-      console.log("Form values:", cleaned);
+      console.log("Form values:", values);
       form.reset();
     },
     [form],
