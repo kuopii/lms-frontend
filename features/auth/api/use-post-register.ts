@@ -3,7 +3,7 @@ import { RegisterSchema } from "@/validators/auth";
 import { useMutation } from "@tanstack/react-query";
 
 type UsePostRegister = {
-  onSuccess?: () => void;
+  onSuccess?: (variables: RegisterSchema) => void | Promise<void>;
   onError?: (e: Error) => void;
 };
 
@@ -16,7 +16,9 @@ export const usePostRegister = ({ onSuccess, onError }: UsePostRegister) => {
       );
       return response.data;
     },
-    onSuccess,
+    onSuccess: (data, variables) => {
+      onSuccess?.(variables);
+    },
     onError,
   });
 };

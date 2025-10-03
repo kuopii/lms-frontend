@@ -16,14 +16,17 @@ import Image from "next/image";
 import { IoMdImage } from "react-icons/io";
 import { Button } from "@/components/ui/button";
 import { MdEditSquare } from "react-icons/md";
+import { Loader2 } from "lucide-react";
 
 export const ProfileForm = memo(
   ({
     form,
     onSubmit,
+    isLoading,
   }: {
     form: ReturnType<typeof useForm<UpdateUserSchema>>;
     onSubmit: (data: UpdateUserSchema) => void;
+    isLoading: boolean;
   }) => (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
@@ -106,8 +109,19 @@ export const ProfileForm = memo(
         />
 
         <div className="mt-4 flex justify-end">
-          <Button size="xs" type="submit" className="rounded-full">
-            Update <MdEditSquare size={20} />
+          <Button
+            size="xs"
+            disabled={isLoading}
+            type="submit"
+            className="min-w-32 rounded-full"
+          >
+            {isLoading ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              <>
+                Update <MdEditSquare size={20} />
+              </>
+            )}
           </Button>
         </div>
       </form>
