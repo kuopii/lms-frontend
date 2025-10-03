@@ -23,12 +23,13 @@ import {
 import React, { useCallback, useEffect, useRef } from "react";
 import { useFieldArray, useFormContext, useWatch } from "react-hook-form";
 import { MdDragIndicator } from "react-icons/md";
-import SentenceCompletion from "../../components/questions/sentence-completion";
-import { defaultListeningQuestion } from "../../constant/default-listening-question";
-import { PassageListening } from "../../form/create-listening-form";
 import FormCompletion from "../../components/questions/form-completion";
 import MapLabeling from "../../components/questions/map-labeling";
+import SentenceCompletion from "../../components/questions/sentence-completion";
 import SummaryCompletion from "../../components/questions/summary-completion";
+import TableCompletion from "../../components/questions/table-completion";
+import { defaultListeningQuestion } from "../../constant/default-listening-question";
+import { PassageListening } from "../../form/create-listening-form";
 
 type QuestionsSectionProps = {
   nestIndex: number;
@@ -44,6 +45,7 @@ const SENTENCE_COMPLETION = "sentence_completion";
 const FORM_COMPLETION = "form_completion";
 const SUMMARY_COMPLETION = "summary_completion";
 const MAP_LABELING = "map_labeling";
+const TABLE_COMPLETION = "table_completion";
 
 export const QuestionsSection = ({
   nestIndex,
@@ -364,6 +366,18 @@ export const QuestionsSection = ({
                         case MAP_LABELING:
                           return (
                             <MapLabeling
+                              key={`${question.id}-${questionType}`}
+                              questionsPath={questionsPath}
+                              qIndex={qIndex}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                              canRemove={questionFields.length > 1}
+                            />
+                          );
+                        case TABLE_COMPLETION:
+                          return (
+                            <TableCompletion
                               key={`${question.id}-${questionType}`}
                               questionsPath={questionsPath}
                               qIndex={qIndex}

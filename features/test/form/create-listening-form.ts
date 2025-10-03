@@ -10,6 +10,7 @@ export const QuestionType = z.enum([
   "form_completion",
   "summary_completion",
   "map_labeling",
+  "table_completion",
 ]);
 
 const optionSchema = z.object({
@@ -25,6 +26,7 @@ export const questionDataSchema = z.object({
   images: z
     .array(z.instanceof(File, { message: "Each image must be a valid file" }))
     .optional(),
+  table: z.array(z.array(z.string())).optional(),
 });
 
 const chooseCorrectAnswerSchema = z.object({
@@ -75,9 +77,19 @@ const mapLabelingSchema = z.object({
   }),
   question_type: z.literal("map_labeling"),
   question_text: z.string().min(1, "Question text is required"),
-  correct_answer: z.array(optionSchema).min(1).max(2),
   points_value: z.number().min(1, "Points value must be at least 1"),
   question_data: questionDataSchema.optional(),
+  items: z
+    .array(
+      z.object({
+        question_number: z.number({
+          required_error: "Question number is required",
+          invalid_type_error: "Question number must be a number",
+        }),
+        correct_answer: optionSchema,
+      }),
+    )
+    .min(1, "Minimum 1 item to match"),
   breakdown: breakdownSchema.optional(),
 });
 
@@ -124,6 +136,20 @@ const summaryCompletionSchema = z.object({
   breakdown: breakdownSchema.optional(),
 });
 
+const tableCompletionSchema = z.object({
+  question_type: z.literal("table_completion"),
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_data: questionDataSchema.optional(),
+  correct_answer: z
+    .array(optionSchema)
+    .min(1, "At least 2 correct answers are required"),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  breakdown: breakdownSchema.optional(),
+});
+
 const transcriptValueSchema = z.discriminatedUnion("type", [
   z.object({
     type: z.literal("descriptive"),
@@ -161,6 +187,7 @@ export const questionSchema = z.discriminatedUnion("question_type", [
   formCompletionSchema,
   noteCompletionSchema,
   summaryCompletionSchema,
+  tableCompletionSchema,
 ]);
 
 const questionGroupSchema = z.object({
@@ -226,5 +253,9 @@ export const createListeningTestSchema = withPointsValidation(
 export type CreateListeningTestSchema = z.infer<
   typeof createListeningTestSchema
 >;
-
 export type PassageListening = z.infer<typeof passageSchema>;
+export type QuestionDataSchema = z.infer<typeof questionDataSchema>;
+export type InferQuestion<
+  T extends z.infer<typeof questionSchema>["question_type"],
+> = Extract<z.infer<typeof questionSchema>, { question_type: T }>;
+export type Table = QuestionDataSchema["table"];

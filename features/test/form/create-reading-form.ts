@@ -15,12 +15,14 @@ export const QuestionType = z.enum([
   "diagram_label_completion",
   "paragraph_completion",
   "note_completion",
+  "table_completion",
 ]);
 
 export const questionDataSchema = z.object({
   images: z
     .array(z.instanceof(File, { message: "Each image must be a valid file" }))
     .optional(),
+  table: z.array(z.array(z.string())).optional(),
 });
 
 const optionSchema = z.object({
@@ -265,6 +267,20 @@ const noteCompletionSchema = z.object({
   breakdown: breakdownSchema.optional(),
 });
 
+const tableCompletionSchema = z.object({
+  question_type: z.literal("table_completion"),
+  question_number: z.number({
+    required_error: "Question number is required",
+    invalid_type_error: "Question number must be a number",
+  }),
+  question_data: questionDataSchema.optional(),
+  correct_answer: z
+    .array(optionSchema)
+    .min(1, "At least 2 correct answers are required"),
+  points_value: z.number().min(1, "Points value must be at least 1"),
+  breakdown: breakdownSchema.optional(),
+});
+
 export const questionSchema = z.discriminatedUnion("question_type", [
   chooseCorrectAnswerSchema,
   chooseMultipleAnswerSchema,
@@ -278,6 +294,7 @@ export const questionSchema = z.discriminatedUnion("question_type", [
   diagramLabelCompletionSchema,
   paragraphCompletionSchema,
   noteCompletionSchema,
+  tableCompletionSchema,
 ]);
 
 const questionGroupSchema = z.object({

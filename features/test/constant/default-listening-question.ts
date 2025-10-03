@@ -119,6 +119,19 @@ export const defaultListeningQuestion: Record<
     question_type: "map_labeling",
     question_text: "",
     question_data: { images: [] },
+    items: [],
+    points_value: 0,
+    breakdown: {
+      explanation: "",
+    },
+  },
+  table_completion: {
+    question_number: 0,
+    question_type: "table_completion",
+    question_data: {
+      images: [],
+      table: [],
+    },
     correct_answer: [
       {
         option_key: "",

@@ -39,6 +39,7 @@ import { ParagraphCompletion } from "@/features/test/components/questions/paragr
 import TrueFalseNotGiven from "@/features/test/components/questions/true-false-not-given";
 import YesNoNotGiven from "@/features/test/components/questions/yes-no-not-given";
 import SentenceCompletion from "../../components/questions/sentence-completion";
+import TableCompletion from "../../components/questions/table-completion";
 import { PassageReading } from "../../form/create-reading-form";
 
 type QuestionsSectionProps = {
@@ -60,6 +61,7 @@ const MATCHING_INFORMATION_TYPE = "matching_information";
 const DIAGRAM_LABEL_COMPLETION_TYPE = "diagram_label_completion";
 const PARAGRAPH_COMPLETION_TYPE = "paragraph_completion";
 const NOTE_COMPLETION_TYPE = "note_completion";
+const TABLE_COMPLETION = "table_completion";
 
 export const QuestionsSection = ({
   nestIndex,
@@ -436,6 +438,18 @@ export const QuestionsSection = ({
                               onDuplicateQuestion={handleDuplicateQuestion}
                               onRemoveQuestion={handleRemoveQuestion}
                               globalNumber={globalNumber}
+                            />
+                          );
+                        case TABLE_COMPLETION:
+                          return (
+                            <TableCompletion
+                              key={`${question.id}-${questionType}`}
+                              questionsPath={questionsPath}
+                              qIndex={qIndex}
+                              onDuplicateQuestion={handleDuplicateQuestion}
+                              onRemoveQuestion={handleRemoveQuestion}
+                              globalNumber={globalNumber}
+                              canRemove={questionFields.length > 1}
                             />
                           );
                         default:

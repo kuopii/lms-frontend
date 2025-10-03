@@ -51,10 +51,6 @@ const CreateListeningTestPage = () => {
                 title: "",
               },
               questions: [defaultListeningQuestion["choose_correct_answer"]],
-              image: {
-                title: "",
-                file: null,
-              },
             },
           ],
         },
@@ -80,6 +76,11 @@ const CreateListeningTestPage = () => {
       questionGroups: [
         {
           instruction: "",
+          transcript: {
+            type: "descriptive",
+            text: "",
+            title: "",
+          },
           questions: [defaultListeningQuestion["choose_correct_answer"]],
         },
       ],

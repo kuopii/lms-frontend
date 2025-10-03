@@ -65,6 +65,7 @@ export type Question = {
   breakdown: Breakdown;
   question_data?: {
     images?: File[];
+    table?: string[][];
   };
   items?: Item[];
 };
