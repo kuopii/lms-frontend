@@ -1,27 +1,32 @@
-import { classData } from "@/data/dummy-class-data";
+import { axiosInstance } from "@/lib/axios";
+import { Class } from "@/types/class";
 import { useQuery } from "@tanstack/react-query";
 
 export const useFetchClasses = ({
   onError,
-  userId,
+  accessToken,
 }: {
   onError: (e: Error) => void;
-  userId: string;
+  accessToken?: string;
 }) => {
   return useQuery({
     queryFn: async () => {
+      console.log("accessToken", accessToken);
       try {
-        // const data = [];
-        const data = classData;
-        // const { data } = await axiosInstance.get(`/class/${userId}`);
-        return data;
+        const { data } = await axiosInstance.get("/classes", {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+
+        return data as Class[];
       } catch (error) {
         onError(error as Error);
         console.error(error);
         throw error;
       }
     },
-    enabled: !!userId,
-    queryKey: ["class", userId],
+    enabled: !!accessToken,
+    queryKey: ["class", accessToken],
   });
 };
