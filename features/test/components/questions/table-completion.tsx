@@ -1,6 +1,8 @@
+import { useFormContext } from "react-hook-form";
 import QuestionBreakdown from "../question-breakdown";
 import QuestionHeader from "../question-header";
-import TableBuilder from "../table-builder";
+import { ImagePreview } from "../question-image";
+import { TableBuilder } from "../table-builder";
 
 interface TableCompletionProps {
   qIndex: number;
@@ -19,7 +21,12 @@ const TableCompletion = ({
   onRemoveQuestion,
   canRemove,
 }: TableCompletionProps) => {
+  const { watch } = useFormContext();
   const questionPath = `${questionsPath}.${qIndex}`;
+
+  const currentImages = watch(
+    `${questionsPath}.${qIndex}.question_data.images`,
+  );
 
   return (
     <div className="space-y-6">
@@ -31,6 +38,14 @@ const TableCompletion = ({
           globalNumber={globalNumber}
           withNumber={false}
         />
+
+        <div className="mx-auto max-w-md">
+          <ImagePreview
+            images={currentImages}
+            showActions={false}
+            containerClassName="grid-cols-3 md:grid-cols-4"
+          />
+        </div>
 
         <TableBuilder
           qIndex={qIndex}

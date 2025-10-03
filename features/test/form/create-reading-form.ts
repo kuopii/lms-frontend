@@ -273,7 +273,6 @@ const tableCompletionSchema = z.object({
     required_error: "Question number is required",
     invalid_type_error: "Question number must be a number",
   }),
-  question_text: z.string().optional(),
   question_data: questionDataSchema.optional(),
   correct_answer: z
     .array(optionSchema)

@@ -2,10 +2,9 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useCallback, useRef, useState } from "react";
 import { useFormContext, useWatch } from "react-hook-form";
-import { FaTrash } from "react-icons/fa6";
+import { FaCaretRight, FaTrash } from "react-icons/fa6";
 import { GrSelect } from "react-icons/gr";
 import { PiCopyFill } from "react-icons/pi";
-
 import {
   FormControl,
   FormField,
@@ -15,9 +14,16 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { InferQuestion, Table } from "../form/create-listening-form";
-import { AnswerKeyDialog } from "./answer-key-dialog";
 import { GenerateTableModal } from "./generate-table-modal";
 import PointsField from "./points-field";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface TableBuilderProps {
   questionsPath: string;
@@ -30,7 +36,7 @@ interface TableBuilderProps {
 type TableCompletion = InferQuestion<"table_completion">;
 type CorrectAnswer = TableCompletion["correct_answer"];
 
-const TableBuilder = ({
+export const TableBuilder = ({
   questionsPath,
   onDuplicateQuestion,
   qIndex,
@@ -231,22 +237,6 @@ const TableBuilder = ({
                                       onFocus={() => {
                                         lastFocusedKey.current = key;
                                       }}
-                                      // onChange={(e) => {
-                                      //   const value = e.target.value;
-                                      //   // kalau pattern blank rusak
-                                      //   if (
-                                      //     /^__\d+__$/.test(field.value) &&
-                                      //     !/^__\d+__$/.test(value)
-                                      //   ) {
-                                      //     const filtered = correctAnswer.filter(
-                                      //       (ans) => ans.option_key !== key,
-                                      //     );
-                                      //     reIndexBlanks(filtered);
-                                      //     field.onChange(""); // reset cell kosong
-                                      //   } else {
-                                      //     field.onChange(value);
-                                      //   }
-                                      // }}
                                     />
                                   </FormControl>
                                   <FormMessage />
@@ -278,32 +268,43 @@ const TableBuilder = ({
                 Mark as Blank
               </Button>
 
-              <AnswerKeyDialog
-                open={open}
-                setOpen={setOpen}
-                triggerLabel="Answer Key"
-                title="Correct Words for Each Blank"
-              >
-                <div className="flex flex-col gap-2">
-                  {correctAnswer && correctAnswer.length > 0 ? (
-                    correctAnswer.map((field, i) => (
-                      <div
-                        className="flex items-center gap-4"
-                        key={field.option_key}
-                      >
-                        <p className="w-[25px] border-r">{i + 1}</p>
-                        <p className="w-40 truncate">{field.option_text}</p>
-                      </div>
-                    ))
-                  ) : (
-                    <p className="text-muted-foreground text-sm italic">
-                      No options available.
-                    </p>
-                  )}
-                </div>
-
-                <div></div>
-              </AnswerKeyDialog>
+              <Dialog open={open} onOpenChange={setOpen}>
+                <DialogTrigger asChild>
+                  <Button
+                    className="rounded-[30px] border bg-transparent"
+                    type="button"
+                    size="xs"
+                  >
+                    Answer Key
+                    <FaCaretRight />
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="rounded-[30px] border-none">
+                  <DialogHeader>
+                    <DialogTitle>Correct Words for Each Blank</DialogTitle>
+                    <DialogDescription></DialogDescription>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div className="flex flex-col gap-2">
+                      {correctAnswer && correctAnswer.length > 0 ? (
+                        correctAnswer.map((field, i) => (
+                          <div
+                            className="flex items-center gap-4"
+                            key={field.option_key}
+                          >
+                            <p className="w-[25px] border-r">{i + 1}</p>
+                            <p className="w-40 truncate">{field.option_text}</p>
+                          </div>
+                        ))
+                      ) : (
+                        <p className="text-muted-foreground text-sm italic">
+                          No options available.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
 
             <div className="flex w-full items-center justify-between gap-4 md:w-fit">
@@ -341,5 +342,3 @@ const TableBuilder = ({
     </>
   );
 };
-
-export default TableBuilder;
