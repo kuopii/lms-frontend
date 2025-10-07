@@ -19,7 +19,7 @@ interface ToolbarProps {
   onAddPassage: () => void;
   onAddQustionGroup?: (questionType: QuestionType) => void;
   isActive?: boolean;
-  variant?: "reading" | "listening";
+  variant?: "reading" | "listening" | "writing";
 }
 
 const Toolbar = ({
@@ -86,24 +86,26 @@ const Toolbar = ({
         </TooltipContent>
       </Tooltip>
 
-      <Tooltip>
-        <TooltipTrigger asChild>
-          <Button
-            type="button"
-            size={"icon"}
-            className="rounded-full"
-            onClick={(e) => {
-              e.stopPropagation();
-              onAddQustionGroup?.("choose_correct_answer");
-            }}
-          >
-            <ShieldQuestionMark />
-          </Button>
-        </TooltipTrigger>
-        <TooltipContent side="left">
-          <p>Add Question Instruction</p>
-        </TooltipContent>
-      </Tooltip>
+      {variant !== "writing" && (
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              type="button"
+              size={"icon"}
+              className="rounded-full"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddQustionGroup?.("choose_correct_answer");
+              }}
+            >
+              <ShieldQuestionMark />
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent side="left">
+            <p>Add Question Instruction</p>
+          </TooltipContent>
+        </Tooltip>
+      )}
 
       <Dialog
         open={isDialogOpen}
@@ -132,6 +134,7 @@ const Toolbar = ({
 
         <QuestionImage
           isDialogOpen={isDialogOpen}
+          variant={variant}
           setIsDialogOpen={setIsDialogOpen}
           onDialogOpenChange={handleDialogOpenChange}
         />
@@ -148,11 +151,20 @@ const Toolbar = ({
               onAddPassage();
             }}
           >
-            {variant === "reading" ? <AlignLeft /> : <TbSection />}
+            {variant === "reading" || variant === "writing" ? (
+              <AlignLeft />
+            ) : (
+              <TbSection />
+            )}
           </Button>
         </TooltipTrigger>
         <TooltipContent side="left">
-          <p>Add {variant === "reading" ? "Passage" : "Section"}</p>
+          <p>
+            Add{" "}
+            {variant === "reading" || variant === "writing"
+              ? "Passage"
+              : "Section"}
+          </p>
         </TooltipContent>
       </Tooltip>
     </div>

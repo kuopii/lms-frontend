@@ -15,13 +15,16 @@ import { Input } from "@/components/ui/input";
 import { IoEye, IoEyeOff } from "react-icons/io5";
 import { MdEditSquare } from "react-icons/md";
 import { Button } from "@/components/ui/button";
+import { Loader2 } from "lucide-react";
 
 export const PasswordForm = memo(
   ({
     form,
+    isLoading,
     onSubmit,
   }: {
     form: ReturnType<typeof useForm<ChangePasswordSchema>>;
+    isLoading: boolean;
     onSubmit: (data: ChangePasswordSchema) => void;
   }) => {
     const [show, setShow] = useState({
@@ -92,8 +95,19 @@ export const PasswordForm = memo(
           )}
 
           <div className="mt-4 flex justify-end">
-            <Button size="xs" type="submit" className="rounded-full">
-              Change Password <MdEditSquare size={20} />
+            <Button
+              size="xs"
+              disabled={isLoading}
+              type="submit"
+              className="min-w-32 rounded-full"
+            >
+              {isLoading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                <>
+                  Change Password <MdEditSquare size={20} />
+                </>
+              )}
             </Button>
           </div>
         </form>

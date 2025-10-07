@@ -1,5 +1,4 @@
 import { axiosInstance } from "@/lib/axios";
-import { CreateClassFormSchema } from "@/validators/class";
 import { useMutation } from "@tanstack/react-query";
 
 export const useCreateClass = ({
@@ -12,20 +11,20 @@ export const useCreateClass = ({
   return useMutation({
     mutationFn: async ({
       data,
-      teacherId,
+      accessToken,
     }: {
-      data: CreateClassFormSchema;
-      teacherId: string;
+      data: FormData;
+      accessToken?: string;
     }) => {
-      const payload = {
-        teacherId,
-        ...data,
-      };
-      const { data: response } = await axiosInstance.post(`/class`, payload, {
-        headers: {
-          "Content-Type": "multipart/form-data",
+      const { data: response } = await axiosInstance.post(
+        `/classes/create`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         },
-      });
+      );
       return response;
     },
     onSuccess,

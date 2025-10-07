@@ -23,16 +23,17 @@ import { registerSchema, RegisterSchema } from "@/validators/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { HiEye, HiEyeOff } from "react-icons/hi";
 import { toast } from "sonner";
 import { usePostRegister } from "../api/use-post-register";
+import { AxiosError } from "axios";
+import { useAutoLogin } from "../api/use-auto-login";
 
 const SignUpPage = () => {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
+  const { performAutoLogin } = useAutoLogin();
 
   const form = useForm<RegisterSchema>({
     resolver: zodResolver(registerSchema),
@@ -45,13 +46,21 @@ const SignUpPage = () => {
   });
 
   const { mutate: registerUser, isPending } = usePostRegister({
-    onSuccess: () => {
+    onSuccess: async (variables) => {
+      toast.success("Account created successfully!");
+
+      // Auto-login menggunakan custom hook
+      await performAutoLogin(variables.email, variables.password);
+
       form.reset();
-      toast.success("User created successfully");
-      router.push("/auth/sign-in");
     },
-    onError(e) {
-      toast.error(e.message || "Something went wrong");
+    onError: (e) => {
+      if (e instanceof AxiosError) {
+        const message = e.response?.data?.message;
+        toast.error(message || "Something went wrong");
+      } else {
+        toast.error("Something went wrong");
+      }
     },
   });
 

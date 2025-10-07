@@ -34,7 +34,11 @@ const SECONDS_OPTIONS = Array.from({ length: 60 }, (_, i) => i);
 
 import { useFormContext } from "react-hook-form";
 
-const BaseForm = () => {
+interface BaseFormProps {
+  showAllowRepetition?: boolean;
+}
+
+const BaseForm = ({ showAllowRepetition = true }: BaseFormProps) => {
   const { control, formState, watch, setValue } = useFormContext();
 
   const timerMode = watch("timer_mode");
@@ -232,72 +236,76 @@ const BaseForm = () => {
           )}
         />
 
-        {/* Allow Repetition */}
-        <FormField
-          control={control}
-          name="allow_repetition"
-          render={({ field }) => (
-            <FormItem className="flex flex-col items-start justify-start gap-6 lg:flex-row lg:items-center lg:gap-0">
-              <FormLabel className="w-36 font-semibold text-white">
-                Allow Repetition
-              </FormLabel>
-              <FormControl className="flex-1 md:max-w-sm">
-                <ToggleGroup
-                  type="single"
-                  value={field.value ? "true" : "false"}
-                  onValueChange={(val) => {
-                    const result = handleRepetitionChange(val);
-                    if (typeof result === "boolean") field.onChange(result);
-                  }}
-                  className="flex w-full gap-2 rounded-4xl border border-[#FFFFFF66] md:max-w-xs lg:max-w-sm"
-                >
-                  {ALLOW_REPETITION.map((item) => (
-                    <ToggleGroupItem
-                      key={item.label}
-                      value={item.value.toString()}
-                      aria-label={item.label}
-                      className="data-[state=on]:bg-primary rounded-full px-3 py-2 transition-colors data-[state=on]:text-white"
-                    >
-                      {item.label}
-                    </ToggleGroupItem>
-                  ))}
-                </ToggleGroup>
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-
-        {/* Max Repetition Count - Only show if allow_repetition is true */}
-        {allowRepetition && (
-          <FormField
-            control={control}
-            name="max_repetition_count"
-            render={({ field }) => (
-              <FormItem className="flex flex-col items-start justify-start gap-6 lg:flex-row lg:items-center lg:gap-4">
-                <FormLabel className="w-36 font-semibold text-white">
-                  Max Repetitions
-                </FormLabel>
-                <div className="w-full flex-1 space-y-2">
-                  <FormControl>
-                    <Input
-                      type="number"
-                      min="1"
-                      variant="underline"
-                      placeholder="Enter max repetition count"
-                      {...field}
-                      value={field.value || ""}
-                      onChange={(e) => {
-                        const result = handleNumberInputChange(e);
-                        field.onChange(result);
+        {/* Allow Repetition - Conditional rendering */}
+        {showAllowRepetition && (
+          <>
+            <FormField
+              control={control}
+              name="allow_repetition"
+              render={({ field }) => (
+                <FormItem className="flex flex-col items-start justify-start gap-6 lg:flex-row lg:items-center lg:gap-0">
+                  <FormLabel className="w-36 font-semibold text-white">
+                    Allow Repetition
+                  </FormLabel>
+                  <FormControl className="flex-1 md:max-w-sm">
+                    <ToggleGroup
+                      type="single"
+                      value={field.value ? "true" : "false"}
+                      onValueChange={(val) => {
+                        const result = handleRepetitionChange(val);
+                        if (typeof result === "boolean") field.onChange(result);
                       }}
-                    />
+                      className="flex w-full gap-2 rounded-4xl border border-[#FFFFFF66] md:max-w-xs lg:max-w-sm"
+                    >
+                      {ALLOW_REPETITION.map((item) => (
+                        <ToggleGroupItem
+                          key={item.label}
+                          value={item.value.toString()}
+                          aria-label={item.label}
+                          className="data-[state=on]:bg-primary rounded-full px-3 py-2 transition-colors data-[state=on]:text-white"
+                        >
+                          {item.label}
+                        </ToggleGroupItem>
+                      ))}
+                    </ToggleGroup>
                   </FormControl>
                   <FormMessage />
-                </div>
-              </FormItem>
+                </FormItem>
+              )}
+            />
+
+            {/* Max Repetition Count - Only show if allow_repetition is true */}
+            {allowRepetition && (
+              <FormField
+                control={control}
+                name="max_repetition_count"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col items-start justify-start gap-6 lg:flex-row lg:items-center lg:gap-4">
+                    <FormLabel className="w-36 font-semibold text-white">
+                      Max Repetitions
+                    </FormLabel>
+                    <div className="w-full flex-1 space-y-2">
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="1"
+                          variant="underline"
+                          placeholder="Enter max repetition count"
+                          {...field}
+                          value={field.value || ""}
+                          onChange={(e) => {
+                            const result = handleNumberInputChange(e);
+                            field.onChange(result);
+                          }}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </div>
+                  </FormItem>
+                )}
+              />
             )}
-          />
+          </>
         )}
 
         {/* Shuffle Questions */}

@@ -19,6 +19,7 @@ type QuestionImageProps = {
   isDialogOpen: boolean;
   setIsDialogOpen: React.Dispatch<React.SetStateAction<boolean>>;
   onDialogOpenChange: (isOpen: boolean) => void;
+  variant?: "reading" | "listening" | "writing";
 };
 
 interface ImageItem {
@@ -173,12 +174,19 @@ const QuestionImage = ({
   isDialogOpen,
   setIsDialogOpen,
   onDialogOpenChange,
+  variant = "reading",
 }: QuestionImageProps) => {
   const { setValue, watch } = useFormContext();
   const { activePassageIndex, activeQuestionGroupIndex, activeQuestionIndex } =
     useToolbarStore();
 
-  const imagePath = `passages.${activePassageIndex}.questionGroups.${activeQuestionGroupIndex}.questions.${activeQuestionIndex}.question_data.images`;
+  const imagePath =
+    variant === "reading" || variant === "listening"
+      ? `passages.${activePassageIndex}.questionGroups.${activeQuestionGroupIndex}.questions.${activeQuestionIndex}.question_data.images`
+      : variant === "writing"
+        ? `passages.${activePassageIndex}.questions.${activeQuestionIndex}.question_data.images`
+        : "";
+
   const currentContext = watch(imagePath);
 
   const [selectedImages, setSelectedImages] = useState<ImageItem[]>([]);
