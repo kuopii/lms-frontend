@@ -28,6 +28,7 @@ const TestLayout = ({ children }: { children: React.ReactNode }) => {
     "/test/reading/create",
     "/test/listening/create",
     "/test/writing/create",
+    "/test/speaking/create",
   ];
   const overviewLayout = ["/test/overview"];
 

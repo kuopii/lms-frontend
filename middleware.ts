@@ -17,7 +17,12 @@ const roleBlockedRoutes: Record<string, string[]> = {
     "/dashboard/speaking",
     "/dashboard/writing",
   ],
-  student: ["/test/reading/create", "/test/listening/create"],
+  student: [
+    "/test/reading/create",
+    "/test/listening/create",
+    "/test/speaking/create",
+    "/test/writing/create",
+  ],
 };
 
 // Helper function untuk check apakah path adalah landing page
