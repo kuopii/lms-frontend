@@ -1,6 +1,6 @@
 import QuestionHeaderExercise from "../component/question-header";
 import TextAreaExercise from "../component/text-area";
-import MatchingHeadingExercise from "../questions/reading/matching-heading";
+import NoteCompletionReading from "../questions/reading/note-completion";
 
 interface Props {
   testData?: unknown;
@@ -20,7 +20,7 @@ const ReadingBodyExercise = ({ testData }: Props) => {
       </div>
       <div className="container mx-auto grid grid-cols-1 justify-between gap-4 sm:grid-cols-2">
         <TextAreaExercise />
-        <MatchingHeadingExercise />
+        <NoteCompletionReading />
       </div>
     </div>
   );

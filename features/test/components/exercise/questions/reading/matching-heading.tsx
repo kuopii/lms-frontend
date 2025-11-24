@@ -2,7 +2,7 @@ import { FaCaretRight } from "react-icons/fa6";
 import QuestionHeaderExercise from "../../component/question-header";
 import { useEffect, useState } from "react";
 
-const MatchingHeadingExercise = () => {
+const MatchingHeadingReading = () => {
   const [open, setOpen] = useState(false);
   const [select, setSelect] = useState("Choose correct answer");
 
@@ -69,4 +69,4 @@ const MatchingHeadingExercise = () => {
   );
 };
 
-export default MatchingHeadingExercise;
+export default MatchingHeadingReading;
