@@ -18,12 +18,18 @@ const roleBlockedRoutes: Record<string, string[]> = {
     "/dashboard/writing",
   ],
   student: [
+    // Student tidak bisa create test (hanya bisa mengerjakan test)
     "/test/reading/create",
     "/test/listening/create",
     "/test/speaking/create",
     "/test/writing/create",
   ],
 };
+
+// Helper function untuk check apakah path adalah create test route
+function isCreateTestRoute(pathname: string): boolean {
+  return /^\/test\/(reading|listening|speaking|writing)\/create/.test(pathname);
+}
 
 // Helper function untuk check apakah path adalah landing page
 function isLandingPagePath(pathname: string): boolean {
@@ -70,6 +76,13 @@ export default async function middleware(req: NextRequest) {
 
   // --- RBAC check ---
   const role = token?.role as string | undefined;
+
+  // Student tidak boleh akses create test routes
+  if (role === "student" && isCreateTestRoute(pathname)) {
+    return NextResponse.redirect(new URL("/dashboard/profile", req.url));
+  }
+
+  // Check role blocked routes
   if (role && roleBlockedRoutes[role]) {
     const blocked = roleBlockedRoutes[role].some((route) =>
       pathname.startsWith(route),
