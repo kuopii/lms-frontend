@@ -81,8 +81,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --color-neutral-1: #dedede;
+  --color-neutral-1: oklch(0.9006 0 0);
   --color-neutral-3: #aaaaaa;
+  --color-neutral-5: oklch(0.5727 0 0);
 }
 
 .dark {
@@ -162,6 +163,37 @@ body {
   border-radius: 10px;
 }
 
+.thin-scrollbar::-webkit-scrollbar {
+  width: 4px; /* Scrollbar Width */
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(122, 157, 88, 1); /* Thumb color */
+  border-radius: 10px; /* Rounding the thumb */
+  transition: background 0.5s ease; /* Smooth hover effect */
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.9); /* Thumb color on hover */
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: rgba(243, 244, 246, 0.7); /* Track color */
+  border-radius: 10px;
+}
+
+.masonry {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-auto-rows: 1px; /* very small row height */
+    grid-auto-flow: dense;
+}
+
+.masonry-item {
+    break-inside: avoid;
+}
+
+
 @layer utilities {
   .font-geologica {
     font-family: var(--font-geologica), sans-serif;
@@ -171,6 +203,13 @@ body {
   }
   .text-neutral-custom-3 {
     color: var(--color-neutral-3);
+  }
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 

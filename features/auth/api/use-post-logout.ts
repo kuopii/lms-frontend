@@ -1,5 +1,6 @@
 import { axiosInstance } from "@/lib/axios";
 import { useMutation } from "@tanstack/react-query";
+import { signOut } from "next-auth/react";
 
 type UsePostLogout = {
   onSuccess?: () => void;
@@ -14,7 +15,11 @@ export const usePostLogout = ({
 }: UsePostLogout) => {
   return useMutation({
     mutationFn: async () => {
-      if (!accessToken) throw new Error("No access token provided");
+      // ✅ DEV MODE (no backend token)
+      if (!accessToken) {
+        await signOut({ callbackUrl: "/auth/sign-in" });
+        return { devLogout: true };
+      }
 
       const { data: response } = await axiosInstance.post(
         `/auth/logout`,
@@ -26,6 +31,9 @@ export const usePostLogout = ({
           },
         },
       );
+
+      // Then clear NextAuth session
+      await signOut({ callbackUrl: "/auth/sign-in" });
 
       return response;
     },

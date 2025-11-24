@@ -43,11 +43,8 @@ yarn-error.log*
 next-env.d.ts
 
 # audio files
-*.mp3
-*.wav
-*.ogg
-*.m4a
-*.aac
-*.flac
+# Ignore audio files in public/audio folder (except specific files needed for dev)
 public/audio/*
 !public/audio/.gitkeep
+# Exception: allow specific audio files needed for development/testing
+!public/audio/bad.mp3

@@ -117,7 +117,7 @@ const TestLayout = ({ children }: { children: React.ReactNode }) => {
     );
   }
 
-  <>{children}</>;
+  return <>{children}</>;
 };
 
 export default TestLayout;
