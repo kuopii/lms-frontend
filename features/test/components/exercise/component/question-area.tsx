@@ -11,10 +11,7 @@ const QuestionAreaExercise = ({ questions = [] }: Props) => {
   return (
     <div className="flex flex-col gap-4">
       {questions.map((q, qi) => (
-        <div
-          key={qi}
-          className="bg-popover flex flex-col gap-[15px] rounded-[30px] p-[20px]"
-        >
+        <div key={qi} className="bg-popover flex flex-col gap-[15px] p-[20px]">
           <div className="flex items-center gap-[15px]">
             <span className="text-primary text-[22px] font-medium">
               {qi + 1}

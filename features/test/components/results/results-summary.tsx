@@ -14,7 +14,9 @@ interface Props {
 
 const ResultsSummary = ({ testData }: Props) => {
   const renderSummary = () => {
-    switch (testData?.type_test) {
+    const type = testData?.type_test?.toLowerCase();
+
+    switch (type) {
       case "reading":
         return (
           <div className="flex flex-col gap-[70px]">

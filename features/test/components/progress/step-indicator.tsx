@@ -112,7 +112,7 @@ const StepIndicator: React.FC<StepIndicatorProps> = ({
             type="button"
             onClick={() => goTo(step)}
             aria-current={step === currentStep ? "step" : undefined}
-            className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full text-base font-semibold transition-all duration-200 ${
+            className={`flex h-10 w-10 flex-shrink-0 cursor-pointer items-center justify-center rounded-full text-base font-semibold transition-all duration-200 ${
               step === currentStep
                 ? "scale-110 bg-[#7A9D58] text-[#E0E9D8]"
                 : "bg-green-100 text-[#7A9D58] hover:bg-[#7A9D58] hover:text-[#E0E9D8]"

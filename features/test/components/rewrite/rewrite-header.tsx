@@ -14,7 +14,7 @@ interface Props {
   showProgress?: boolean; // Untuk menampilkan step indicator dan timer (hanya untuk attempt, bukan results)
 }
 
-const HeaderTest = ({ testData, showProgress = true }: Props) => {
+const RewriteHeader = ({ testData, showProgress = true }: Props) => {
   const totalSteps = 40; // TODO: derive from exercise data if available
   const [currentStep, setCurrentStep] = useState(1);
 
@@ -33,7 +33,7 @@ const HeaderTest = ({ testData, showProgress = true }: Props) => {
     testData.type_test?.toLowerCase() === "reading";
 
   return (
-    <header className="flex flex-col gap-4">
+    <header className="flex flex-col gap-4 py-4">
       {/* Top row: Test type and close button */}
       <div className="container mx-auto flex items-center justify-between gap-[40px]">
         <h1 className="w-full rounded-[30px] bg-[#7a9d58] px-[8px] py-[12px] text-center text-2xl font-semibold capitalize">
@@ -69,4 +69,4 @@ const HeaderTest = ({ testData, showProgress = true }: Props) => {
   );
 };
 
-export default HeaderTest;
+export default RewriteHeader;

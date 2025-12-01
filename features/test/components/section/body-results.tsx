@@ -12,6 +12,7 @@ import VocabRemember from "../results/vocab-remember";
 
 interface Props {
   testData?: {
+    id?: string;
     type_test?: string;
     [key: string]: unknown;
   };
@@ -19,7 +20,9 @@ interface Props {
 
 const BodyResults = ({ testData }: Props) => {
   const renderResults = () => {
-    switch (testData?.type_test) {
+    const type = testData?.type_test?.toLowerCase();
+
+    switch (type) {
       case "reading":
         return (
           <div className="overflow-hiding container mx-auto mb-16 flex flex-col gap-[100px]">
@@ -44,7 +47,7 @@ const BodyResults = ({ testData }: Props) => {
             <FeedbackSummaryArea />
             <SpeakingWritingCorrection testData={testData} />
             <SuggestedRevision />
-            <ReattemptsArea />
+            <ReattemptsArea testId={testData?.id as string | undefined} />
           </div>
         );
       case "speaking":
@@ -54,7 +57,7 @@ const BodyResults = ({ testData }: Props) => {
             <AudioPlayer />
             <FeedbackSummaryArea />
             <SpeakingWritingCorrection testData={testData} />
-            <ReattemptsArea />
+            <ReattemptsArea testId={testData?.id as string | undefined} />
             <VocabRemember />
           </div>
         );
