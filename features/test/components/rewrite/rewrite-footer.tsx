@@ -15,7 +15,7 @@ interface Props {
   };
 }
 
-const FooterTest = ({ testData }: Props) => {
+const RewriteFooter = ({ testData }: Props) => {
   const [isRecording, setIsRecording] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -74,4 +74,4 @@ const FooterTest = ({ testData }: Props) => {
   return <footer className="p-4 pb-10">{renderFooterContent()}</footer>;
 };
 
-export default FooterTest;
+export default RewriteFooter;

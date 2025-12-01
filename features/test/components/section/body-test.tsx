@@ -20,7 +20,9 @@ const BodyTest = ({ testData }: Props) => {
   }
 
   const renderExercise = () => {
-    switch (testData.type_test) {
+    const type = testData.type_test?.toLowerCase();
+
+    switch (type) {
       case "reading":
         return <ReadingBodyExercise testData={testData} />;
       case "listening":
