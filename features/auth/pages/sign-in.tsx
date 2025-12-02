@@ -176,31 +176,6 @@ const SignInPage = () => {
         ))}
       </div>
 
-      {/* Dev auto-login button (visible when NEXT_PUBLIC_DEV_TEST_EMAIL is set) */}
-      {process.env.NEXT_PUBLIC_DEV_TEST_EMAIL && (
-        <div className="mb-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={async () => {
-              try {
-                setIsLoading(true);
-                await signIn("credentials", {
-                  email: process.env.NEXT_PUBLIC_DEV_TEST_EMAIL,
-                  password: process.env.NEXT_PUBLIC_DEV_TEST_PASSWORD,
-                  redirect: true,
-                  callbackUrl: "/dashboard/profile",
-                });
-              } finally {
-                setIsLoading(false);
-              }
-            }}
-          >
-            Auto login (dev)
-          </Button>
-        </div>
-      )}
-
       <p>
         Don&apos;t have an account?{" "}
         <Link href="/auth/sign-up" className="text-white hover:underline">
