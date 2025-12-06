@@ -6,13 +6,14 @@ import { Separator } from "@/components/ui/separator";
 import { useFetchTest } from "@/features/test/api/use-fetch-test";
 import { Role } from "@/types/auth";
 import { Dot, Loader2 } from "lucide-react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { BsFileEarmarkCheckFill } from "react-icons/bs";
 import { IoBook, IoPlayCircle } from "react-icons/io5";
 import { toast } from "sonner";
 
 export const OverviewPage = () => {
+  const router = useRouter();
   const [session] = useState({
     user: {
       id: "33hf9jdk38di",
@@ -78,6 +79,7 @@ export const OverviewPage = () => {
         <Button
           size={"xsm"}
           className="gap-3 [&_svg:not([class*='size-'])]:size-6"
+          onClick={() => router.push(`/test/exercise/${id}`)}
         >
           Attempt the Test <IoPlayCircle />
         </Button>

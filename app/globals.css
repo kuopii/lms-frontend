@@ -60,6 +60,7 @@
   --primary-foreground: oklch(1 0 0);
   --secondary: oklch(0.8433 0.1115 137.24);
   --secondary-foreground: oklch(0.205 0 0);
+  --tertiary: oklch(0.9226 0.0246 129.9);
   --muted: oklch(0.97 0 0);
   --muted-foreground: oklch(0.556 0 0);
   --accent: oklch(0.97 0 0);
@@ -73,6 +74,8 @@
   --chart-3: oklch(0.398 0.07 227.392);
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
+  --error-1: oklch(0.7461 0.1132 13.93);
+  --error-5: oklch(0.4346 0.1561 22.67);
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -81,8 +84,9 @@
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
   --sidebar-ring: oklch(0.708 0 0);
-  --color-neutral-1: #dedede;
+  --color-neutral-1: oklch(0.9006 0 0);
   --color-neutral-3: #aaaaaa;
+  --color-neutral-5: oklch(0.5727 0 0);
 }
 
 .dark {
@@ -162,6 +166,36 @@ body {
   border-radius: 10px;
 }
 
+.thin-scrollbar::-webkit-scrollbar {
+  width: 4px; /* Scrollbar Width */
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(122, 157, 88, 1); /* Thumb color */
+  border-radius: 10px; /* Rounding the thumb */
+  transition: background 0.5s ease; /* Smooth hover effect */
+}
+
+.thin-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.9); /* Thumb color on hover */
+}
+
+.thin-scrollbar::-webkit-scrollbar-track {
+  background: rgba(243, 244, 246, 0.7); /* Track color */
+  border-radius: 10px;
+}
+
+.masonry {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 1px; /* very small row height */
+  grid-auto-flow: dense;
+}
+
+.masonry-item {
+  break-inside: avoid;
+}
+
 @layer utilities {
   .font-geologica {
     font-family: var(--font-geologica), sans-serif;
@@ -171,6 +205,13 @@ body {
   }
   .text-neutral-custom-3 {
     color: var(--color-neutral-3);
+  }
+  .scrollbar-hidden::-webkit-scrollbar {
+    display: none;
+  }
+  .scrollbar-hidden {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 

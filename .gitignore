@@ -41,3 +41,10 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# audio files
+# Ignore audio files in public/audio folder (except specific files needed for dev)
+public/audio/*
+!public/audio/.gitkeep
+# Exception: allow specific audio files needed for development/testing
+!public/audio/bad.mp3
