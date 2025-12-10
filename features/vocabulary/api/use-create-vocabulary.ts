@@ -12,9 +12,19 @@ export const useCreateVocabulary = ({
   onSuccess,
 }: UseCreateVocabularyProps) =>
   useMutation({
-    mutationFn: async (payload: CreateVocabularyType) => {
+    mutationFn: async ({
+      payload,
+      accessToken,
+    }: {
+      payload: CreateVocabularyType;
+      accessToken?: string;
+    }) => {
       console.log("payload", payload);
-      const { data } = await axiosInstance.post("/api/vocabulary", payload);
+      const { data } = await axiosInstance.post("/vocab/create", payload, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
       return data;
     },
     onError,

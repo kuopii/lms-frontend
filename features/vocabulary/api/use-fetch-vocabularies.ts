@@ -1,37 +1,17 @@
-// import { axiosInstance } from "@/lib/axios";
+import { axiosInstance } from "@/lib/axios";
 import { useQuery } from "@tanstack/react-query";
-import { ClassData } from "../pages/vocabulary-page";
-
-// Dummy data when API is not available
-const classData: ClassData[] = [
-  {
-    id: 1,
-    name: "class-A",
-  },
-  {
-    id: 2,
-    name: "class-B",
-  },
-  {
-    id: 3,
-    name: "class-C",
-  },
-  {
-    id: 4,
-    name: "class-D",
-  },
-];
-
 interface UseFetchVocabulariesProps {
   class?: null | string;
   search?: string | null;
   onError: (e: Error) => void;
+  accessToken?: string;
 }
 
 export const useFetchVocabularies = ({
   class: _class,
   search,
   onError,
+  accessToken,
 }: UseFetchVocabulariesProps) => {
   return useQuery({
     queryFn: async () => {
@@ -40,10 +20,13 @@ export const useFetchVocabularies = ({
           search,
           class: _class,
         });
-        // const { data } = await axiosInstance.get("/api/vocabulary", {
-        //   params: { class: _class, search },
-        // });
-        return classData;
+        const { data } = await axiosInstance.get("/vocab/vocabularies", {
+          params: { class: _class, search },
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        return data;
       } catch (error) {
         onError(error as Error);
         console.error(error);
@@ -51,5 +34,6 @@ export const useFetchVocabularies = ({
       }
     },
     queryKey: ["vocabulary", _class, search],
+    enabled: !!accessToken,
   });
 };

@@ -126,14 +126,26 @@ const ProfilePage = () => {
         email: user.email || "",
         avatar: null,
       });
+    } else if (session?.user) {
+      // Use session data as fallback while fetching user data
+      profileForm.reset({
+        name: session.user.name || "",
+        email: session.user.email || "",
+        avatar: session.user.avatar || null,
+      });
     }
-  }, [user, profileForm]);
+  }, [user, session, profileForm]);
 
-  if (isPending) {
-    return <Loader className="min-h-[80vh]" />;
-  }
+  // Show page immediately with session data, don't block on API call
+  // This makes the page feel faster after login
+  const displayUser = user || {
+    name: session?.user?.name || "",
+    email: session?.user?.email || "",
+    avatar: session?.user?.avatar || null,
+    role: session?.user?.role || "",
+  };
 
-  if (isError || !user) {
+  if (isError && !user && !session?.user) {
     return (
       <GeneralError
         className="h-[75vh]"
@@ -152,8 +164,8 @@ const ProfilePage = () => {
         <div className="flex flex-col items-start justify-between gap-5 rounded-4xl bg-[#333333] p-5 md:flex-row md:items-center">
           <div className="flex items-center gap-6">
             <Avatar className="h-20 w-20">
-              {user?.avatar ? (
-                <AvatarImage src={user.avatar} alt={user.name} />
+              {displayUser?.avatar ? (
+                <AvatarImage src={displayUser.avatar} alt={displayUser.name} />
               ) : null}
 
               <AvatarFallback className="text-muted-foreground flex items-center justify-center">
@@ -162,12 +174,17 @@ const ProfilePage = () => {
             </Avatar>
             <div className="flex flex-col items-start justify-start gap-1.5">
               <span className="text-xl font-medium text-white">
-                {user?.name || <Skeleton className="h-2 w-40" />}
+                {displayUser?.name || <Skeleton className="h-2 w-40" />}
               </span>
               <span className="capitalize">
-                {user?.role || session?.user.role}
+                {displayUser?.role || session?.user.role || ""}
               </span>
             </div>
+            {isPending && (
+              <div className="ml-auto">
+                <Loader className="h-4 w-4" />
+              </div>
+            )}
           </div>
           <Button
             size="xs"

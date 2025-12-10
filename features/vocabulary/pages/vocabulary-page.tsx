@@ -104,12 +104,13 @@ export const VocabularyPage = () => {
     search: debouncedSearch,
     class: selectedClass,
     onError: (e) => console.error(e),
+    accessToken: undefined,
   });
 
   const handleCreateVocabulary = useCallback(
     (data: CreateVocabularyType) => {
       console.log("Creating new vocabulary:", data);
-      createVocabulary(data);
+      createVocabulary({ payload: data, accessToken: undefined });
     },
     [createVocabulary],
   );
@@ -179,7 +180,7 @@ export const VocabularyPage = () => {
             </SelectTrigger>
 
             <SelectContent className="bg-[#333333] text-white">
-              {vocabularies?.map((item) => (
+              {vocabularies?.map((item: ClassData) => (
                 <SelectItem
                   key={item.id}
                   value={item.name}

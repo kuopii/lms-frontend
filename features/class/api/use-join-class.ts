@@ -9,10 +9,24 @@ export const useJoinClass = ({
   onError?: (e: Error) => void;
 }) => {
   return useMutation({
-    mutationFn: async ({ classCode }: { classCode: string }) => {
-      const { data: response } = await axiosInstance.post(`/class/join`, {
-        classCode,
-      });
+    mutationFn: async ({
+      classCode,
+      accessToken,
+    }: {
+      classCode: string;
+      accessToken?: string;
+    }) => {
+      const { data: response } = await axiosInstance.post(
+        `/enrollments/create`,
+        {
+          class_code: classCode,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
       return response;
     },
     onSuccess,
