@@ -10,7 +10,8 @@ import { useParams, useRouter } from "next/navigation";
 import { useState } from "react";
 import { BsFileEarmarkCheckFill } from "react-icons/bs";
 import { IoBook, IoPlayCircle } from "react-icons/io5";
-import { toast } from "sonner";
+import { GeneralError } from "@/components/pages/general-error";
+import { slugifyTestName } from "@/lib/test-utils";
 
 export const OverviewPage = () => {
   const router = useRouter();
@@ -21,13 +22,18 @@ export const OverviewPage = () => {
     },
   });
   const params = useParams();
-  const id = params.id as string;
+  const testName = params.name as string;
 
-  const { data: testData, isLoading } = useFetchTest({
+  const {
+    data: testData,
+    isLoading,
+    isError,
+    refetch,
+  } = useFetchTest({
     userId: session.user.id,
-    testId: id,
-    onError: (e) => {
-      toast.error(e.message || "Something went wrong when fetching test");
+    testName: testName,
+    onError: () => {
+      // Error handled by GeneralError component
     },
   });
 
@@ -36,6 +42,20 @@ export const OverviewPage = () => {
       <div className="flex h-[70svh] items-center justify-center">
         <Loader2 className="text-primary h-10 w-10 animate-spin" />
       </div>
+    );
+  }
+
+  if (isError || !testData) {
+    return (
+      <GeneralError
+        className="h-[70svh]"
+        errorCode={404}
+        title="Test Not Found"
+        message="The test you're looking for doesn't exist or has been removed."
+        textButton="Retry"
+        onClick={refetch}
+        withBackButton={true}
+      />
     );
   }
 
@@ -79,7 +99,11 @@ export const OverviewPage = () => {
         <Button
           size={"xsm"}
           className="gap-3 [&_svg:not([class*='size-'])]:size-6"
-          onClick={() => router.push(`/test/exercise/${id}`)}
+          onClick={() => {
+            if (testData?.name) {
+              router.push(`/test/exercise/${slugifyTestName(testData.name)}`);
+            }
+          }}
         >
           Attempt the Test <IoPlayCircle />
         </Button>

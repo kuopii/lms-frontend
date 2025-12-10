@@ -16,13 +16,10 @@ export const useUpdateUser = ({
       data: FormData;
       accessToken?: string;
     }) => {
-      const { data: response } = await axiosInstance.post(
+      const { data: response } = await axiosInstance.patch(
         "/profile/update",
         data,
         {
-          params: {
-            _method: "PATCH",
-          },
           headers: {
             Authorization: `Bearer ${accessToken}`,
             "Content-Type": "multipart/form-data",

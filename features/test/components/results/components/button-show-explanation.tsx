@@ -6,10 +6,10 @@ import { BsFillArrowRightCircleFill } from "react-icons/bs";
 const ButtonShowExplanation = () => {
   const router = useRouter();
   const params = useParams();
-  const testId = params.id as string;
+  const testName = params.name as string;
 
   const handleClick = () => {
-    router.push(`/test/review/${testId}`);
+    router.push(`/test/review/${testName}`);
   };
 
   return (

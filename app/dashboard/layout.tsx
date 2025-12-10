@@ -19,7 +19,7 @@ import { usePostLogout } from "@/features/auth/api/use-post-logout";
 import { useConfirm } from "@/hooks/use-confirm";
 import { cn } from "@/lib/utils";
 import { Role } from "@/types/auth";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { NextIntlClientProvider } from "next-intl";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -158,14 +158,16 @@ const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   const { mutate: logout } = usePostLogout({
     accessToken: session?.accessToken,
     onError(e) {
-      toast.error(e.message || "Something went wrong");
+      // Error is already handled in usePostLogout (session cleared)
+      // Just show error message but user is already logged out
+      console.error("Logout API error:", e);
+      // Don't show error toast since logout still succeeded (session cleared)
+      // User will be redirected to sign-in page by signOut call
     },
     onSuccess: () => {
-      toast.success("Logout success!");
-      signOut({
-        redirect: true,
-        callbackUrl: "/",
-      });
+      // Session already cleared in usePostLogout
+      // Just show success message (redirect happens automatically)
+      toast.success("Logged out successfully");
     },
   });
 

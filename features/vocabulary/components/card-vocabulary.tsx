@@ -49,7 +49,8 @@ const CardVocabulary = ({ vocab }: { vocab: VocabularyData }) => {
     },
   });
 
-  const handleEdit = (data: EditVocabularyType) => updateVocabulary(data);
+  const handleEdit = (data: EditVocabularyType) =>
+    updateVocabulary({ payload: data, accessToken: undefined });
 
   const handleEditClick = () => {
     openEditModal(vocab, handleEdit);

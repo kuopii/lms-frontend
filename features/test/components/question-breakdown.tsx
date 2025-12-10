@@ -310,7 +310,7 @@ const QuestionBreakdown = ({ breakdownPath }: { breakdownPath: string }) => {
   });
 
   const handleAddVocabulary = (data: CreateVocabularyType) =>
-    createVocabulary(data);
+    createVocabulary({ payload: data, accessToken: undefined });
 
   return (
     <div className="space-y-4 rounded-3xl bg-[#e4ecd7] p-3 md:p-4 lg:p-5">

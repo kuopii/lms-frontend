@@ -109,7 +109,10 @@ export const ClassActionModal = ({
 
   const onJoiningClass = (data: JoinClassFormSchema) => {
     console.log("Submitted data:", data);
-    joinClass({ classCode: data.classCode });
+    joinClass({
+      classCode: data.classCode,
+      accessToken: session?.accessToken,
+    });
   };
 
   const onCreatingClass = (data: CreateClassFormSchema) => {
