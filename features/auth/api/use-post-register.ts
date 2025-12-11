@@ -14,7 +14,7 @@ export const usePostRegister = ({ onSuccess, onError }: UsePostRegister) => {
         `/auth/register`,
         data,
       );
-      return response.data;
+      return response;
     },
     onSuccess: (data, variables) => {
       onSuccess?.(variables);

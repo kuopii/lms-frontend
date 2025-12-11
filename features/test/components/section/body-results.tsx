@@ -9,10 +9,12 @@ import SpeakingWritingCorrection from "../results/speaking-writing-correction";
 import SuggestedRevision from "../results/suggested-revision";
 import TaskOptionArea from "../results/task-option-area";
 import VocabRemember from "../results/vocab-remember";
+import { slugifyTestName } from "@/lib/test-utils";
 
 interface Props {
   testData?: {
     id?: string;
+    name?: string;
     type_test?: string;
     [key: string]: unknown;
   };
@@ -47,7 +49,11 @@ const BodyResults = ({ testData }: Props) => {
             <FeedbackSummaryArea />
             <SpeakingWritingCorrection testData={testData} />
             <SuggestedRevision />
-            <ReattemptsArea testId={testData?.id as string | undefined} />
+            <ReattemptsArea
+              testName={
+                testData?.name ? slugifyTestName(testData.name) : undefined
+              }
+            />
           </div>
         );
       case "speaking":
@@ -57,7 +63,11 @@ const BodyResults = ({ testData }: Props) => {
             <AudioPlayer />
             <FeedbackSummaryArea />
             <SpeakingWritingCorrection testData={testData} />
-            <ReattemptsArea testId={testData?.id as string | undefined} />
+            <ReattemptsArea
+              testName={
+                testData?.name ? slugifyTestName(testData.name) : undefined
+              }
+            />
             <VocabRemember />
           </div>
         );

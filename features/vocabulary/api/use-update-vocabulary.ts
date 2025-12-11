@@ -12,11 +12,22 @@ export const useUpdateVocabulary = ({
   onSuccess,
 }: UseUpdateVocabularyProps) =>
   useMutation({
-    mutationFn: async (payload: EditVocabularyType) => {
+    mutationFn: async ({
+      payload,
+      accessToken,
+    }: {
+      payload: EditVocabularyType;
+      accessToken?: string;
+    }) => {
       console.log("payload", payload);
       const { data } = await axiosInstance.patch(
-        `/api/vocabulary${payload.vocab_id}`,
+        `/vocab/update/${payload.vocab_id}`,
         payload,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
       );
       return data;
     },

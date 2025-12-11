@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
@@ -43,7 +42,6 @@ const socialProviders = [
 ];
 
 const SignInPage = () => {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -68,15 +66,17 @@ const SignInPage = () => {
       if (res?.error) {
         toast.error(res.error);
         form.setValue("password", "");
+        setIsLoading(false);
       } else if (res?.ok) {
         form.reset();
         toast.success("Login success!");
-        router.push("/dashboard/profile");
+        // Use window.location for faster redirect (bypasses React Router delay)
+        // This ensures immediate navigation without waiting for session state updates
+        window.location.href = "/dashboard/profile";
       }
     } catch {
       toast.error("Something went wrong. Please try again later.");
       form.setValue("password", "");
-    } finally {
       setIsLoading(false);
     }
   };

@@ -1,17 +1,17 @@
 "use client";
 
 import { useFetchTest } from "@/features/test/api/use-fetch-test";
+import { GeneralError } from "@/components/pages/general-error";
 import { Role } from "@/types/auth";
 import { Loader2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { toast } from "sonner";
 import HeaderTest from "../components/section/header-test";
 import BodyResults from "../components/section/body-results";
 
 const ResultsTestPage = () => {
   const params = useParams();
-  const id = params.id as string;
+  const testName = params.name as string;
 
   const [session] = useState({
     user: {
@@ -20,11 +20,16 @@ const ResultsTestPage = () => {
     },
   });
 
-  const { data: testData, isLoading } = useFetchTest({
+  const {
+    data: testData,
+    isLoading,
+    isError,
+    refetch,
+  } = useFetchTest({
     userId: session.user.id,
-    testId: id,
-    onError: (e) => {
-      toast.error(e.message || "Something went wrong when fetching test");
+    testName: testName,
+    onError: () => {
+      // Error handled by GeneralError component
     },
   });
 
@@ -36,11 +41,17 @@ const ResultsTestPage = () => {
     );
   }
 
-  if (!testData) {
+  if (isError || !testData) {
     return (
-      <div className="flex h-[70svh] items-center justify-center">
-        <p>Test not found</p>
-      </div>
+      <GeneralError
+        className="h-[70svh]"
+        errorCode={404}
+        title="Test Not Found"
+        message="The test results you're looking for don't exist or have been removed."
+        textButton="Retry"
+        onClick={refetch}
+        withBackButton={true}
+      />
     );
   }
 

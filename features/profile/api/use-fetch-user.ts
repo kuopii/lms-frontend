@@ -14,7 +14,9 @@ export const useFetchUserById = ({
   return useQuery({
     queryFn: async () => {
       try {
-        const { data } = await axiosInstance.get(`/profile/${userId}`, {
+        // If userId is provided, get specific user, otherwise get own profile
+        const endpoint = userId ? `/profile/${userId}` : `/profile`;
+        const { data } = await axiosInstance.get(endpoint, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },

@@ -4,13 +4,13 @@ import ReattemptTest from "../reattempt-test";
 import ReattemptsButton from "./components/reattempts-button";
 
 interface ReattemptsAreaProps {
-  testId?: string;
+  testName?: string;
 }
 
-const ReattemptsArea = ({ testId }: ReattemptsAreaProps) => {
+const ReattemptsArea = ({ testName }: ReattemptsAreaProps) => {
   return (
     <div className="flex items-center justify-center gap-5 text-base font-medium text-white">
-      <ReattemptsButton testId={testId} />
+      <ReattemptsButton testName={testName} />
       <ReattemptTest />
     </div>
   );

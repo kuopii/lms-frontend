@@ -18,7 +18,7 @@ export const useChangePassword = ({
       accessToken?: string;
     }) => {
       const { data: response } = await axiosInstance.patch(
-        "/password/change-password",
+        "/change-password",
         data,
         {
           headers: {

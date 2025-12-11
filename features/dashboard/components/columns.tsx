@@ -10,6 +10,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Play, SquarePen, Trash, View } from "lucide-react";
 import { format } from "date-fns";
+import { slugifyTestName } from "@/lib/test-utils";
 
 export const studentColumns: ColumnDef<DashboardItem>[] = [
   { accessorKey: "test_name", header: "Test Name" },
@@ -36,9 +37,10 @@ export const studentColumns: ColumnDef<DashboardItem>[] = [
     accessorKey: "action",
     header: "Action",
     cell: ({ row }) => {
-      const id = row.original.id;
+      const testName = row.original.test_name;
+      const testNameSlug = testName ? slugifyTestName(testName) : "";
       return (
-        <Link href={`/test/overview/${id}`}>
+        <Link href={`/test/overview/${testNameSlug}`}>
           <Button size="icon" variant="default" className="size-8">
             <Play />
           </Button>
